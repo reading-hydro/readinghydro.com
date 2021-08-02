@@ -1,0 +1,572 @@
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+        <!-- https://github.com/chartjs/chartjs-adapter-moment/blob/master/README.md -->
+        <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@0.1.1"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/0.5.7/chartjs-plugin-annotation.min.js"></script>
+        <link rel="stylesheet" href="https://unpkg.com/js-datepicker/dist/datepicker.min.css">
+ 
+        <style>
+
+            #tit {
+                 font-family: Arial, Helvetica, sans-serif;
+                 font-size: 20px;
+                 text-align: center;
+                            }
+             #sub1 {
+                 font-family: Arial, Helvetica, sans-serif;
+                 font-size: 18px;
+                 text-align: center;
+             }
+             #sub2 {
+                 clear: left;
+                 font-family: Arial, Helvetica, sans-serif;
+                 font-size: 18px;
+                 text-align: center;
+                 line-height: 60px;
+             }
+             #dpk1 {
+                 margin: 10px;
+                 font-family: Arial, Helvetica, sans-serif;
+             }
+             #dpk2 {
+                 margin: 10px;
+                 font-family: Arial, Helvetica, sans-serif;
+             }
+             
+             .btn {
+                 font-size: 18px;
+                 font-family: Arial, Helvetica, sans-serif;
+                 padding: 10px 16px;
+                 margin: 5px;
+                 border-radius: 4px;
+                 background-color: #e7e7e7;
+             }
+             .lab {
+                 font-family: Arial, Helvetica, sans-serif;
+                 white-space: nowrap;
+                 font-style: normal;
+             }
+ 
+             /* Style the active class, and buttons on mouse-over */
+             .active, .btn:hover {
+             background-color: #1a73e8;
+             color: white;
+             }
+             #ts {
+                 white-space: nowrap;
+             }
+            .box {
+                 width: 230px;
+                 height: 230px;
+                 margin: 20px;
+                 padding: 5px 10px;
+                 font-family: Arial, Helvetica, sans-serif;
+                 font-size: 17px;
+                 color: white;
+                 float: left;
+             }
+             .inner {
+                 height: 230px; 
+                 margin-top: -30px;
+                 text-align:center;
+                 display:flex;                
+                 align-items: center;
+                 justify-content: center;
+                 font-size: 65px;
+                 font-weight: bold;
+                 color: white;               
+             }
+             .cle {
+                 clear: left;
+             }
+            #con {
+                 max-width: 1280px;
+                 margin: auto;
+            }
+            #wra1 {
+                /* local */
+                /* max-width: 1160px; */
+                /* Wordpress */
+                max-width: 1080px;
+                margin: auto;
+             }
+             #btw {
+                 max-width: 1160px;
+                 margin: auto;
+                 text-align:center;
+             }
+             #dtw {
+                 max-width: 1160px;
+                 margin: auto;
+                 text-align:center;
+             }
+             #wra2 {
+                max-width: 1160px;
+                height: 500px;
+                margin: 20px auto;
+             }
+             #wra3 {
+                max-width: 1160px;
+                height: 300px;
+                margin: 20px auto;
+             }
+            #up {
+                background-color: #409AE6;
+             }
+            #do {
+                background-color: #52B4E6;
+             }
+            #he {
+                background-color: #88D1E6;
+             }
+            #fl {
+                background-color: #418CDA;
+             }
+ 
+             #chart1 {
+                 height: 100%;                          
+             }
+             #chart2 {
+                 height: 100%;                          
+             }
+ 
+             @media only screen and (max-width: 1190px) {
+                 #wra1 {
+                 max-width: 580px;                
+                 }
+                 #wra2 {
+                 max-width: 580px;                
+                 }
+                 #wra3 {
+                 max-width: 580px;                
+                 }
+             }
+             @media only screen and (max-width: 610px) {
+                 #wra1 {
+                 max-width: 290px;
+                  }
+                  #btw {
+                 max-width: 300px;
+                  }
+                  #dtw {
+                 width: 260px;
+                  }                 
+                  #wra2 {
+                 max-width: 350px;
+                  }
+                  #wra3 {
+                 max-width: 350px;
+                  }
+                  
+             }
+         
+        </style>       
+
+         <script>
+
+        // Start an IIFE to use `await` at the top level
+        (async function(){
+        var global_data = await getData();
+
+                var myChart1
+                var myChart2
+        
+                const container = document.createElement('div')
+                const title = document.createElement('h1')
+                const subtitle1 = document.createElement('div')
+                const subtitle2 = document.createElement('div')
+                const buttonwrap = document.createElement('div')
+                const button1 = document.createElement('button')
+                const button2 = document.createElement('button')
+                const button3 = document.createElement('button')
+                const button4 = document.createElement('button')
+                const datewrap = document.createElement('div')
+                const datepick1 = document.createElement('input')
+                const datepick2 = document.createElement('input')
+                const label1 = document.createElement('label')
+                const label2 = document.createElement('label')
+                const now_upst = document.createElement('div')
+                const now_down = document.createElement('div')
+                const now_head = document.createElement('div')
+                const now_flow = document.createElement('div')
+                const inner_now_upst = document.createElement('div')
+                const inner_now_down = document.createElement('div')
+                const inner_now_head = document.createElement('div')
+                const inner_now_flow = document.createElement('div')
+                const wrap1 = document.createElement('div')
+                const wrap2 = document.createElement('div')
+                const wrap3 = document.createElement('div')
+                const clear = document.createElement('p')
+                const canv1 = document.createElement('canvas')
+                const canv2 = document.createElement('canvas')
+                
+                container.id = "con"
+                title.id = "tit"
+                subtitle1.id = "sub1"
+                subtitle2.id = "sub2"
+                buttonwrap.id = "btw"
+                datewrap.id = "dtw"
+                datepick1.type = "text"
+                datepick1.id = "dpk1"
+                datepick2.type = "text"
+                datepick2.id = "dpk2"
+                label1.for = "dpk1"
+                label2.for = "dpk2"
+                now_upst.id = "up"
+                now_down.id = "do"
+                now_head.id = "he"
+                now_flow.id = "fl"
+                wrap1.id = "wra1"
+                wrap2.id = "wra2"
+                wrap3.id = "wra3"
+                canv1.id = "chart1"
+                canv2.id = "chart2"
+
+                now_upst.className = "box"
+                now_down.className = "box"
+                now_head.className = "box"
+                now_flow.className = "box"
+                inner_now_upst.className = "inner"
+                inner_now_down.className = "inner"
+                inner_now_head.className = "inner"
+                inner_now_flow.className = "inner"
+                clear.className = "cle"
+                button1.className = "btn"
+                button2.className = "btn active"
+                button3.className = "btn"
+                button4.className = "btn"
+                label1.className = "lab"
+                label2.className = "lab"
+
+                title.innerHTML = "Water levels and flow"
+                subtitle1.innerHTML = `Current conditions: <span id="ts">${moment(global_data[0].received_at).format('Do MMMM YYYY, HH:mm')} </span>`
+                subtitle2.innerHTML = "<span>Conditions over selected period</span>"
+                button1.innerHTML = "Last day"
+                button1.onclick = function(){picker1.setDate(yesterday, true); picker2.setDate(today, true); selectTimescale(yesterday, today)}
+                button2.innerHTML = "Last week"
+                button2.onclick = function(){picker1.setDate(lastweek, true); picker2.setDate(today, true); selectTimescale(lastweek, today)}
+                button3.innerHTML = "Last month"
+                button3.onclick = function(){picker1.setDate(lastmonth, true); picker2.setDate(today, true); selectTimescale(lastmonth, today)}
+                button4.innerHTML = "Last year"
+                button4.onclick = function(){picker1.setDate(lastyear, true); picker2.setDate(today, true); selectTimescale(lastyear, today)}
+
+                now_upst.innerHTML = "Upstream (metres AOD)"
+                now_down.innerHTML = "Downstream (metres AOD)"
+                now_head.innerHTML = "Head (metres)" 
+                now_flow.innerHTML = "Flow (cubic metres/sec)"
+                label1.innerHTML = "Start date"
+                label2.innerHTML = "End date"
+                inner_now_upst.textContent = global_data[0].upstream.toFixed(3)
+                inner_now_down.textContent = global_data[0].downstream.toFixed(3)
+                inner_now_head.textContent = (global_data[0].upstream - global_data[0].downstream).toFixed(3)
+                inner_now_flow.textContent = ((global_data[0].gen1_flow_ls + global_data[0].gen2_flow_ls) / 1000).toFixed(3)
+
+                now_upst.append(inner_now_upst)
+                now_down.append(inner_now_down)
+                now_head.append(inner_now_head)
+                now_flow.append(inner_now_flow)
+
+                wrap1.append(now_upst, now_down, now_head, now_flow, clear)
+                container.append(title)
+                container.append(subtitle1)
+                container.append(wrap1)
+                container.append(subtitle2)
+                buttonwrap.append(button1, button2, button3, button4, clear)
+                container.append(buttonwrap)
+                datewrap.append(label1, datepick1, label2, datepick2, clear)
+                container.append(datewrap)
+                wrap2.append(canv1, clear)
+                wrap3.append(canv2)
+
+                container.append(wrap2)
+                container.append(wrap3)
+                
+                //local
+                //document.body.append(container)
+                //Wordpress
+                var target = document.getElementsByClassName("entry-content");
+                target[0].append(container)
+            
+            //filter by date
+            let today = new Date()
+            let yesterday = new Date()
+            let daybefore = new Date()
+            let lastweek = new Date()
+            let lastmonth = new Date()
+            let lastyear = new Date()
+            yesterday.setDate(today.getDate() - 1)
+            daybefore.setDate(today.getDate() - 2)
+            lastweek.setDate(today.getDate() - 7)
+            lastmonth.setDate(today.getDate() - 31)
+            lastyear.setDate(today.getDate() - 365)
+
+            var picked = false
+            //datepicker
+            const picker1 = datepicker('#dpk1', { id: 1, dateSelected: lastweek, onSelect: instance => {picked = true; selectTimescale(picker1.getRange().start, picker1.getRange().end ) }})
+            const picker2 = datepicker('#dpk2', { id: 1, dateSelected: new Date(), onSelect: instance => {picked = true; selectTimescale(picker2.getRange().start, picker2.getRange().end ) }})
+
+        //default timescale = last week
+        selectTimescale(lastweek, today)
+
+        function selectTimescale(mystart, myend) {
+            var selection = global_data.filter(function(item){
+                        return new Date(item.received_at) >= mystart
+                    })
+                    var mystarttime = mystart
+                    var myendtime = myend
+                    var mylength = myendtime - mystarttime
+                    if (mylength >= 172800000){
+                        myunit = 'day'
+                    }else{
+                        myunit = 'hour'
+                    }
+
+                    const xs = []
+                    const ys1 = []
+                    const ys2 = []
+                    const ys3 = []
+                    for(item of selection) {                
+                        const mydate = item.received_at;
+                        xs.push(mydate);
+                        const myupstream = item.upstream;
+                        ys1.push(myupstream);
+                        const mydownstream = item.downstream;
+                        ys2.push(mydownstream);
+                        const myflow = item.gen1_flow_ls + item.gen2_flow_ls;
+                        ys3.push(myflow);
+                    }
+
+                    // add active class on click
+                    // Add active class to the current button
+                    var btns = document.getElementsByClassName("btn");
+                    for (var i = 0; i < btns.length; i++) {
+                    btns[i].addEventListener("click", function() {
+                        var current = document.getElementsByClassName("active");
+                        if (typeof current[0] !== 'undefined'){
+                        current[0].className = current[0].className.replace(" active", "");
+                        }
+                        this.className += " active";
+                        });
+                        }
+                     if (picked == true) {
+                        for (var i = 0; i < btns.length; i++) {
+                            btns[i].classList.remove("active")
+                        } 
+                        picked = false
+                    }
+                   
+
+                //Graph 1 - Water levels            
+                if (myChart1) {
+                    myChart1.destroy();
+                    }
+
+                var ctx1 = document.getElementById('chart1').getContext('2d');
+
+                myChart1 = new Chart(ctx1, {
+                        type: 'line',
+                        data: {
+                            labels: xs,
+                            datasets: [
+                                {       
+                                label: 'Upstream',                         
+                                data: ys1,
+                                fill: true,
+                                backgroundColor: 'rgba(136, 209, 230, 0.6)',
+                                borderColor: 'rgba(136, 209, 230, 0.6)',
+                                borderWidth: 1,
+                                radius: 0
+                                },
+                                {  
+                                label: 'Downstream',                              
+                                data: ys2,
+                                fill: true,
+                                backgroundColor: 'rgba(64, 154, 230, 0.9)',
+                                borderColor: 'rgba(64, 154, 230, 0.9)',
+                                borderWidth: 1,
+                                radius: 0
+                                },                        
+                            ]
+                            },
+                            options: {
+                                //responsive: true,
+                                annotation: {
+                                        drawTime: 'afterDraw',
+                                        annotations: [{
+                                            type: 'line',
+                                            id: 'line1',
+                                            mode: 'horizontal',
+                                            scaleID: 'y-axis-0',
+                                            value: 36.737,
+                                            borderWidth: 1,
+                                            borderDash: [2,2],
+                                            borderColor: '#E4004D',
+                                            label: {
+                                                backgroundColor: 'rgba(255,255,255,0)',
+                                                fontColor: '#E4004D',
+                                                content: 'Hands off level',
+                                                position: 'right',
+                                                yAdjust: 10,
+                                                enabled: true,
+                                            }
+                                        }
+                                    ]
+                                    },
+
+                                tooltips: {
+                                        callbacks: {
+                                        title: function(t, d) {
+                                        return moment(d.labels[t[0].index]).format('DD-MM-YYYY, HH:mm');
+                                                              }
+                                                    }
+                                            },
+                                maintainAspectRatio: false,
+                                scales: {
+                                        xAxes: [{
+                                            // use moment.js
+                                            type: 'time',
+                                            time: {
+                                                minUnit: myunit,
+                                            },                                             
+                                            distribution: 'linear', 
+                                            //
+                                            ticks: {
+                                            //reverse: true,
+                                                fontStyle: "bold",
+                                                min: mystarttime,
+                                                max: myendtime,
+                                                    },
+                                            scaleLabel: {
+                                                display: false,                                                                  
+                                                    }
+                                                }
+
+                                        ],
+                                        yAxes: [{
+                                            ticks: {
+                                                min: 34.5,
+                                                max: 37.5,
+                                                fontSize: 15,
+                                                fontStyle: "bold",
+                                                    },
+                                                    scaleLabel: {
+                                                display: false                                      
+                                                    }
+                                                }]
+                                        },
+                                title: {
+                                    display: true,
+                                    text: "Water levels (metres AOD)",
+                                    fontSize: 20,
+                                    fontStyle: "bold",
+                                        },
+                                legend: {
+                                    //display: false,
+                                    display: true,
+                            labels: {fontSize: 15,
+                            fontStyle: "bold",
+                                    }
+                                        }
+                                    } 
+                    });
+                    
+                //Graph 2 - Derived flow
+                if (myChart2) {
+                    myChart2.destroy();
+                    }
+
+                var ctx2 = document.getElementById('chart2').getContext('2d');
+                myChart2 = new Chart(ctx2, {
+                        type: 'line',
+                        data: {
+                            labels: xs,
+                            datasets: [
+                                {
+                                
+                                data: ys3,
+                                fill: true,
+                                backgroundColor: 'rgba(65, 140, 218, 0.8)',
+                                borderColor: 'rgba(65, 140, 218, 0.9)',
+                                borderWidth: 1,
+                                radius: 0
+                                },                        
+                            ]
+                            },
+                            options: {
+                                //responsive: true,
+                                tooltips: {
+                                        callbacks: {
+                                        title: function(t, d) {
+                                        return moment(d.labels[t[0].index]).format('DD-MM-YYYY, HH:mm');
+                                                              }
+                                                    }
+                                            },
+                                maintainAspectRatio: false,
+                                scales: {
+
+                                        xAxes: [{
+                                            type: 'time', 
+                                            time: {
+                                                minUnit: myunit,
+                                            },
+                                            distribution: 'linear',
+                                            ticks: {
+                                            //reverse: true,
+                                                fontStyle: "bold",
+                                                min: mystarttime,
+                                                max: myendtime,
+                                                    },
+                                            scaleLabel: {
+                                                display: false,                                                                  
+                                                    }
+                                                }
+
+                                        ],
+                                        yAxes: [{
+                                            ticks: {
+                                                fontSize: 15,
+                                                fontStyle: "bold",
+                                                    },
+                                                    scaleLabel: {
+                                                display: false                                      
+                                                    }
+                                                }]
+                                        },
+                                title: {
+                                    display: true,
+                                    text: "Flow through the turbines (cubic metres/second)",
+                                    fontSize: 20,
+                                    fontStyle: "bold",
+                                        },
+                                legend: {
+                                    display: false,
+                                        }
+                                    } 
+                    });
+                
+                
+                // End of graphs
+
+                }
+                // End of selectTimescale
+
+        //closing of IIFE function
+        })();
+
+
+// functions
+        async function getData() {
+            //local
+            //const response = await fetch('/powergen') 
+            //Wordpress
+            const response = await fetch('https://thingitude-apps.com:9445/api/plc/all') 
+            const data = await response.json() 
+            return data           
+        }
+            
+        </script>
+         
+         <script src="https://unpkg.com/js-datepicker"></script>     
+
