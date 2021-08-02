@@ -1,177 +1,179 @@
-
+        <!-- Using luxon instead of moment for datetime handling. Downsampling added when displaying large numbers of data points. Some global defaults set for charts. -->
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
-        <!-- https://github.com/chartjs/chartjs-adapter-moment/blob/master/README.md -->
-        <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0"></script>
-        <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@0.1.1"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
+       <script src="https://cdn.jsdelivr.net/npm/luxon@2.0.1/build/global/luxon.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.0.0/dist/chartjs-adapter-luxon.min.js"></script>
+        <!-- For luxon formatting see https://github.com/moment/luxon/blob/master/docs/formatting.md -->
+        <script src="https://unpkg.com/js-datepicker"></script>
         <link rel="stylesheet" href="https://unpkg.com/js-datepicker/dist/datepicker.min.css">
+
 
         <style>
 
-           #tit {
-                font-family: Arial, Helvetica, sans-serif;
-                font-size: 20px;
-                text-align: center;
-                           }
-            #sub1 {
-                font-family: Arial, Helvetica, sans-serif;
-                font-size: 18px;
-                text-align: center;
+            #tit {
+                 font-family: Arial, Helvetica, sans-serif;
+                 font-size: 20px;
+                 text-align: center;
+                            }
+             #sub1 {
+                 font-family: Arial, Helvetica, sans-serif;
+                 font-size: 18px;
+                 text-align: center;
+             }
+             #sub2 {
+                 clear: left;
+                 font-family: Arial, Helvetica, sans-serif;
+                 font-size: 18px;
+                 text-align: center;
+                 line-height: 60px;
+             }
+             #dpk1 {
+                 margin: 10px;
+                 font-family: Arial, Helvetica, sans-serif;
+             }
+             #dpk2 {
+                 margin: 10px;
+                 font-family: Arial, Helvetica, sans-serif;
+             }
+             
+             .btn {
+                 font-size: 18px;
+                 font-family: Arial, Helvetica, sans-serif;
+                 padding: 10px 16px;
+                 margin: 5px;
+                 border-radius: 4px;
+                 background-color: #e7e7e7;
+             }
+             .lab {
+                 font-family: Arial, Helvetica, sans-serif;
+                 font-style: normal;
+                 white-space: nowrap;
+             }
+ 
+             /* Style the active class, and buttons on mouse-over */
+             .active, .btn:hover {
+             background-color: #1a73e8;
+             color: white;
+             }
+             #ts {
+                 white-space: nowrap;
+             }
+             .box {
+                 width: 230px;
+                 height: 230px;
+                 margin: 20px;
+                 padding: 5px 10px;
+                 font-family: Arial, Helvetica, sans-serif;
+                 font-size: 17px;
+                 color: white;
+                 float: left;
+             }
+             .inner {
+                 height: 230px; 
+                 margin-top: -30px;
+                 text-align:center;
+                 display:flex;                
+                 align-items: center;
+                 justify-content: center;
+                 font-size: 80px;
+                 font-weight: bold;
+                 color: white;               
+             }
+             .cwra {
+                 width: 540px;
+                 height: 270px;
+                 margin: 20px;
+                 float: left;
+             }
+             .cle {
+                 clear: left;
+             }
+            #con {
+                 max-width: 1280px;
+                 margin: auto;
             }
-            #sub2 {
-                clear: left;
-                font-family: Arial, Helvetica, sans-serif;
-                font-size: 18px;
-                text-align: center;
-                line-height: 60px;
-            }
-            #dpk1 {
-                margin: 10px;
-                font-family: Arial, Helvetica, sans-serif;
-            }
-            #dpk2 {
-                margin: 10px;
-                font-family: Arial, Helvetica, sans-serif;
-            }
-            
-            .btn {
-                font-size: 18px;
-                font-family: Arial, Helvetica, sans-serif;
-                padding: 10px 16px;
-                margin: 5px;
-                border-radius: 4px;
-                background-color: #e7e7e7;
-            }
-            .lab {
-                font-family: Arial, Helvetica, sans-serif;
-                font-style: normal;
-                white-space: nowrap;
-            }
-
-            /* Style the active class, and buttons on mouse-over */
-            .active, .btn:hover {
-            background-color: #1a73e8;
-            color: white;
-            }
-            #ts {
-                white-space: nowrap;
-            }
-            .box {
-                width: 230px;
-                height: 230px;
-                margin: 20px;
-                padding: 5px 10px;
-                font-family: Arial, Helvetica, sans-serif;
-                font-size: 17px;
-                color: white;
-                float: left;
-            }
-            .inner {
-                height: 230px; 
-                margin-top: -30px;
-                text-align:center;
-                display:flex;                
-                align-items: center;
-                justify-content: center;
-                font-size: 80px;
-                font-weight: bold;
-                color: white;               
-            }
-            .cwra {
-                width: 540px;
-                height: 270px;
-                margin: 20px;
-                float: left;
-            }
-            .cle {
-                clear: left;
-            }
-           #con {
-                max-width: 1280px;
+            #wra1 {
+                /* local */
+                /* max-width: 1160px; */
+                /* Wordpress */
+                max-width: 1080px;
                 margin: auto;
-           }
-           #wra1 {
-               /* local */
-               /* max-width: 1160px; */
-               /* Wordpress */
-               max-width: 1080px;
-               margin: auto;
-            }
-            #btw {
+             }
+             #btw {
+                 max-width: 1160px;
+                 margin: auto;
+                 text-align:center;
+             }
+             #dtw {
+                 max-width: 1160px;
+                 margin: auto;
+                 text-align:center;
+             }
+             #wra2 {
                 max-width: 1160px;
                 margin: auto;
-                text-align:center;
-            }
-            #dtw {
+             }
+             #wra3 {
                 max-width: 1160px;
                 margin: auto;
-                text-align:center;
-            }
-            #wra2 {
-               max-width: 1160px;
-               margin: auto;
-            }
-            #wra3 {
-               max-width: 1160px;
-               margin: auto;
-            }
-           #tem {
-               background-color: #ff6d56;
-            }
-           #hum {
-               background-color: #57b7dd;
-            }
-           #lig {
-               background-color: #ffbe0a;
-            }
-           #mot {
-               background-color: #8ac539;
-            }
-
-            #chart1 {
-                height: 100%;                          
-            }
-            #chart2 {
-                height: 100%;                          
-            }
-
-            @media only screen and (max-width: 1190px) {
-                #wra1 {
-                max-width: 580px;                
-                }
-                #wra2 {
-                max-width: 580px;                
-                }
-                #wra3 {
-                max-width: 580px;                
-                }
-            }
-            @media only screen and (max-width: 610px) {
-                #wra1 {
-                max-width: 290px;
+             }
+            #tem {
+                background-color: #ff6d56;
+             }
+            #hum {
+                background-color: #57b7dd;
+             }
+            #lig {
+                background-color: #ffbe0a;
+             }
+            #mot {
+                background-color: #8ac539;
+             }
+ 
+             #chart1 {
+                 height: 100%;                          
+             }
+             #chart2 {
+                 height: 100%;                          
+             }
+ 
+             @media only screen and (max-width: 1190px) {
+                 #wra1 {
+                 max-width: 580px;                
                  }
-                 #btw {
-                max-width: 300px;
-                 }
-                 #dtw {
-                width: 260px;
-                 }                 
                  #wra2 {
-                max-width: 350px;
+                 max-width: 580px;                
                  }
                  #wra3 {
-                max-width: 350px;
+                 max-width: 580px;                
                  }
-                 .cwra {
-                     width: 350px;
-                     height: 300px;
-                     margin: auto;
-                 }
-                 
-            }
-        
-       </style>        
+             }
+             @media only screen and (max-width: 610px) {
+                 #wra1 {
+                 max-width: 290px;
+                  }
+                  #btw {
+                 max-width: 300px;
+                  }
+                  #dtw {
+                 width: 260px;
+                  }                 
+                  #wra2 {
+                 max-width: 350px;
+                  }
+                  #wra3 {
+                 max-width: 350px;
+                  }
+                  .cwra {
+                      width: 350px;
+                      height: 300px;
+                      margin: auto;
+                  }
+                  
+             }
+         
+        </style>
 
          <script>
 
@@ -266,7 +268,7 @@
                 canvwrap4.className = "cwra"
 
                 title.innerHTML = "Turbine House"
-                subtitle1.innerHTML = `Current conditions: <span id="ts">${moment(global_data[0].received_at).format('Do MMMM YYYY, HH:mm')} </span>`
+                subtitle1.innerHTML = `Current conditions: <span id="ts">${luxon.DateTime.fromISO(global_data[0].received_at).toFormat('ff')} </span>`
                 subtitle2.innerHTML = "<span>Conditions over selected period</span>"
                 button1.innerHTML = "Last day"
                 button1.onclick = function(){picker1.setDate(yesterday, true); picker2.setDate(today, true); selectTimescale(yesterday, today)}
@@ -311,13 +313,12 @@
 
                 container.append(wrap2)
                 container.append(wrap3)
-
+                
                 //local
                 //document.body.append(container)
                 //Wordpress
                 var target = document.getElementsByClassName("entry-content");
                 target[0].append(container)
-
             
             //filter by date
             let today = new Date()
@@ -335,14 +336,14 @@
             var picked = false
 
             const picker1 = datepicker('#dpk1', { id: 1, dateSelected: lastweek, onSelect: instance => {picked = true; selectTimescale(picker1.getRange().start, picker1.getRange().end ) }})
-            const picker2 = datepicker('#dpk2', { id: 1, dateSelected: new Date(), onSelect: instance => {picked = true; selectTimescale(picker2.getRange().start, picker2.getRange().end ) }})
+            const picker2 = datepicker('#dpk2', { id: 1, dateSelected: today, onSelect: instance => {picked = true; selectTimescale(picker2.getRange().start, picker2.getRange().end ) }})
 
 
         selectTimescale(lastweek, today)
 
         function selectTimescale(mystart, myend) {
             var selection = global_data.filter(function(item){
-                return new Date(item.received_at) >= mystart && item.device_id == 'rdghydro-ers001'
+                        return new Date(item.received_at) >= mystart && item.device_id == 'rdghydro-ers001'
                     })
                     var mystarttime = mystart
                     var myendtime = myend
@@ -353,15 +354,31 @@
                         myunit = 'hour'
                     }
 
+                    // Downsample if greater than 10512 data points (approx 2.5 months)
+                    // No of points will vary between 5256 and 10512
+                    if (selection.length > 10512){
+                        var step = Math.ceil(selection.length/10512)
+                        var reduced = []
+                        for (i = 0; i < selection.length; i++) {
+                            if(i % step === 0){
+                                reduced.push(selection[i])
+                            }
+                        }
+                        selection = reduced
+                        }
+
                     const xs = []
                     const ys1 = []
                     const ys2 = []
                     const ys3 = []
                     const ys4 = []
                     for(item of selection) {                
-                        const mydate1 = item.received_at;
-                        //const mydate = formatDate(mydate1);
-                        xs.push(mydate1);
+
+                        //convert the timestamp to milliseconds (faster)                
+                        const mydate1 = new Date(item.received_at)
+                        const mydate = mydate1.getTime()
+
+                        xs.push(mydate);
                         const mytemp = item.temperature;
                         ys1.push(mytemp);
                         const myhum = item.humidity;
@@ -372,8 +389,7 @@
                         ys4.push(mymot);
                     }
 
-                    // add active class on click
-                    // Add active class to the current button
+                    // Add active class to the current button on click
                     var btns = document.getElementsByClassName("btn");
                     for (var i = 0; i < btns.length; i++) {
                     btns[i].addEventListener("click", function() {
@@ -391,6 +407,19 @@
                         picked = false
                     }
 
+                //Set global defaults for charts
+                //More settings can be global if we use Chartjs v3
+                Chart.defaults.global.tooltips.callbacks.title = function(t, d) {
+                                        return luxon.DateTime.fromMillis(d.labels[t[0].index]).toFormat('ff');
+                                                }
+                //Chart.defaults.global.animation.duration = 0
+                Chart.defaults.global.maintainAspectRatio = false
+                Chart.defaults.global.title.display = true
+                Chart.defaults.global.title.fontSize = 20
+                Chart.defaults.global.title.fontStyle = 'bold'
+                Chart.defaults.global.legend.display = false
+
+
                 //Graph 1 - temperature            
                 if (myChart1) {
                     myChart1.destroy();
@@ -402,8 +431,7 @@
                         data: {
                             labels: xs,
                             datasets: [
-                                {
-                                
+                                {                                
                                 data: ys1,
                                 fill: true,
                                 backgroundColor: 'rgb(255, 109, 86, 0.7)',
@@ -414,58 +442,40 @@
                             ]
                             },
                             options: {
-                                //responsive: true,
-                                tooltips: {
-                                        callbacks: {
-                                        title: function(t, d) {
-                                        return moment(d.labels[t[0].index]).format('DD-MM-YYYY, HH:mm');
-                                                              }
-                                                    }
-                                            },
-                                maintainAspectRatio: false,
                                 scales: {
-                                        xAxes: [{
-                                            // use moment.js
-                                            type: 'time',
-                                            time: {
-                                                minUnit: myunit,
-                                            },                                             
-                                            distribution: 'linear', 
-                                            //
-                                            ticks: {
-                                            //reverse: true,
-                                                fontStyle: "bold",
-                                                min: mystarttime,
-                                                max: myendtime,
-                                                    },
-                                            scaleLabel: {
-                                                display: false,                                                                  
-                                                    }
+                                    xAxes: [{
+                                        type: 'time',
+                                        time: {
+                                            minUnit: myunit,
+                                        }, 
+                                        distribution: 'linear',
+                                        ticks: {
+                                            fontStyle: "bold",
+                                            min: mystarttime,
+                                            max: myendtime,
+                                                },
+                                        scaleLabel: {
+                                            display: false,                                                                  
                                                 }
-
-                                        ],
-                                        yAxes: [{
-                                            ticks: {
-                                                fontSize: 15,
-                                                fontStyle: "bold",
-                                                    },
-                                                    scaleLabel: {
-                                                display: false                                      
-                                                    }
-                                                }]
-                                        },
+                                            }
+                                    ],
+                                    yAxes: [{
+                                        ticks: {
+                                            fontSize: 15,
+                                            fontStyle: "bold",
+                                                },
+                                                scaleLabel: {
+                                            display: false                                      
+                                                }
+                                            }]
+                                    },
                                 title: {
-                                    display: true,
-                                    text: "Temperature (°C)",
-                                    fontSize: 20,
-                                    fontStyle: "bold",
+                                    text: "Temperature (°C)"
                                         },
-                                legend: {
-                                    display: false,
-                                        }
                                     } 
                     });
-                    
+                // End of graph 1
+
                 //Graph 2 - humidity
                 if (myChart2) {
                     myChart2.destroy();
@@ -489,15 +499,6 @@
                             ]
                             },
                             options: {
-                                //responsive: true,
-                                tooltips: {
-                                        callbacks: {
-                                        title: function(t, d) {
-                                        return moment(d.labels[t[0].index]).format('DD-MM-YYYY, HH:mm');
-                                                              }
-                                                    }
-                                            },
-                                maintainAspectRatio: false,
                                 scales: {
 
                                         xAxes: [{
@@ -507,7 +508,6 @@
                                             }, 
                                             distribution: 'linear',
                                             ticks: {
-                                            //reverse: true,
                                                 fontStyle: "bold",
                                                 min: mystarttime,
                                                 max: myendtime,
@@ -516,7 +516,6 @@
                                                 display: false,                                                                  
                                                     }
                                                 }
-
                                         ],
                                         yAxes: [{
                                             ticks: {
@@ -529,17 +528,12 @@
                                                 }]
                                         },
                                 title: {
-                                    display: true,
                                     text: "Humidity (%)",
-                                    fontSize: 20,
-                                    fontStyle: "bold",
-                                        },
-                                legend: {
-                                    display: false,
                                         }
                                     } 
                     });
-                
+                // End of graph 2
+
                 //Graph 3 - light
                 if (myChart3) {
                     myChart3.destroy();
@@ -551,8 +545,7 @@
                         data: {
                             labels: xs,
                             datasets: [
-                                {
-                                
+                                {                               
                                 data: ys3,
                                 fill: true,
                                 backgroundColor: 'rgb(255, 190, 10, 0.7)',
@@ -563,17 +556,7 @@
                             ]
                             },
                             options: {
-                                //responsive: true,
-                                tooltips: {
-                                        callbacks: {
-                                        title: function(t, d) {
-                                        return moment(d.labels[t[0].index]).format('DD-MM-YYYY, HH:mm');
-                                                              }
-                                                    }
-                                            },
-                                maintainAspectRatio: false,
                                 scales: {
-
                                         xAxes: [{
                                             type: 'time',
                                             time: {
@@ -581,7 +564,6 @@
                                             }, 
                                             distribution: 'linear',
                                             ticks: {
-                                            //reverse: true,
                                                 fontStyle: "bold",
                                                 min: mystarttime,
                                                 max: myendtime,
@@ -590,7 +572,6 @@
                                                 display: false,                                                                  
                                                     }
                                                 }
-
                                         ],
                                         yAxes: [{
                                             ticks: {
@@ -603,16 +584,11 @@
                                                 }]
                                         },
                                 title: {
-                                    display: true,
                                     text: "Light (Lux)",
-                                    fontSize: 20,
-                                    fontStyle: "bold",
-                                        },
-                                legend: {
-                                    display: false,
                                         }
                                     } 
                     });
+                // End of graph 3
 
                 //Graph 4 - motion
                 if (myChart4) {
@@ -625,8 +601,7 @@
                         data: {
                             labels: xs,
                             datasets: [
-                                {
-                                
+                                {                              
                                 data: ys4,
                                 fill: true,
                                 backgroundColor: 'rgb(138, 197, 57, 0.7)',
@@ -637,15 +612,6 @@
                             ]
                             },
                             options: {
-                                //responsive: true,
-                                tooltips: {
-                                        callbacks: {
-                                        title: function(t, d) {
-                                        return moment(d.labels[t[0].index]).format('DD-MM-YYYY, HH:mm');
-                                                              }
-                                                    }
-                                            },
-                                maintainAspectRatio: false,
                                 scales: {
 
                                         xAxes: [{
@@ -655,7 +621,6 @@
                                             },
                                             distribution: 'linear',
                                             ticks: {
-                                            //reverse: true,
                                                 fontStyle: "bold",
                                                 min: mystarttime,
                                                 max: myendtime,
@@ -664,7 +629,6 @@
                                                 display: false,                                                                  
                                                     }
                                                 }
-
                                         ],
                                         yAxes: [{
                                             ticks: {
@@ -677,17 +641,11 @@
                                                 }]
                                         },
                                 title: {
-                                    display: true,
                                     text: "Motion counts",
-                                    fontSize: 20,
-                                    fontStyle: "bold",
-                                        },
-                                legend: {
-                                    display: false,
                                         }
                                     } 
                     });
-                // End of graphs
+                // End of graph 4
 
                 }
                 // End of selectTimescale
@@ -707,6 +665,5 @@
         }
             
         </script>
-         
-         <script src="https://unpkg.com/js-datepicker"></script>     
+
 

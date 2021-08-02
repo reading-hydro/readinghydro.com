@@ -1,10 +1,12 @@
+        <!-- Using luxon instead of moment for datetime handling. Downsampling added when displaying large numbers of data points. Some global defaults set for charts. -->
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
-        <!-- https://github.com/chartjs/chartjs-adapter-moment/blob/master/README.md -->
-        <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0"></script>
-        <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@0.1.1"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/luxon@2.0.1/build/global/luxon.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.0.0/dist/chartjs-adapter-luxon.min.js"></script>
+        <!-- For luxon formatting see https://github.com/moment/luxon/blob/master/docs/formatting.md -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/0.5.7/chartjs-plugin-annotation.min.js"></script>
+        <script src="https://unpkg.com/js-datepicker"></script>
         <link rel="stylesheet" href="https://unpkg.com/js-datepicker/dist/datepicker.min.css">
  
         <style>
@@ -45,8 +47,8 @@
              }
              .lab {
                  font-family: Arial, Helvetica, sans-serif;
-                 white-space: nowrap;
                  font-style: normal;
+                 white-space: nowrap;
              }
  
              /* Style the active class, and buttons on mouse-over */
@@ -162,7 +164,7 @@
                   
              }
          
-        </style>       
+        </style>
 
          <script>
 
@@ -241,7 +243,7 @@
                 label2.className = "lab"
 
                 title.innerHTML = "Water levels and flow"
-                subtitle1.innerHTML = `Current conditions: <span id="ts">${moment(global_data[0].received_at).format('Do MMMM YYYY, HH:mm')} </span>`
+                subtitle1.innerHTML = `Current conditions: <span id="ts">${luxon.DateTime.fromISO(global_data[0].received_at).toFormat('ff')} </span>`
                 subtitle2.innerHTML = "<span>Conditions over selected period</span>"
                 button1.innerHTML = "Last day"
                 button1.onclick = function(){picker1.setDate(yesterday, true); picker2.setDate(today, true); selectTimescale(yesterday, today)}
@@ -305,14 +307,14 @@
             var picked = false
             //datepicker
             const picker1 = datepicker('#dpk1', { id: 1, dateSelected: lastweek, onSelect: instance => {picked = true; selectTimescale(picker1.getRange().start, picker1.getRange().end ) }})
-            const picker2 = datepicker('#dpk2', { id: 1, dateSelected: new Date(), onSelect: instance => {picked = true; selectTimescale(picker2.getRange().start, picker2.getRange().end ) }})
+            const picker2 = datepicker('#dpk2', { id: 1, dateSelected: today, onSelect: instance => {picked = true; selectTimescale(picker2.getRange().start, picker2.getRange().end ) }})
 
         //default timescale = last week
         selectTimescale(lastweek, today)
 
         function selectTimescale(mystart, myend) {
             var selection = global_data.filter(function(item){
-                        return new Date(item.received_at) >= mystart
+                return new Date(item.received_at) >= mystart
                     })
                     var mystarttime = mystart
                     var myendtime = myend
@@ -323,12 +325,27 @@
                         myunit = 'hour'
                     }
 
+                    // Downsample if greater than 10512 data points (approx 2.5 months)
+                    // No of points will vary between 5256 and 10512
+                    if (selection.length > 10512){
+                        var step = Math.ceil(selection.length/10512)
+                        var reduced = []
+                        for (i = 0; i < selection.length; i++) {
+                            if(i % step === 0){
+                                reduced.push(selection[i])
+                            }
+                        }
+                        selection = reduced
+                        }
+
                     const xs = []
                     const ys1 = []
                     const ys2 = []
                     const ys3 = []
                     for(item of selection) {                
-                        const mydate = item.received_at;
+                        //convert the timestamp to milliseconds (faster)                
+                        const mydate1 = new Date(item.received_at)
+                        const mydate = mydate1.getTime()
                         xs.push(mydate);
                         const myupstream = item.upstream;
                         ys1.push(myupstream);
@@ -338,8 +355,7 @@
                         ys3.push(myflow);
                     }
 
-                    // add active class on click
-                    // Add active class to the current button
+                    // Add active class to the current button on click
                     var btns = document.getElementsByClassName("btn");
                     for (var i = 0; i < btns.length; i++) {
                     btns[i].addEventListener("click", function() {
@@ -356,6 +372,19 @@
                         } 
                         picked = false
                     }
+
+                    //Set global defaults for charts
+                    //More settings can be global if we use Chartjs v3
+                    Chart.defaults.global.tooltips.callbacks.title = function(t, d) {
+                                            return luxon.DateTime.fromMillis(d.labels[t[0].index]).toFormat('ff');
+                                                    }
+                    //Chart.defaults.global.animation.duration = 0
+                    Chart.defaults.global.maintainAspectRatio = false
+                    Chart.defaults.global.title.display = true
+                    Chart.defaults.global.title.fontSize = 20
+                    Chart.defaults.global.title.fontStyle = 'bold'
+                    Chart.defaults.global.legend.labels.fontSize = 15
+                    Chart.defaults.global.legend.labels.fontStyle = 'bold'
                    
 
                 //Graph 1 - Water levels            
@@ -391,7 +420,6 @@
                             ]
                             },
                             options: {
-                                //responsive: true,
                                 annotation: {
                                         drawTime: 'afterDraw',
                                         annotations: [{
@@ -414,35 +442,23 @@
                                         }
                                     ]
                                     },
-
-                                tooltips: {
-                                        callbacks: {
-                                        title: function(t, d) {
-                                        return moment(d.labels[t[0].index]).format('DD-MM-YYYY, HH:mm');
-                                                              }
-                                                    }
-                                            },
-                                maintainAspectRatio: false,
                                 scales: {
                                         xAxes: [{
-                                            // use moment.js
                                             type: 'time',
                                             time: {
                                                 minUnit: myunit,
                                             },                                             
                                             distribution: 'linear', 
-                                            //
+
                                             ticks: {
-                                            //reverse: true,
                                                 fontStyle: "bold",
                                                 min: mystarttime,
                                                 max: myendtime,
                                                     },
                                             scaleLabel: {
-                                                display: false,                                                                  
+                                                display: false,
                                                     }
                                                 }
-
                                         ],
                                         yAxes: [{
                                             ticks: {
@@ -457,17 +473,10 @@
                                                 }]
                                         },
                                 title: {
-                                    display: true,
                                     text: "Water levels (metres AOD)",
-                                    fontSize: 20,
-                                    fontStyle: "bold",
                                         },
                                 legend: {
-                                    //display: false,
                                     display: true,
-                            labels: {fontSize: 15,
-                            fontStyle: "bold",
-                                    }
                                         }
                                     } 
                     });
@@ -494,16 +503,7 @@
                                 },                        
                             ]
                             },
-                            options: {
-                                //responsive: true,
-                                tooltips: {
-                                        callbacks: {
-                                        title: function(t, d) {
-                                        return moment(d.labels[t[0].index]).format('DD-MM-YYYY, HH:mm');
-                                                              }
-                                                    }
-                                            },
-                                maintainAspectRatio: false,
+                            options: {                                
                                 scales: {
 
                                         xAxes: [{
@@ -513,7 +513,6 @@
                                             },
                                             distribution: 'linear',
                                             ticks: {
-                                            //reverse: true,
                                                 fontStyle: "bold",
                                                 min: mystarttime,
                                                 max: myendtime,
@@ -535,18 +534,13 @@
                                                 }]
                                         },
                                 title: {
-                                    display: true,
                                     text: "Flow through the turbines (cubic metres/second)",
-                                    fontSize: 20,
-                                    fontStyle: "bold",
                                         },
                                 legend: {
                                     display: false,
                                         }
                                     } 
-                    });
-                
-                
+                    });                
                 // End of graphs
 
                 }
@@ -566,7 +560,5 @@
             return data           
         }
             
-        </script>
-         
-         <script src="https://unpkg.com/js-datepicker"></script>     
+        </script>  
 
