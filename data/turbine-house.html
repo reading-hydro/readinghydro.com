@@ -268,7 +268,9 @@
                 canvwrap4.className = "cwra"
 
                 title.innerHTML = "Turbine House"
-                subtitle1.innerHTML = `Current conditions: <span id="ts">${luxon.DateTime.fromISO(global_data[0].received_at).toFormat('ff')} </span>`
+                //subtitle1.innerHTML = `Current conditions: <span id="ts">${luxon.DateTime.fromISO(global_data[0].received_at).toFormat('ff')} </span>`
+                //temp adjustment until timezone issue resolved
+                subtitle1.innerHTML = `Current conditions: <span id="ts">${luxon.DateTime.fromISO(global_data[0].received_at, { setZone: true }).toFormat('ff')} </span>`
                 subtitle2.innerHTML = "<span>Conditions over selected period</span>"
                 button1.innerHTML = "Last day"
                 button1.onclick = function(){picker1.setDate(yesterday, true); picker2.setDate(today, true); selectTimescale(yesterday, today)}
@@ -376,8 +378,8 @@
 
                         //convert the timestamp to milliseconds (faster)                
                         const mydate1 = new Date(item.received_at)
-                        const mydate = mydate1.getTime()
-
+                        //const mydate = mydate1.getTime()
+                        const mydate = (mydate1.getTime() - 3600000) //temp adjustment until timezone issue resolved
                         xs.push(mydate);
                         const mytemp = item.temperature;
                         ys1.push(mytemp);
