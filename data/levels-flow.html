@@ -9,7 +9,7 @@
         <script src="https://unpkg.com/js-datepicker"></script>
         <link rel="stylesheet" href="https://unpkg.com/js-datepicker/dist/datepicker.min.css">
  
-        <style>
+        <style> 
 
             #tit {
                  font-family: Arial, Helvetica, sans-serif;
@@ -76,7 +76,7 @@
                  display:flex;                
                  align-items: center;
                  justify-content: center;
-                 font-size: 65px;
+                 font-size: 80px;
                  font-weight: bold;
                  color: white;               
              }
@@ -104,12 +104,12 @@
                  margin: auto;
                  text-align:center;
              }
-             #wra2 {
+             #wra4 {
                 max-width: 1160px;
                 height: 500px;
                 margin: 20px auto;
              }
-             #wra3 {
+             #wra5 {
                 max-width: 1160px;
                 height: 300px;
                 margin: 20px auto;
@@ -127,10 +127,10 @@
                 background-color: #418CDA;
              }
  
-             #chart1 {
+             #chart5 {
                  height: 100%;                          
              }
-             #chart2 {
+             #chart6 {
                  height: 100%;                          
              }
  
@@ -138,10 +138,10 @@
                  #wra1 {
                  max-width: 580px;                
                  }
-                 #wra2 {
+                 #wra4 {
                  max-width: 580px;                
                  }
-                 #wra3 {
+                 #wra5 {
                  max-width: 580px;                
                  }
              }
@@ -155,16 +155,16 @@
                   #dtw {
                  width: 260px;
                   }                 
-                  #wra2 {
+                  #wra4 {
                  max-width: 350px;
                   }
-                  #wra3 {
+                  #wra5 {
                  max-width: 350px;
                   }
                   
              }
          
-        </style>
+        </style>        
 
          <script>
 
@@ -172,8 +172,8 @@
         (async function(){
         var global_data = await getData();
 
-                var myChart1
-                var myChart2
+                var myChart5
+                var myChart6
         
                 const container = document.createElement('div')
                 const title = document.createElement('h1')
@@ -198,11 +198,11 @@
                 const inner_now_head = document.createElement('div')
                 const inner_now_flow = document.createElement('div')
                 const wrap1 = document.createElement('div')
-                const wrap2 = document.createElement('div')
-                const wrap3 = document.createElement('div')
+                const wrap4 = document.createElement('div')
+                const wrap5 = document.createElement('div')
                 const clear = document.createElement('p')
-                const canv1 = document.createElement('canvas')
-                const canv2 = document.createElement('canvas')
+                const canv5 = document.createElement('canvas')
+                const canv6 = document.createElement('canvas')
                 
                 container.id = "con"
                 title.id = "tit"
@@ -221,10 +221,10 @@
                 now_head.id = "he"
                 now_flow.id = "fl"
                 wrap1.id = "wra1"
-                wrap2.id = "wra2"
-                wrap3.id = "wra3"
-                canv1.id = "chart1"
-                canv2.id = "chart2"
+                wrap4.id = "wra4"
+                wrap5.id = "wra5"
+                canv5.id = "chart5"
+                canv6.id = "chart6"
 
                 now_upst.className = "box"
                 now_down.className = "box"
@@ -262,10 +262,10 @@
                 now_flow.innerHTML = "Flow (cubic metres/sec)"
                 label1.innerHTML = "Start date"
                 label2.innerHTML = "End date"
-                inner_now_upst.textContent = global_data[0].upstream.toFixed(3)
-                inner_now_down.textContent = global_data[0].downstream.toFixed(3)
-                inner_now_head.textContent = (global_data[0].upstream - global_data[0].downstream).toFixed(3)
-                inner_now_flow.textContent = ((global_data[0].gen1_flow_ls + global_data[0].gen2_flow_ls) / 1000).toFixed(3)
+                inner_now_upst.textContent = global_data[0].upstream.toFixed(2)
+                inner_now_down.textContent = global_data[0].downstream.toFixed(2)
+                inner_now_head.textContent = (global_data[0].upstream - global_data[0].downstream).toFixed(2)
+                inner_now_flow.textContent = ((global_data[0].gen1_flow_ls + global_data[0].gen2_flow_ls) / 1000).toFixed(2)
 
                 now_upst.append(inner_now_upst)
                 now_down.append(inner_now_down)
@@ -281,11 +281,11 @@
                 container.append(buttonwrap)
                 datewrap.append(label1, datepick1, label2, datepick2, clear)
                 container.append(datewrap)
-                wrap2.append(canv1, clear)
-                wrap3.append(canv2)
+                wrap4.append(canv5, clear)
+                wrap5.append(canv6)
 
-                container.append(wrap2)
-                container.append(wrap3)
+                container.append(wrap4)
+                container.append(wrap5)
                 
                 //local
                 //document.body.append(container)
@@ -381,7 +381,7 @@
                     Chart.defaults.global.tooltips.callbacks.title = function(t, d) {
                                             return luxon.DateTime.fromMillis(d.labels[t[0].index]).toFormat('ff');
                                                     }
-                    //Chart.defaults.global.animation.duration = 0
+                    //Chart.defaults.global.animation.duration = 0 
                     Chart.defaults.global.maintainAspectRatio = false
                     Chart.defaults.global.title.display = true
                     Chart.defaults.global.title.fontSize = 20
@@ -391,13 +391,13 @@
                    
 
                 //Graph 1 - Water levels            
-                if (myChart1) {
-                    myChart1.destroy();
+                if (myChart5) {
+                    myChart5.destroy();
                     }
 
-                var ctx1 = document.getElementById('chart1').getContext('2d');
+                var ctx5 = document.getElementById('chart5').getContext('2d');
 
-                myChart1 = new Chart(ctx1, {
+                myChart5 = new Chart(ctx5, {
                         type: 'line',
                         data: {
                             labels: xs,
@@ -485,12 +485,12 @@
                     });
                     
                 //Graph 2 - Derived flow
-                if (myChart2) {
-                    myChart2.destroy();
+                if (myChart6) {
+                    myChart6.destroy();
                     }
 
-                var ctx2 = document.getElementById('chart2').getContext('2d');
-                myChart2 = new Chart(ctx2, {
+                var ctx6 = document.getElementById('chart6').getContext('2d');
+                myChart6 = new Chart(ctx6, {
                         type: 'line',
                         data: {
                             labels: xs,
@@ -563,5 +563,4 @@
             return data           
         }
             
-        </script>  
-
+        </script>
