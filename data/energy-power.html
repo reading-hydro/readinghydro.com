@@ -1,445 +1,441 @@
-        <!-- Using luxon instead of moment for datetime handling. Downsampling added when displaying large numbers of data points. Some global defaults set for charts. -->
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/luxon@2.0.1/build/global/luxon.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.0.0/dist/chartjs-adapter-luxon.min.js"></script>
-        <!-- For luxon formatting see https://github.com/moment/luxon/blob/master/docs/formatting.md -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/0.5.7/chartjs-plugin-annotation.min.js"></script>
-        <script src="https://unpkg.com/js-datepicker"></script>
-        <link rel="stylesheet" href="https://unpkg.com/js-datepicker/dist/datepicker.min.css">
- 
-        <style> 
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/luxon@2.0.1/build/global/luxon.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.0.0/dist/chartjs-adapter-luxon.min.js"></script>
+<!-- For luxon formatting see https://github.com/moment/luxon/blob/master/docs/formatting.md -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/0.5.7/chartjs-plugin-annotation.min.js"></script>
+<script src="https://unpkg.com/js-datepicker"></script>
+<link rel="stylesheet" href="https://unpkg.com/js-datepicker/dist/datepicker.min.css">
 
-            #tit {
-                 font-family: Arial, Helvetica, sans-serif;
-                 font-size: 20px;
-                 text-align: center;
-                            }
-             #sub1 {
-                 font-family: Arial, Helvetica, sans-serif;
-                 font-size: 18px;
-                 text-align: center;
-             }
-             #sub2 {
-                 clear: left;
-                 font-family: Arial, Helvetica, sans-serif;
-                 font-size: 18px;
-                 text-align: center;
-                 line-height: 60px;
-             }
-             #dpk1 {
-                 margin: 10px;
-                 font-family: Arial, Helvetica, sans-serif;
-             }
-             #dpk2 {
-                 margin: 10px;
-                 font-family: Arial, Helvetica, sans-serif;
-             }
-             
-             .btn {
-                 font-size: 18px;
-                 font-family: Arial, Helvetica, sans-serif;
-                 padding: 10px 16px;
-                 margin: 5px;
-                 border-radius: 4px;
-                 background-color: #e7e7e7;
-             }
-             .lab {
-                 font-family: Arial, Helvetica, sans-serif;
-                 font-style: normal;
-                 white-space: nowrap;
-             }
- 
-             /* Style the active class, and buttons on mouse-over */
-             .active, .btn:hover {
-             background-color: #1a73e8;
-             color: white;
-             }
-             #ts {
-                 white-space: nowrap;
-             }
-            .box {
-                 width: 230px;
-                 height: 230px;
-                 margin: 20px;
-                 padding: 5px 10px;
-                 font-family: Arial, Helvetica, sans-serif;
-                 font-size: 17px;
-                 line-height: 1.2;
-                 color: white;
-                 float: left;
-             }
-             .inner {
-                 height: 230px; 
-                 margin-top: -30px;
-                 text-align:center;
-                 display:flex;                
-                 align-items: center;
-                 justify-content: center;
-                 font-size: 80px;
-                 font-weight: bold;
-                 color: white;               
-             }
-             .cle {
-                 clear: left;
-             }
-            #con {
-                 max-width: 1280px;
-                 margin: auto;
-            }
-            #wra1 {
-                /* local */
-                /* max-width: 1160px; */
-                /* Wordpress */
-                max-width: 1080px;
-                margin: auto;
-             }
-             #btw {
-                 max-width: 1160px;
-                 margin: auto;
-                 text-align:center;
-             }
-             #dtw {
-                 max-width: 1160px;
-                 margin: auto;
-                 text-align:center;
-             }
-             #wra6 {
-                max-width: 1160px;
-                height: 400px;
-                margin: 20px auto;
-             }
-            #e1 {
-                background-color: #e63056;
-             }
-            #e2 {
-                background-color: #eb5977;
-             }
-            #e3 {
-                background-color: #f08299;
-             }
-            #e4 {
-                background-color: #e84466;
-             }
- 
-             #chart7 {
-                 height: 100%;                          
-             }
- 
-             @media only screen and (max-width: 1190px) {
-                 #wra1 {
-                 max-width: 580px;                
-                 }
-                 #wra6 {
-                 max-width: 580px;                
-                 }
-             }
-             @media only screen and (max-width: 610px) {
-                 #wra1 {
-                 max-width: 290px;
-                  }
-                  #btw {
-                 max-width: 300px;
-                  }
-                  #dtw {
-                 width: 260px;
-                  }                 
-                  #wra6 {
-                 max-width: 350px;
-                  }
-                  
-             }
-         
-        </style>
-       
-         <script>
+<style> 
 
-        // Start an IIFE to use `await` at the top level
-        (async function(){
-        var global_data = await getData();
+    #tit {
+         font-family: Arial, Helvetica, sans-serif;
+         font-size: 20px;
+         text-align: center;
+                    }
+     #sub1 {
+         font-family: Arial, Helvetica, sans-serif;
+         font-size: 18px;
+         text-align: center;
+     }
+     #sub2 {
+         clear: left;
+         font-family: Arial, Helvetica, sans-serif;
+         font-size: 18px;
+         text-align: center;
+         line-height: 60px;
+     }
+     #dpk1 {
+         margin: 10px;
+         font-family: Arial, Helvetica, sans-serif;
+     }
+     #dpk2 {
+         margin: 10px;
+         font-family: Arial, Helvetica, sans-serif;
+     }
+     
+     .btn {
+         font-size: 18px;
+         font-family: Arial, Helvetica, sans-serif;
+         padding: 10px 16px;
+         margin: 5px;
+         border-radius: 4px;
+         background-color: #e7e7e7;
+     }
+     .lab {
+         font-family: Arial, Helvetica, sans-serif;
+         font-style: normal;
+         white-space: nowrap;
+     }
 
-                var myChart7
+     /* Style the active class, and buttons on mouse-over */
+     .active, .btn:hover {
+     background-color: #1a73e8;
+     color: white;
+     }
+     #ts {
+         white-space: nowrap;
+     }
+    .box {
+         width: 230px;
+         height: 230px;
+         margin: 20px;
+         padding: 5px 10px;
+         font-family: Arial, Helvetica, sans-serif;
+         font-size: 17px;
+         line-height: 1.2;
+         color: white;
+         float: left;
+     }
+     .inner {
+         height: 230px; 
+         margin-top: -30px;
+         text-align:center;
+         display:flex;                
+         align-items: center;
+         justify-content: center;
+         font-size: 80px;
+         font-weight: bold;
+         color: white;               
+     }
+     .cle {
+         clear: left;
+     }
+    #con {
+         max-width: 1280px;
+         margin: auto;
+    }
+    #wra1 {
+        /* local */
+        /* max-width: 1160px; */
+        /* Wordpress */
+        max-width: 1080px;
+        margin: auto;
+     }
+     #btw {
+         max-width: 1160px;
+         margin: auto;
+         text-align:center;
+     }
+     #dtw {
+         max-width: 1160px;
+         margin: auto;
+         text-align:center;
+     }
+     #wra6 {
+        max-width: 1160px;
+        height: 400px;
+        margin: 20px auto;
+     }
+    #e1 {
+        background-color: #e63056;
+     }
+    #e2 {
+        background-color: #eb5977;
+     }
+    #e3 {
+        background-color: #f08299;
+     }
+    #e4 {
+        background-color: #e84466;
+     }
+
+     #chart7 {
+         height: 100%;                          
+     }
+
+     @media only screen and (max-width: 1190px) {
+         #wra1 {
+         max-width: 580px;                
+         }
+         #wra6 {
+         max-width: 580px;                
+         }
+     }
+     @media only screen and (max-width: 610px) {
+         #wra1 {
+         max-width: 290px;
+          }
+          #btw {
+         max-width: 300px;
+          }
+          #dtw {
+         width: 260px;
+          }                 
+          #wra6 {
+         max-width: 350px;
+          }
+          
+     }
+ 
+</style>
+
+ <script>
+
+// Start an IIFE to use `await` at the top level
+(async function(){
+var global_data = await getData();
+
+        var myChart7
+
+        const container = document.createElement('div')
+        const title = document.createElement('h1')
+        const subtitle1 = document.createElement('div')
+        const subtitle2 = document.createElement('div')
+        const buttonwrap = document.createElement('div')
+        const button1 = document.createElement('button')
+        const button2 = document.createElement('button')
+        const button3 = document.createElement('button')
+        const button4 = document.createElement('button')
+        const datewrap = document.createElement('div')
+        const datepick1 = document.createElement('input')
+        const datepick2 = document.createElement('input')
+        const label1 = document.createElement('label')
+        const label2 = document.createElement('label')
+        const energy_1 = document.createElement('div')
+        const energy_2 = document.createElement('div')
+        const energy_3 = document.createElement('div')
+        const energy_4 = document.createElement('div')
+        const inner_energy_1 = document.createElement('div')
+        const inner_energy_2 = document.createElement('div')
+        const inner_energy_3 = document.createElement('div')
+        const inner_energy_4 = document.createElement('div')
+        const wrap1 = document.createElement('div')
+        const wrap6 = document.createElement('div')
+        const clear = document.createElement('p')
+        const canv7 = document.createElement('canvas')
         
-                const container = document.createElement('div')
-                const title = document.createElement('h1')
-                const subtitle1 = document.createElement('div')
-                const subtitle2 = document.createElement('div')
-                const buttonwrap = document.createElement('div')
-                const button1 = document.createElement('button')
-                const button2 = document.createElement('button')
-                const button3 = document.createElement('button')
-                const button4 = document.createElement('button')
-                const datewrap = document.createElement('div')
-                const datepick1 = document.createElement('input')
-                const datepick2 = document.createElement('input')
-                const label1 = document.createElement('label')
-                const label2 = document.createElement('label')
-                const energy_1 = document.createElement('div')
-                const energy_2 = document.createElement('div')
-                const energy_3 = document.createElement('div')
-                const energy_4 = document.createElement('div')
-                const inner_energy_1 = document.createElement('div')
-                const inner_energy_2 = document.createElement('div')
-                const inner_energy_3 = document.createElement('div')
-                const inner_energy_4 = document.createElement('div')
-                const wrap1 = document.createElement('div')
-                const wrap6 = document.createElement('div')
-                const clear = document.createElement('p')
-                const canv7 = document.createElement('canvas')
-                
-                container.id = "con"
-                title.id = "tit"
-                subtitle1.id = "sub1"
-                subtitle2.id = "sub2"
-                buttonwrap.id = "btw"
-                datewrap.id = "dtw"
-                datepick1.type = "text"
-                datepick1.id = "dpk1"
-                datepick2.type = "text"
-                datepick2.id = "dpk2"
-                label1.for = "dpk1"
-                label2.for = "dpk2"
-                energy_1.id = "e1"
-                energy_2.id = "e2"
-                energy_3.id = "e3"
-                energy_4.id = "e4"
-                wrap1.id = "wra1"
-                wrap6.id = "wra6"
-                canv7.id = "chart7"
+        container.id = "con"
+        title.id = "tit"
+        subtitle1.id = "sub1"
+        subtitle2.id = "sub2"
+        buttonwrap.id = "btw"
+        datewrap.id = "dtw"
+        datepick1.type = "text"
+        datepick1.id = "dpk1"
+        datepick2.type = "text"
+        datepick2.id = "dpk2"
+        label1.for = "dpk1"
+        label2.for = "dpk2"
+        energy_1.id = "e1"
+        energy_2.id = "e2"
+        energy_3.id = "e3"
+        energy_4.id = "e4"
+        wrap1.id = "wra1"
+        wrap6.id = "wra6"
+        canv7.id = "chart7"
 
-                energy_1.className = "box"
-                energy_2.className = "box"
-                energy_3.className = "box"
-                energy_4.className = "box"
-                inner_energy_1.className = "inner"
-                inner_energy_2.className = "inner"
-                inner_energy_3.className = "inner"
-                inner_energy_4.className = "inner"
-                clear.className = "cle"
-                button1.className = "btn"
-                button2.className = "btn active"
-                button3.className = "btn"
-                button4.className = "btn"
-                label1.className = "lab"
-                label2.className = "lab"
+        energy_1.className = "box"
+        energy_2.className = "box"
+        energy_3.className = "box"
+        energy_4.className = "box"
+        inner_energy_1.className = "inner"
+        inner_energy_2.className = "inner"
+        inner_energy_3.className = "inner"
+        inner_energy_4.className = "inner"
+        clear.className = "cle"
+        button1.className = "btn"
+        button2.className = "btn active"
+        button3.className = "btn"
+        button4.className = "btn"
+        label1.className = "lab"
+        label2.className = "lab"
 
-                title.innerHTML = "Energy/power output"
-                //subtitle1.innerHTML = `Current conditions: <span id="ts">${luxon.DateTime.fromISO(global_data[0].received_at).toFormat('ff')} </span>`
-                //temp adjustment until timezone issue resolved
-                subtitle1.innerHTML = `<span id="ts">${luxon.DateTime.fromISO(global_data[0].received_at, { setZone: true }).toFormat('ff')} </span>`
-                subtitle2.innerHTML = "<span>Power generated over selected period</span>"
-                button1.innerHTML = "Last day"
-                button1.onclick = function(){picker1.setDate(yesterday, true); picker2.setDate(today, true); selectTimescale(yesterday, today)}
-                button2.innerHTML = "Last week"
-                button2.onclick = function(){picker1.setDate(lastweek, true); picker2.setDate(today, true); selectTimescale(lastweek, today)}
-                button3.innerHTML = "Last month"
-                button3.onclick = function(){picker1.setDate(lastmonth, true); picker2.setDate(today, true); selectTimescale(lastmonth, today)}
-                button4.innerHTML = "Last year"
-                button4.onclick = function(){picker1.setDate(lastyear, true); picker2.setDate(today, true); selectTimescale(lastyear, today)}
+        title.innerHTML = "Energy/power output"
+        subtitle1.innerHTML = `Current conditions: <span id="ts">${luxon.DateTime.fromISO(global_data[0].received_at).toFormat('ff')} </span>`
+        subtitle2.innerHTML = "<span>Power generated over selected period</span>"
+        button1.innerHTML = "Last day"
+        button1.onclick = function(){picker1.setDate(yesterday, true); picker2.setDate(today, true); selectTimescale(yesterday, today)}
+        button2.innerHTML = "Last week"
+        button2.onclick = function(){picker1.setDate(lastweek, true); picker2.setDate(today, true); selectTimescale(lastweek, today)}
+        button3.innerHTML = "Last month"
+        button3.onclick = function(){picker1.setDate(lastmonth, true); picker2.setDate(today, true); selectTimescale(lastmonth, today)}
+        button4.innerHTML = "Last year"
+        button4.onclick = function(){picker1.setDate(lastyear, true); picker2.setDate(today, true); selectTimescale(lastyear, today)}
 
-                energy_1.innerHTML = "Energy output last day<br /> (MWh)"
-                energy_2.innerHTML = "Energy output last week<br /> (MWh)"
-                energy_3.innerHTML = "Energy output last month<br /> (MWh)" 
-                energy_4.innerHTML = "Energy output last year<br /> (MWh)"
-                label1.innerHTML = "Start date"
-                label2.innerHTML = "End date"
-                inner_energy_1.textContent = '0.00' //global_data[0].upstream.toFixed(2)
-                inner_energy_2.textContent = '0.00' //global_data[0].downstream.toFixed(2)
-                inner_energy_3.textContent = '0.00' //(global_data[0].upstream - global_data[0].downstream).toFixed(2)
-                inner_energy_4.textContent = '0.00' //((global_data[0].gen1_flow_ls + global_data[0].gen2_flow_ls) / 1000).toFixed(2)
+        energy_1.innerHTML = "Energy output last day<br /> (MWh)"
+        energy_2.innerHTML = "Energy output last week<br /> (MWh)"
+        energy_3.innerHTML = "Energy output last month<br /> (MWh)" 
+        energy_4.innerHTML = "Energy output last year<br /> (MWh)"
+        label1.innerHTML = "Start date"
+        label2.innerHTML = "End date"
+        inner_energy_1.textContent = '0.00' //global_data[0].upstream.toFixed(2)
+        inner_energy_2.textContent = '0.00' //global_data[0].downstream.toFixed(2)
+        inner_energy_3.textContent = '0.00' //(global_data[0].upstream - global_data[0].downstream).toFixed(2)
+        inner_energy_4.textContent = '0.00' //((global_data[0].gen1_flow_ls + global_data[0].gen2_flow_ls) / 1000).toFixed(2)
 
-                energy_1.append(inner_energy_1)
-                energy_2.append(inner_energy_2)
-                energy_3.append(inner_energy_3)
-                energy_4.append(inner_energy_4)
+        energy_1.append(inner_energy_1)
+        energy_2.append(inner_energy_2)
+        energy_3.append(inner_energy_3)
+        energy_4.append(inner_energy_4)
 
-                wrap1.append(energy_1, energy_2, energy_3, energy_4, clear)
-                container.append(title)
-                container.append(subtitle1)
-                container.append(wrap1)
-                container.append(subtitle2)
-                buttonwrap.append(button1, button2, button3, button4, clear)
-                container.append(buttonwrap)
-                datewrap.append(label1, datepick1, label2, datepick2, clear)
-                container.append(datewrap)
-                wrap6.append(canv7, clear)
-                container.append(wrap6)
-                
-                //local
-                //document.body.append(container)
-                //Wordpress
-                var target = document.getElementsByClassName("entry-content");
-                target[0].append(container)
-            
-            //filter by date
-            let today = new Date()
-            let yesterday = new Date()
-            let daybefore = new Date()
-            let lastweek = new Date()
-            let lastmonth = new Date()
-            let lastyear = new Date()
-            yesterday.setDate(today.getDate() - 1)
-            daybefore.setDate(today.getDate() - 2)
-            lastweek.setDate(today.getDate() - 7)
-            lastmonth.setDate(today.getDate() - 31)
-            lastyear.setDate(today.getDate() - 365)
+        wrap1.append(energy_1, energy_2, energy_3, energy_4, clear)
+        container.append(title)
+        container.append(subtitle1)
+        container.append(wrap1)
+        container.append(subtitle2)
+        buttonwrap.append(button1, button2, button3, button4, clear)
+        container.append(buttonwrap)
+        datewrap.append(label1, datepick1, label2, datepick2, clear)
+        container.append(datewrap)
+        wrap6.append(canv7, clear)
+        container.append(wrap6)
+        
+        //local
+        //document.body.append(container)
+        //Wordpress
+        var target = document.getElementsByClassName("entry-content");
+        target[0].append(container)
+    
+    //filter by date
+    let today = new Date()
+    let yesterday = new Date()
+    let daybefore = new Date()
+    let lastweek = new Date()
+    let lastmonth = new Date()
+    let lastyear = new Date()
+    yesterday.setDate(today.getDate() - 1)
+    daybefore.setDate(today.getDate() - 2)
+    lastweek.setDate(today.getDate() - 7)
+    lastmonth.setDate(today.getDate() - 31)
+    lastyear.setDate(today.getDate() - 365)
 
-            var picked = false
-            //datepicker
-            const picker1 = datepicker('#dpk1', { id: 1, dateSelected: lastweek, onSelect: instance => {picked = true; selectTimescale(picker1.getRange().start, picker1.getRange().end ) }})
-            const picker2 = datepicker('#dpk2', { id: 1, dateSelected: today, onSelect: instance => {picked = true; selectTimescale(picker2.getRange().start, picker2.getRange().end ) }})
+    var picked = false
+    //datepicker
+    const picker1 = datepicker('#dpk1', { id: 1, dateSelected: lastweek, onSelect: instance => {picked = true; selectTimescale(picker1.getRange().start, picker1.getRange().end ) }})
+    const picker2 = datepicker('#dpk2', { id: 1, dateSelected: today, onSelect: instance => {picked = true; selectTimescale(picker2.getRange().start, picker2.getRange().end ) }})
 
-        //default timescale = last week
-        selectTimescale(lastweek, today)
+//default timescale = last week
+selectTimescale(lastweek, today)
 
-        function selectTimescale(mystart, myend) {
-            var selection = global_data.filter(function(item){
-                return new Date(item.received_at) >= mystart
-                    })
-                    var mystarttime = mystart
-                    var myendtime = myend
-                    var mylength = myendtime - mystarttime
-                    if (mylength >= 172800000){
-                        myunit = 'day'
-                    }else{
-                        myunit = 'hour'
+function selectTimescale(mystart, myend) {
+    var selection = global_data.filter(function(item){
+        return new Date(item.received_at) >= mystart
+            })
+            var mystarttime = mystart
+            var myendtime = myend
+            var mylength = myendtime - mystarttime
+            if (mylength >= 172800000){
+                myunit = 'day'
+            }else{
+                myunit = 'hour'
+            }
+
+            // Downsample if greater than 10512 data points (approx 2.5 months)
+            // No of points will vary between 5256 and 10512
+            if (selection.length > 10512){
+                var step = Math.ceil(selection.length/10512)
+                var reduced = []
+                for (i = 0; i < selection.length; i++) {
+                    if(i % step === 0){
+                        reduced.push(selection[i])
                     }
-
-                    // Downsample if greater than 10512 data points (approx 2.5 months)
-                    // No of points will vary between 5256 and 10512
-                    if (selection.length > 10512){
-                        var step = Math.ceil(selection.length/10512)
-                        var reduced = []
-                        for (i = 0; i < selection.length; i++) {
-                            if(i % step === 0){
-                                reduced.push(selection[i])
-                            }
-                        }
-                        selection = reduced
-                        }
-
-                    const xs = []
-                    const ys = []
-                    for(item of selection) {                
-                        //convert the timestamp to milliseconds (faster)                
-                        const mydate1 = new Date(item.received_at)
-                        //const mydate = mydate1.getTime()
-                        const mydate = (mydate1.getTime() - 3600000) //temp adjustment until timezone issue resolved
-                        xs.push(mydate);
-                        const mypower = (item.gen1_power_kw + item.gen2_power_kw).toFixed(2);
-                        ys.push(mypower);
-                    }
-
-                    // Add active class to the current button on click
-                    var btns = document.getElementsByClassName("btn");
-                    for (var i = 0; i < btns.length; i++) {
-                    btns[i].addEventListener("click", function() {
-                        var current = document.getElementsByClassName("active");
-                        if (typeof current[0] !== 'undefined'){
-                        current[0].className = current[0].className.replace(" active", "");
-                        }
-                        this.className += " active";
-                        });
-                        }
-                     if (picked == true) {
-                        for (var i = 0; i < btns.length; i++) {
-                            btns[i].classList.remove("active")
-                        } 
-                        picked = false
-                    }
-
-                    //Set global defaults for charts
-                    //More settings can be global if we use Chartjs v3
-                    Chart.defaults.global.tooltips.callbacks.title = function(t, d) {
-                                            return luxon.DateTime.fromMillis(d.labels[t[0].index]).toFormat('ff');
-                                                    }
-                    //Chart.defaults.global.animation.duration = 0 
-                    Chart.defaults.global.maintainAspectRatio = false
-                    Chart.defaults.global.title.display = true
-                    Chart.defaults.global.title.fontSize = 20
-                    Chart.defaults.global.title.fontStyle = 'bold'
-                    Chart.defaults.global.legend.labels.fontSize = 15
-                    Chart.defaults.global.legend.labels.fontStyle = 'bold'
-                   
-                    
-                //Graph 7 - power generated
-                if (myChart7) {
-                    myChart7.destroy();
-                    }
-
-                var ctx7 = document.getElementById('chart7').getContext('2d');
-                myChart7 = new Chart(ctx7, {
-                        type: 'line',
-                        data: {
-                            labels: xs,
-                            datasets: [
-                                {
-                                
-                                data: ys,
-                                fill: true,
-                                backgroundColor: 'rgba(230, 48, 86, 0.8)',
-                                borderColor: 'rgba(230, 48, 86, 0.9)',
-                                borderWidth: 1,
-                                radius: 0
-                                },                        
-                            ]
-                            },
-                            options: {                                
-                                scales: {
-
-                                        xAxes: [{
-                                            type: 'time', 
-                                            time: {
-                                                minUnit: myunit,
-                                            },
-                                            distribution: 'linear',
-                                            ticks: {
-                                                fontStyle: "bold",
-                                                min: mystarttime,
-                                                max: myendtime,
-                                                    },
-                                            scaleLabel: {
-                                                display: false,                                                                  
-                                                    }
-                                                }
-
-                                        ],
-                                        yAxes: [{
-                                            ticks: {
-                                                fontSize: 15,
-                                                fontStyle: "bold",
-                                                    },
-                                                    scaleLabel: {
-                                                display: false                                      
-                                                    }
-                                                }]
-                                        },
-                                title: {
-                                    text: "Power generated (kW)",
-                                        },
-                                legend: {
-                                    display: false,
-                                        }
-                                    } 
-                    });                
-                // End of graphs
-
                 }
-                // End of selectTimescale
+                selection = reduced
+                }
 
-        //closing of IIFE function
-        })();
+            const xs = []
+            const ys = []
+            for(item of selection) {                
+                //convert the timestamp to milliseconds (faster)                
+                const mydate1 = new Date(item.received_at)
+                const mydate = mydate1.getTime()
+                xs.push(mydate);
+                const mypower = (item.gen1_power_kw + item.gen2_power_kw).toFixed(2);
+                ys.push(mypower);
+            }
+
+            // Add active class to the current button on click
+            var btns = document.getElementsByClassName("btn");
+            for (var i = 0; i < btns.length; i++) {
+            btns[i].addEventListener("click", function() {
+                var current = document.getElementsByClassName("active");
+                if (typeof current[0] !== 'undefined'){
+                current[0].className = current[0].className.replace(" active", "");
+                }
+                this.className += " active";
+                });
+                }
+             if (picked == true) {
+                for (var i = 0; i < btns.length; i++) {
+                    btns[i].classList.remove("active")
+                } 
+                picked = false
+            }
+
+            //Set global defaults for charts
+            //More settings can be global if we use Chartjs v3
+            Chart.defaults.global.tooltips.callbacks.title = function(t, d) {
+                                    return luxon.DateTime.fromMillis(d.labels[t[0].index]).toFormat('ff');
+                                            }
+            //Chart.defaults.global.animation.duration = 0 
+            Chart.defaults.global.maintainAspectRatio = false
+            Chart.defaults.global.title.display = true
+            Chart.defaults.global.title.fontSize = 20
+            Chart.defaults.global.title.fontStyle = 'bold'
+            Chart.defaults.global.legend.labels.fontSize = 15
+            Chart.defaults.global.legend.labels.fontStyle = 'bold'
+           
+            
+        //Graph 7 - power generated
+        if (myChart7) {
+            myChart7.destroy();
+            }
+
+        var ctx7 = document.getElementById('chart7').getContext('2d');
+        myChart7 = new Chart(ctx7, {
+                type: 'line',
+                data: {
+                    labels: xs,
+                    datasets: [
+                        {
+                        
+                        data: ys,
+                        fill: true,
+                        backgroundColor: 'rgba(230, 48, 86, 0.8)',
+                        borderColor: 'rgba(230, 48, 86, 0.9)',
+                        borderWidth: 1,
+                        radius: 0
+                        },                        
+                    ]
+                    },
+                    options: {                                
+                        scales: {
+
+                                xAxes: [{
+                                    type: 'time', 
+                                    time: {
+                                        minUnit: myunit,
+                                    },
+                                    distribution: 'linear',
+                                    ticks: {
+                                        fontStyle: "bold",
+                                        min: mystarttime,
+                                        max: myendtime,
+                                            },
+                                    scaleLabel: {
+                                        display: false,                                                                  
+                                            }
+                                        }
+
+                                ],
+                                yAxes: [{
+                                    ticks: {
+                                        fontSize: 15,
+                                        fontStyle: "bold",
+                                            },
+                                            scaleLabel: {
+                                        display: false                                      
+                                            }
+                                        }]
+                                },
+                        title: {
+                            text: "Power generated (kW)",
+                                },
+                        legend: {
+                            display: false,
+                                }
+                            } 
+            });                
+        // End of graphs
+
+        }
+        // End of selectTimescale
+
+//closing of IIFE function
+})();
 
 
 // functions
-        async function getData() {
-            //local
-            //const response = await fetch('/powergen') 
-            //Wordpress
-            const response = await fetch('https://thingitude-apps.com:9445/api/plc/all') 
-            const data = await response.json() 
-            return data           
-        }
-            
-        </script>  
+async function getData() {
+    //local
+    //const response = await fetch('/powergen') 
+    //Wordpress
+    const response = await fetch('https://thingitude-apps.com:9445/api/plc/all') 
+    const data = await response.json() 
+    return data           
+}
+    
+</script>  

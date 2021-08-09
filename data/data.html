@@ -1,6 +1,5 @@
 <meta charset="UTF-8">
         <meta name="viewport1" content="width=device-width, initial-scale=1.0">
-        <!-- https://github.com/chartjs/chartjs-adapter-moment/blob/master/README.md -->
         <script src="https://cdn.jsdelivr.net/npm/luxon@2.0.1/build/global/luxon.min.js"></script>
         <style>
 
@@ -267,7 +266,7 @@
                 var selection1 = global_data1.filter(function(item){
                         return item.device_id == 'rdghydro-ers001'
                     })
-                subtitle1.innerHTML = `Current conditions: <span id="ts">${luxon.DateTime.fromISO(selection1[0].received_at, { setZone: true }).toFormat('ff')} </span>`
+                subtitle1.innerHTML = `Current conditions: <span id="ts">${luxon.DateTime.fromISO(selection1[0].received_at).toFormat('ff')} </span>`
 
                 nowtemp.innerHTML = "Temperature (&deg;C)"
                 nowhumid.innerHTML = "Humidity (&percnt;)"
@@ -289,7 +288,7 @@
                 container.append(wrap11, clear)
 
                 title2.innerHTML = '<a href="/water-level-data/">Water levels and flow</a>'
-                subtitle2.innerHTML = `Current conditions: <span id="ts">${luxon.DateTime.fromISO(global_data2[0].received_at, { setZone: true }).toFormat('ff')} </span>`
+                subtitle2.innerHTML = `Current conditions: <span id="ts">${luxon.DateTime.fromISO(global_data2[0].received_at).toFormat('ff')} </span>`
 
                 now_upst.innerHTML = "Upstream (metres AOD)"
                 now_down.innerHTML = "Downstream (metres AOD)"
