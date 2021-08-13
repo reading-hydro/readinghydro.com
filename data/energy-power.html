@@ -224,8 +224,8 @@ var global_data = await getData();
         label2.className = "lab"
 
         title.innerHTML = "Energy/power output"
-        subtitle1.innerHTML = `Current conditions: <span id="ts">${luxon.DateTime.fromISO(global_data[0].received_at).toFormat('ff')} </span>`
-        subtitle2.innerHTML = "<span>Power generated over selected period</span>"
+        //subtitle1.innerHTML = `Current conditions: <span id="ts">${luxon.DateTime.fromISO(global_data[0].received_at).toFormat('ff')} </span>`
+        subtitle2.innerHTML = "<span>Power generation over selected period</span>"
         button1.innerHTML = "Last day"
         button1.onclick = function(){picker1.setDate(yesterday, true); picker2.setDate(today, true); selectTimescale(yesterday, today)}
         button2.innerHTML = "Last week"
@@ -253,8 +253,8 @@ var global_data = await getData();
 
         wrap1.append(energy_1, energy_2, energy_3, energy_4, clear)
         container.append(title)
-        container.append(subtitle1)
-        container.append(wrap1)
+        //container.append(subtitle1)
+        //container.append(wrap1)
         container.append(subtitle2)
         buttonwrap.append(button1, button2, button3, button4, clear)
         container.append(buttonwrap)
@@ -412,7 +412,7 @@ function selectTimescale(mystart, myend) {
                                         }]
                                 },
                         title: {
-                            text: "Power generated (kW)",
+                            text: "Power generation (kW)",
                                 },
                         legend: {
                             display: false,
