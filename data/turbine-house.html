@@ -178,7 +178,10 @@
 
 // Start an IIFE to use `await` at the top level
 (async function(){
-var global_data = await getData();
+        var global_data_0 = await getData();
+        var global_data = global_data_0.filter(function(item){
+                        return item.device_id == 'rdghydro-ers001'
+                    })
 
         var myChart1
         var myChart2
@@ -342,7 +345,7 @@ selectTimescale(lastweek, today)
 
 function selectTimescale(mystart, myend) {
     var selection = global_data.filter(function(item){
-                return new Date(item.received_at) >= mystart && item.device_id == 'rdghydro-ers001'
+                return new Date(item.received_at) >= mystart
             })
             var mystarttime = mystart
             var myendtime = myend
