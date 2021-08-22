@@ -120,13 +120,13 @@
            #hum {
                background-color: #57b7dd;
             }
-           #lig {
+           #gen1 {
                background-color: #ffbe0a;
             }
-           #mot {
+           #gen2 {
                background-color: #8ac539;
             }
-            #up {
+           #up {
                background-color: #409AE6;
             }
            #do {
@@ -166,14 +166,8 @@
                 max-width: 290px;
                  }
                  #wra3 {
-                max-width: 350px;
+                max-width: 290px;
                  }
-                 .cwra {
-                     width: 350px;
-                     height: 300px;
-                     margin: auto;
-                 }
-                 
             }
         
        </style>        
@@ -189,18 +183,41 @@
                 const container = document.createElement('div')
                 const title1 = document.createElement('h1')
                 const title2 = document.createElement('h1')
+                const title3 = document.createElement('h1')
+                const title4 = document.createElement('h1')
+
                 const subtitle1 = document.createElement('div')
                 const subtitle2 = document.createElement('div')
+                const subtitle3 = document.createElement('div')
+                const subtitle4 = document.createElement('div')
+
+                const nowPower_G1 = document.createElement('div')
+                const nowScrewRPM_G1 = document.createElement('div')
+                const nowTorque_G1 = document.createElement('div')
+                const nowOpHours_G1 = document.createElement('div')
+
+                const nowPower_G2 = document.createElement('div')
+                const nowScrewRPM_G2 = document.createElement('div')
+                const nowTorque_G2 = document.createElement('div')
+                const nowOpHours_G2 = document.createElement('div')
 
                 const nowtemp = document.createElement('div')
                 const nowhumid = document.createElement('div')
-                const nowlight = document.createElement('div')
-                const nowmotion = document.createElement('div')
-
+                
                 const now_upst = document.createElement('div')
                 const now_down = document.createElement('div')
                 const now_head = document.createElement('div')
                 const now_flow = document.createElement('div')
+
+                const inner_nowPower_G1 = document.createElement('div')
+                const inner_nowScrewRPM_G1 = document.createElement('div')
+                const inner_nowTorque_G1 = document.createElement('div')
+                const inner_nowOpHours_G1 = document.createElement('div')
+
+                const inner_nowPower_G2 = document.createElement('div')
+                const inner_nowScrewRPM_G2 = document.createElement('div')
+                const inner_nowTorque_G2 = document.createElement('div')
+                const inner_nowOpHours_G2 = document.createElement('div')
 
                 const inner_nowtemp = document.createElement('div')
                 const inner_nowhumid = document.createElement('div')
@@ -213,14 +230,30 @@
                 const wrap11 = document.createElement('div')
                 const wrap12 = document.createElement('div')
                 const wrap13 = document.createElement('div')
+                const wrap14 = document.createElement('div')
+
                 const clear = document.createElement('p')
 
                 
                 container.id = "con"
                 title1.id = "tit"
                 title2.id = "tit"
+                title3.id = "tit"
+                title4.id = "tit"
                 subtitle1.id = "sub1"
                 subtitle2.id = "sub2"
+                subtitle3.id = "sub2"
+                subtitle4.id = "sub2"
+
+                nowPower_G1.id = "tem"
+                nowScrewRPM_G1.id = "fl"
+                nowTorque_G1.id = "gen1"
+                nowOpHours_G1.id = "gen2"
+
+                nowPower_G2.id = "tem"
+                nowScrewRPM_G2.id = "fl"
+                nowTorque_G2.id = "gen1"
+                nowOpHours_G2.id = "gen2"
 
                 nowtemp.id = "tem"
                 nowhumid.id = "hum"
@@ -232,7 +265,18 @@
 
                 wrap11.id = "wra1"
                 wrap12.id = "wra2"
-                wrap13.id = "wra3"
+                wrap13.id = "wra2"
+                wrap14.id = "wra2"
+
+                nowPower_G1.className = "box"
+                nowScrewRPM_G1.className = "box"
+                nowTorque_G1.className = "box"
+                nowOpHours_G1.className = "box"
+
+                nowPower_G2.className = "box"
+                nowScrewRPM_G2.className = "box"
+                nowTorque_G2.className = "box"
+                nowOpHours_G2.className = "box"
 
                 nowtemp.className = "box"
                 nowhumid.className = "box"
@@ -241,6 +285,16 @@
                 now_down.className = "box"
                 now_head.className = "box"
                 now_flow.className = "box"
+
+                inner_nowPower_G1.className = "inner"
+                inner_nowScrewRPM_G1.className = "inner"
+                inner_nowTorque_G1.className = "inner"
+                inner_nowOpHours_G1.className = "inner"
+
+                inner_nowPower_G2.className = "inner"
+                inner_nowScrewRPM_G2.className = "inner"
+                inner_nowTorque_G2.className = "inner"
+                inner_nowOpHours_G2.className = "inner"
 
                 inner_nowtemp.className = "inner"
                 inner_nowhumid.className = "inner"
@@ -252,6 +306,53 @@
 
 
                 clear.className = "cle"
+
+                title3.innerHTML = '<a href="/power-output-data/">Turbine 1 (Tony)</a>'
+                subtitle3.innerHTML = 'Current performance of Turbine'
+
+                nowPower_G1.innerHTML = 'Powerb Generated (kW)'
+                nowScrewRPM_G1.innerHTML = 'Screw Speed (RPM)'
+                nowTorque_G1.innerHTML = 'Screw Torque (Nm)'
+                nowOpHours_G1.innerHTML = 'Total Operating (Hours)'
+
+                inner_nowPower_G1.textContent = global_data2.gen1_power_kw
+                inner_nowScrewRPM_G1.textContent = global_data2.gen1_screw_rpm
+                inner_nowTorque_G1.textContent = global_data2.gen1_torque
+                inner_nowOpHours_G1.textContent = global_data2.gen1_operating_hours
+
+                nowPower_G1.append(inner_nowPower_G1)
+                nowScrewRPM_G1.append(inner_nowScrewRPM_G1)
+                nowTorque_G1.append(inner_nowTorque_G1)
+                nowOpHours_G1.append(inner_nowOpHours_G1)
+
+                wrap13.append(nowPower_G1, nowScrewRPM_G1, nowTorque_G1, nowOpHours_G1, clear)
+                container.append(title3)
+                container.append(subtitle3)
+                container.append(wrap13, clear)
+
+                title4.innerHTML = '<a href="/power-output-data/">Turbine 2 (Sophie)</a>'
+                subtitle4.innerHTML = 'Current performance of Turbine'
+
+                nowPower_G2.innerHTML = 'Powerb Generated (kW)'
+                nowScrewRPM_G2.innerHTML = 'Screw Speed (RPM)'
+                nowTorque_G2.innerHTML = 'Screw Torque (Nm)'
+                nowOpHours_G2.innerHTML = 'Total Operating (Hours)'
+
+                inner_nowPower_G2.textContent = global_data2.gen2_power_kw
+                inner_nowScrewRPM_G2.textContent = global_data2.gen2_screw_rpm
+                inner_nowTorque_G2.textContent = global_data2.gen2_torque
+                inner_nowOpHours_G2.textContent = global_data2.gen2_operating_hours
+
+                nowPower_G2.append(inner_nowPower_G2)
+                nowScrewRPM_G2.append(inner_nowScrewRPM_G2)
+                nowTorque_G2.append(inner_nowTorque_G2)
+                nowOpHours_G2.append(inner_nowOpHours_G2)
+
+                wrap14.append(nowPower_G2, nowScrewRPM_G2, nowTorque_G2, nowOpHours_G2, clear)
+                container.append(title4)
+                container.append(subtitle4)
+                container.append(wrap14, clear)
+
 
                 title1.innerHTML = '<a href="/turbine-house-data/">Turbine House</a>'
                 //Filter out other devices
