@@ -3656,24 +3656,24 @@
     "type": "function",
     "z": "e887e495.f74df8",
     "name": "Just get the unread messages",
-    "func": 
-    "var messages=msg.payload.split('\\n');
-     const numberOfLines = messages.length;
-     node.warn(\"Number of Lines is \"+numberOfLines);
-     var firstMsgRow = global.get('lastMsgRow');
-     if(firstMsgRow < 1 )
-     {    firstMsgRow=1;
-     } else if(firstMsgRow>numberOfLines) 
-            {      firstMsgRow=numberofLines;
-            }
-     global.set('firstMsgRow',firstMsgRow);
-     global.set('lastMsgRow',numberOfLines);
-     node.warn(\"First row is: \"+firstMsgRow+\" and Last row is: \"+numberOfLines);
-                        
-     messages.splice(0,firstMsgRow-1);
-     var newPayload={ payload: messages.join('\\n') };
-     node.warn(\"msg.payload is \"+newPayload.payload);
-     return newPayload;",
+    "func": [
+    "var messages=msg.payload.split('\\n');",
+    "const numberOfLines = messages.length;",
+    "node.warn(\"Number of Lines is \"+numberOfLines);",
+    "var firstMsgRow = global.get('lastMsgRow');",
+    "if(firstMsgRow < 1 )",
+    "{    firstMsgRow=1;",
+    "} else if(firstMsgRow>numberOfLines)",
+    "{      firstMsgRow=numberofLines;",
+    "}",
+    "global.set('firstMsgRow',firstMsgRow);",
+    "global.set('lastMsgRow',numberOfLines);",
+    "node.warn(\"First row is: \"+firstMsgRow+\" and Last row is: \"+numberOfLines);",
+
+    "messages.splice(0,firstMsgRow-1);",
+    "var newPayload={ payload: messages.join('\\n') };",
+    "node.warn(\"msg.payload is \"+newPayload.payload);",
+    "return newPayload;"],
     "outputs": 1,
     "noerr": 0,
     "initialize": "",
@@ -3692,16 +3692,16 @@
     "type": "function",
     "z": "e887e495.f74df8",
     "name": "Adjust file pointers",
-    "func": 
-    "var rowPointer=global.get('firstMsgRow');
-     var lastRowPointer=global.get('lastMsgRow');
-     rowPointer++;
-     if (rowPointer>lastRowPointer) {
-        rowPointer=lastRowPointer;
-        }
-     global.set('firstMsgRow',rowPointer);
-     // node.warn(\"FirstMsgRow is now \"+flow.get('firstMsgRow'));
-     return msg;",
+    "func": [
+    "var rowPointer=global.get('firstMsgRow');",
+    "var lastRowPointer=global.get('lastMsgRow');",
+    "rowPointer++;",
+    "if (rowPointer>lastRowPointer) {",
+        "rowPointer=lastRowPointer;",
+        "}",
+    "global.set('firstMsgRow',rowPointer);",
+    "// node.warn(\"FirstMsgRow is now \"+flow.get('firstMsgRow'));",
+    "return msg;"],
     "outputs": 1,
     "noerr": 0,
     "initialize": "",
@@ -3792,25 +3792,25 @@
     "type": "function",
     "z": "e887e495.f74df8",
     "name": "Is this a message that needs an alert?",
-    "func": 
-    "// This function checks against the list of MsgNumber that 
-     // need an alert sending to the duty staff.
-     // You may need to amend this list in due course.
-     // MsgNumber is the column heading in the Alarm_log CSV 
-     // file that lives on the SD card on the touch screen
-     // control panel in the turbine room.
-     
-     // Only MsgNumbers in this list below will send alerts.
-     const alertMsgNumbers= [\"36\",\"37\",\"38\",\"40\",\"41\",\"43\",\"44\",\"45\",\"60\",\"61\",
-                             \"62\",\"67\",\"68\",\"69\",\"70\",\"71\",\"80\",\"106\",\"117\",\"119\",
-                             \"121\",\"123\",\"127\",\"128\",\"135\",\"136\",\"143\",\"152\",\"153\",
-                             \"154\",\"155\",\"158\",\"160\",\"197\",\"199\",\"201\",\"203\",\"207\",
-                             \"208\",\"215\",\"216\",\"223\",\"232\",\"233\",\"234\",\"235\",\"238\",
-                             \"240\",\"260000\"];
-     var result=alertMsgNumbers.some(c=>c===msg.payload.MsgNumber);
-     node.warn(\"Result of array some is \"+result);
-     msg.payload.sendAlert=result;
-     return msg;",
+    "func": [
+    "// This function checks against the list of MsgNumber that",
+    "// need an alert sending to the duty staff.",
+    "// You may need to amend this list in due course.",
+    "// MsgNumber is the column heading in the Alarm_log CSV ",
+    "// file that lives on the SD card on the touch screen",
+    "// control panel in the turbine room.",
+
+    "// Only MsgNumbers in this list below will send alerts.",
+    "const alertMsgNumbers= [\"36\",\"37\",\"38\",\"40\",\"41\",\"43\",\"44\",\"45\",\"60\",\"61\",",
+                            "\"62\",\"67\",\"68\",\"69\",\"70\",\"71\",\"80\",\"106\",\"117\",\"119\",",
+                            "\"121\",\"123\",\"127\",\"128\",\"135\",\"136\",\"143\",\"152\",\"153\",",
+                            "\"154\",\"155\",\"158\",\"160\",\"197\",\"199\",\"201\",\"203\",\"207\",",
+                            "\"208\",\"215\",\"216\",\"223\",\"232\",\"233\",\"234\",\"235\",\"238\",",
+                            "\"240\",\"260000\"];",
+    "var result=alertMsgNumbers.some(c=>c===msg.payload.MsgNumber);",
+    "node.warn(\"Result of array some is \"+result);",
+    "msg.payload.sendAlert=result;",
+    "return msg;"],
     "outputs": 1,
     "noerr": 0,
     "initialize": "",
