@@ -27,12 +27,12 @@ def on_log(client, userdata, level, buf):
 
 mqtt_broker = 'readinghydro.org'
 mqtt_broker_port = 8883
-topic = "#"
+topic = "hydro-data"
 qos=0
 
 client = mqtt.Client("purple")
 
-client.username_pw_set("stuart","ecl1ps3")
+client.username_pw_set("mqttrota","R0t@vaTOR")
 client.on_connect = on_connect
 client.on_message = on_message
 client.on_log = on_log
