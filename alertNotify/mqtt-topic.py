@@ -1,8 +1,9 @@
 #! /usr/bin/python3
 
-
 import paho.mqtt.client as mqtt
-import time
+import time, datetime, threading
+from calendarread import calendarread
+from restServer import restServer
 
 
 def on_message(client, userdata, message):
@@ -29,6 +30,7 @@ mqtt_broker = 'readinghydro.org'
 mqtt_broker_port = 8883
 topic = "hydro-data"
 qos=0
+lastHour = -1
 
 client = mqtt.Client("purple")
 
@@ -37,6 +39,7 @@ client.on_connect = on_connect
 client.on_message = on_message
 client.on_log = on_log
 client.tls_set("/etc/ssl/certs/ca-certificates.crt")
+who_is_oncall = {'primary' : '', 'second': ''}
 
 try:
     client.connect(mqtt_broker,mqtt_broker_port)
@@ -46,9 +49,27 @@ try:
 except:
     print("connection failed")
 
+# Start the restServer in another thread
+try:
+    print('Starting the REST Server')
+    threading.Thread(target=restServer).start()
+except:
+    print('Failed to start the REST server')
+
+# read the calendar once an hour, if there is an entry for each of the roles update the current role person
+# if there is no new entry for a role the old entry will be kept
+
 try:
     while True:
-        time.sleep(1)
+        if lastHour != datetime.datetime.hour :
+            lastHour = datetime.datetime.hour
+            new_who_is_oncall = calendarread()
+            for role in ('primary', 'second'):
+                for person in new_who_is_oncall:
+                    if person['role'] == role:
+                        who_is_oncall.update({role: person.get('name')})
+ 
+        time.sleep(10)
         pass
 
 except KeyboardInterrupt:
