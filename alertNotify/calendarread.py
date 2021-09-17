@@ -39,6 +39,6 @@ def calendarread():
                 print('oncall active',event['summary'])
                 entry = event['summary'].lower().split()
                 oncall.append({'name': entry[0], 'role': entry[1], 'time': now})
+    
+    
     return oncall
-
-# print(calendarread())

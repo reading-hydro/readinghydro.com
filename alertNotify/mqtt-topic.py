@@ -1,17 +1,35 @@
 #! /usr/bin/python3
-
+import json
 import paho.mqtt.client as mqtt
-import time, datetime, threading
+import time, datetime, threading, cgi
 from calendarread import calendarread
 from restServer import restServer
+from tokenHandeler import generate_token, expired_token
+from sendmail import sendMail_alert, sendMail_shift, sendMail_esclate
+
+# Contacts hard coded for the moment need to add this in a database.
+
+contacts = {
+    'stuart':{'email': 'stuart.ward.uk@gmail.com'},
+    'austin':{'email': 'austindangerjacobs@gmail.com'},
+    'jo':{'email': 'jo.ramsay@gmail.com'},
+    'rupert':{'email': 'info@rupes.net'},
+    'tim':{'email': 'tim@milkreading.co.uk'},
+    'sophie':{'email':'sophie@fenwickpaul.com'},
+    'daniel':{'email': 'daniel.cameron@sky.com'}
+    }
 
 
 def on_message(client, userdata, message):
     print("message received " ,str(message.payload.decode("utf-8")))
     print("message topic=",message.topic)
-    print("message qos=",message.qos)
-    print("message retain flag=",message.retain)
-
+    decodedMessage = json.loads(message.payload)
+    email1 = contacts.get(who_is_oncall.get('primary')).get('email')
+    email2 = contacts.get(who_is_oncall.get('second')).get('email')
+    alertMessage = decodedMessage.get('MsgText')
+    alertTime = decodedMessage.get('TimeString')
+    sendMail_alert(email1,alertMessage,alertTime, generate_token(email1))
+    sendMail_alert(email2,alertMessage,alertTime, generate_token(email2))
 
 def on_connect(client, userdata, flags, rc):
     if rc==0:
@@ -28,7 +46,7 @@ def on_log(client, userdata, level, buf):
 
 mqtt_broker = 'readinghydro.org'
 mqtt_broker_port = 8883
-topic = "hydro-data"
+topic = "hydro-alert"
 qos=0
 lastHour = -1
 
@@ -50,31 +68,37 @@ except:
     print("connection failed")
 
 # Start the restServer in another thread
-try:
-    print('Starting the REST Server')
-    threading.Thread(target=restServer).start()
-except:
-    print('Failed to start the REST server')
+print('Starting the REST Server')
+restThread = threading.Thread(target=restServer, daemon=True)
+restThread.start()
 
 # read the calendar once an hour, if there is an entry for each of the roles update the current role person
 # if there is no new entry for a role the old entry will be kept
 
 try:
     while True:
-        if lastHour != datetime.datetime.hour :
-            lastHour = datetime.datetime.hour
+        if lastHour != datetime.datetime.now().hour:
+            lastHour = datetime.datetime.now().hour
             new_who_is_oncall = calendarread()
             for role in ('primary', 'second'):
                 for person in new_who_is_oncall:
                     if person['role'] == role:
                         who_is_oncall.update({role: person.get('name')})
- 
-        time.sleep(10)
+                if lastHour == 9:
+                    email = contacts.get(who_is_oncall.get(role)).get('email')
+                    print('Sending oncall reminder to ', who_is_oncall.get(role), 'at', email, ' for role ',role)
+                    sendMail_shift(email, generate_token(email))
+
+# look through the alert list for any expited alerts that have not been acknowleged.
+        tokenlist = expired_token()
+        for entry in tokenlist:
+            sendMail_esclate(entry.get('email'), generate_token('alerts@readinghydro.org'))
+
+        time.sleep(1)
         pass
 
 except KeyboardInterrupt:
     print("interrrupted by keyboard")
 
 client.loop_stop() #stop loop
-topic_watcher_flag=False #stop logging thread
 time.sleep(5)
