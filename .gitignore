@@ -18,6 +18,7 @@ wp-content/themes/twenty*/
 node_modules/
 
 # ignore log files and databases
+*.pyc
 *.log
 *.sql
 *.sqlite
