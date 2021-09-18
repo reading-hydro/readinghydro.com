@@ -28,8 +28,9 @@ def on_message(client, userdata, message):
     email2 = contacts.get(who_is_oncall.get('second')).get('email')
     alertMessage = decodedMessage.get('MsgText')
     alertTime = decodedMessage.get('TimeString')
-    sendMail_alert(email1,alertMessage,alertTime, generate_token(email1))
-    sendMail_alert(email2,alertMessage,alertTime, generate_token(email2))
+    token = generate_token(email1,'At: {time} message: {message}'.format(time=alertTime, message=alertMessage))
+    sendMail_alert(email1,alertMessage,alertTime, token)
+    sendMail_alert(email2,alertMessage,alertTime, token)
 
 def on_connect(client, userdata, flags, rc):
     if rc==0:
@@ -86,13 +87,14 @@ try:
                         who_is_oncall.update({role: person.get('name')})
                 if lastHour == 9:
                     email = contacts.get(who_is_oncall.get(role)).get('email')
-                    print('Sending oncall reminder to ', who_is_oncall.get(role), 'at', email, ' for role ',role)
-                    sendMail_shift(email, generate_token(email))
+                    message='Sending oncall reminder to '+ who_is_oncall.get(role)+ ' at '+email+' for role '+role
+                    sendMail_shift(email, role, generate_token(email,message))
 
 # look through the alert list for any expited alerts that have not been acknowleged.
         tokenlist = expired_token()
         for entry in tokenlist:
-            sendMail_esclate(entry.get('email'), generate_token('alerts@readinghydro.org'))
+            token = generate_token('alerts@readinghydro.org','Esculate: '+entry.get('message'))
+            sendMail_esclate('alerts@readinghydro.org', 'Esculate: '+entry.get('message'), token)
 
         time.sleep(1)
         pass
