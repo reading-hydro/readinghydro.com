@@ -41,7 +41,9 @@ is sent to alerts@readinghydro.org
 restServer provides a simple http webserver on port 8080 the respondes to:
 
 [/whoisoncall](http://readinghydro.org/whoisoncall)  Shows the on call primary and second person
+
 [/ackresp?token=](http://readinghydro.org/ackresp?token=)   process the acknologements frm emails sent
+
 [/alertlist](http://readinghydro.org/alertlist)   shows all the active tokens and wether they have been acknowleged
 
 ## tokenHandler ##
