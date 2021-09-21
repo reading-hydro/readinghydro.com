@@ -7,7 +7,9 @@ This subsystem provides menagement and escallation of Alerts recieved from the R
 
 The Google calendar APIs allow reading of the calendar entries for a day with 
 
+```
 curl   'https://www.googleapis.com/calendar/v3/calendars/6fue264k25k03v1ogsmkb2pk5g%40group.calendar.google.com/events?key=API_KEY'   --header 'Accept: application/json'
+```
 
 The Calendar ID is in this case 6fue264k25k03v1ogsmkb2pk5g@group.calendar.google.com
 
@@ -37,9 +39,10 @@ is sent to alerts@readinghydro.org
 ## restServer ##
 
 restServer provides a simple http webserver on port 8080 the respondes to:
-readinghydro.org/whoisoncall  Shows the on call primary and second person
-readinghydro.org/ackresp?token=   process the acknologements frm emails sent
-readinghydro.org/alertlist   shows all the active tokens and wether they have been acknowleged
+
+[/whoisoncall](http://readinghydro.org/whoisoncall)  Shows the on call primary and second person
+[/ackresp?token=](http://readinghydro.org/ackresp?token=)   process the acknologements frm emails sent
+[/alertlist](http://readinghydro.org/alertlist)   shows all the active tokens and wether they have been acknowleged
 
 ## tokenHandler ##
 
