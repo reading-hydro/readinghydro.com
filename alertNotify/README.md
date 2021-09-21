@@ -28,13 +28,11 @@ These modules provide the Alert notification system for Reading Hydro On-Call te
 The calendar read module reads the google calendar and finds the on call entries current. If none the last on call enterirs are kept till a new oncall event starts. 
 Calender Events must have the subject in the form "Name role", where role is either Primary or Second
 
-An on shift reminder email is sent at about 9:00 each day to the current on-call primary and second.
+An on shift reminder email is sent at about 9:00 each day to the current on-call primary and second. These will need to be acknowleged or they will be escalated to the alerts@readinghydro.org group. 
 
 ## mqtt-topic ##
 
-The mqtt-topic attached to the readinghydro.org mosquitto broker and subscribes to the "hydro-alert" topic when an alert is recieved an email is sent to the 
-primary and secondary on-call person. These contain a token to confirm recipt of the message. If the token is not acknowleged in 5 minutes a escalation email 
-is sent to alerts@readinghydro.org
+The mqtt-topic attached to the readinghydro.org mosquitto broker and subscribes to the "hydro-alert" topic when an alert is recieved an email is sent to the primary and secondary on-call person. These contain a token to confirm recipt of the message. If the token is not acknowleged in 5 minutes a escalation email is sent to alerts@readinghydro.org
 
 ## restServer ##
 
@@ -48,8 +46,14 @@ restServer provides a simple http webserver on port 8080 the respondes to:
 
 ## tokenHandler ##
 
-generates the tokens, and provides methods to list, and acknlowege the tokens
+Generates the tokens, and provides methods to list, and acknlowege the tokens
 
 ## sendmail ##
 
-sends the various alert and esclation emails
+Sends the various alert and esclation emails
+
+# To Do #
+
+1. Create a databse for the contact information and methods for manageing contacts.
+2. Add TLS to the restServer.
+3. Use key management for the cerdentials for Google API and MQTT broker
