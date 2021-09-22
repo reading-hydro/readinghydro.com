@@ -5,7 +5,7 @@ import datetime
 import json
 
 
-def calendarread():
+def calendarread(api_key):
 # If modifying these scopes, delete the file token.json.
     SCOPE = 'https://www.googleapis.com/calendar/v3/calendars/'
     CALENDAR_ID = '6fue264k25k03v1ogsmkb2pk5g%40group.calendar.google.com'
@@ -16,7 +16,7 @@ def calendarread():
     'maxResults' : '5',
     'singleEvents' : 'true',
     'timeMin' : now,
-    'key' : 'AIzaSyCLH1gk8E83hDgVbEu6WuI1SfFVDp4T3K8'
+    'key' : api_key
     }
 
     # Encode the query string

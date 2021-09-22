@@ -48,6 +48,33 @@ def on_log(client, userdata, level, buf):
 
 
 
+# Use this code snippet in your app.
+# If you need more information about configurations or implementing the sample code, visit the AWS docs:  
+# https://aws.amazon.com/developers/getting-started/python/
+
+import boto3
+import base64
+from botocore.exceptions import ClientError
+
+
+def get_secret(MySecretString):
+
+    secret_name = "RdgHydroServerSecrets"
+    region_name = "eu-west-2"
+
+    # Create a Secrets Manager client
+    session = boto3.session.Session()
+    client = session.client(service_name='secretsmanager',region_name=region_name)
+
+    get_secret_value_response = client.get_secret_value(SecretId=secret_name)
+
+    all_secret = json.loads(get_secret_value_response['SecretString'])
+    secret = all_secret.get(MySecretString)
+    return secret
+
+
+
+
 mqtt_broker = 'readinghydro.org'
 mqtt_broker_port = 8883
 topic = "hydro-alert"
@@ -56,7 +83,7 @@ lastHour = -1
 
 client = mqtt.Client("purple")
 
-client.username_pw_set("mqttrota","R0t@vaTOR")
+client.username_pw_set("mqttrota",get_secret('MQTT_ROTA_PWD'))
 client.on_connect = on_connect
 client.on_message = on_message
 client.on_log = on_log
@@ -83,7 +110,7 @@ try:
     while True:
         if lastHour != datetime.datetime.now().hour:
             lastHour = datetime.datetime.now().hour
-            new_who_is_oncall = calendarread()
+            new_who_is_oncall = calendarread(get_secret('GOOGLE_API_KEY'))
             for role in ('primary', 'second'):
                 for person in new_who_is_oncall:
                     if person['role'] == role:
