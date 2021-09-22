@@ -72,9 +72,6 @@ def get_secret(MySecretString):
     secret = all_secret.get(MySecretString)
     return secret
 
-
-
-
 mqtt_broker = 'readinghydro.org'
 mqtt_broker_port = 8883
 topic = "hydro-alert"
@@ -89,6 +86,8 @@ client.on_message = on_message
 client.on_log = on_log
 client.tls_set("/etc/ssl/certs/ca-certificates.crt")
 who_is_oncall = {'primary' : '', 'second': ''}
+
+google_api_key = get_secret('GOOGLE_API_KEY')
 
 try:
     client.connect(mqtt_broker,mqtt_broker_port)
@@ -110,7 +109,7 @@ try:
     while True:
         if lastHour != datetime.datetime.now().hour:
             lastHour = datetime.datetime.now().hour
-            new_who_is_oncall = calendarread(get_secret('GOOGLE_API_KEY'))
+            new_who_is_oncall = calendarread(google_api_key)
             for role in ('primary', 'second'):
                 for person in new_who_is_oncall:
                     if person['role'] == role:
