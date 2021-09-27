@@ -77,7 +77,6 @@ def ackresp(environ, start_response):
         resp = _ack_resp_fail
     yield resp.encode('utf-8')
 
-
 _ack_list_head = '''\
 <html>
   <head>
@@ -85,9 +84,10 @@ _ack_list_head = '''\
    </head>
    <body>
      <h1>Acknowlegement alerts currently active</h1>
-     <table><tr><th>Token</th><th>Email address</th><th>Time Activated</th>,<th>status</th></tr>'''
+     <table><tr><th>Token</th><th>Email address</th><th>Expiary Time</th>,<th>Status</th><th>Message</th></tr>'''
 _ack_list_body = '''\
-    <tr><td><a href="http://readinghydro.org:8080/ackresp?token={token}">{token}</a></td><td>{email}</td><td>{time}</td><td>{status}</td></tr>
+    <tr><td><a href="http://readinghydro.org:8080/ackresp?token={token}">Token</a></td><td>{email}</td>
+    <td>{time}</td><td>{status}</td><td>{message}</td></tr>
     '''
 _ack_list_tail = '''\
     </table>
@@ -101,7 +101,8 @@ def alertlist(environ, start_response):
     for entry in tokenlist:
         status='live'
         if entry.get('ack'): status='Acknowleged'
-        resp = resp + _ack_list_body.format(token=entry.get('token'), email=entry.get('email'), time=entry.get('time'), status=status)
+        resp = resp + _ack_list_body.format(token=entry.get('token'), email=entry.get('email'), 
+                                            time=entry.get('time'), status=status, message=entry.get('message'))
     resp = resp + _ack_list_tail
     yield resp.encode('utf-8')
 

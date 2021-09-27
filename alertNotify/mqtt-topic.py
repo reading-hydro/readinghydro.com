@@ -24,14 +24,12 @@ contacts = {
 
 
 def on_message(client, userdata, message):
-    print("message received " ,str(message.payload.decode("utf-8")))
-    print("message topic=",message.topic)
     decodedMessage = json.loads(message.payload)
     email1 = contacts.get(who_is_oncall.get('primary')).get('email')
     email2 = contacts.get(who_is_oncall.get('second')).get('email')
     alertMessage = decodedMessage.get('MsgText')
     alertTime = decodedMessage.get('TimeString')
-    token = generate_token(email1,'At: {time} message: {message}'.format(time=alertTime, message=alertMessage))
+    token = generate_token(email1, 'At: {time} message: {message}'.format(time=alertTime, message=alertMessage), datetime.timedelta(seconds=5*60))
     sendMail_alert(email1,alertMessage,alertTime, token)
     sendMail_alert(email2,alertMessage,alertTime, token)
 
@@ -76,7 +74,7 @@ mqtt_broker = 'readinghydro.org'
 mqtt_broker_port = 8883
 topic = "hydro-alert"
 qos=0
-lastHour = -1
+last_hour = -1
 
 client = mqtt.Client("purple")
 
@@ -107,22 +105,22 @@ restThread.start()
 
 try:
     while True:
-        if lastHour != datetime.datetime.now().hour:
-            lastHour = datetime.datetime.now().hour
+        if last_hour != datetime.datetime.now().hour:
+            last_hour = datetime.datetime.now().hour
             new_who_is_oncall = calendarread(google_api_key)
             for role in ('primary', 'second'):
                 for person in new_who_is_oncall:
                     if person['role'] == role:
                         who_is_oncall.update({role: person.get('name')})
-                if lastHour == 9:
+                if last_hour == 9:
                     email = contacts.get(who_is_oncall.get(role)).get('email')
                     message='Sending oncall reminder to '+ who_is_oncall.get(role)+ ' at '+email+' for role '+role
-                    sendMail_shift(email, role, generate_token(email,message))
+                    sendMail_shift(email, role, generate_token(email, message, datetime.timedelta(seconds=15*60)))
 
 # look through the alert list for any expited alerts that have not been acknowleged.
         tokenlist = expired_token()
         for entry in tokenlist:
-            token = generate_token('alerts@readinghydro.org','Esculate: '+entry.get('message'))
+            token = generate_token('alerts@readinghydro.org','Esculate: '+entry.get('message'), datetime.timedelta(seconds=5*60))
             sendMail_esclate('alerts@readinghydro.org', 'Esculate: '+entry.get('message'), token)
 
         time.sleep(1)

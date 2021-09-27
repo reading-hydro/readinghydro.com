@@ -3,13 +3,15 @@
 # and are acknowleged with the check_token call. expired_token is called at regular intivals to indicate any 
 # tokens that have not been acknowleged, and these are removed.
 
-import hashlib, base64, datetime
+import hashlib
+import base64
+import datetime
 
 token_table = []
 
 
-def generate_token(emailAddr, message):
-    timekey = datetime.datetime.now()
+def generate_token(emailAddr: str, message: str, lifetime: datetime) -> str:
+    timekey = datetime.datetime.now() + lifetime
     hash = hashlib.sha256()
     hash.update(bytes(emailAddr,"ascii"))
     hash.update(bytes(timekey.isoformat(),"ascii"))
@@ -18,28 +20,25 @@ def generate_token(emailAddr, message):
     token_table.append({'token': token, 'email': emailAddr, 'time': timekey, 'ack': False, 'message': message})
     return token
 
-def check_token(token):
-    timekey = datetime.datetime.now()
+def check_token(token: str) -> bool:
     for entry in token_table:
         if entry.get('token') == token:
-            if (((timekey - entry.get('time')).seconds) < 5*60):
+            if entry.get('time') > datetime.datetime.now() :
                 entry.update({'ack': True})
                 return True
     return False        
 
-def active_token():
-    timekey = datetime.datetime.now()
+def active_token() -> list:
     tokens = []
     for entry in token_table:
-        if (((timekey - entry.get('time')).seconds) < 5*60):
+        if entry.get('time') > datetime.datetime.now() :
             tokens.append(entry)
     return tokens
 
-def expired_token():
-    timekey = datetime.datetime.now()
+def expired_token() -> list:
     tokens = []
     for entry in token_table:
-        if (((timekey - entry.get('time')).seconds) >= 5*60):
+        if entry.get('time') < datetime.datetime.now() :
             if entry.get('ack'):
                 token_table.remove(entry)
             else:
@@ -48,7 +47,7 @@ def expired_token():
     return tokens
 
 #import time
-#t = generate_token('stuart.ward.uk@gmail.com','message contents')
+#t = generate_token('stuart.ward.uk@gmail.com','message contents', datetime.timedelta(seconds=5*60))
 #print(token_table)
 #time.sleep(5)
 #print(active_token())

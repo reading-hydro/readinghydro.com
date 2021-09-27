@@ -17,7 +17,7 @@ You can see all the active alert messages here: http://readinghydro.org:8080/ale
 
     msg = text.format(to_addr=to_addr, alert=alert, time=time, token=token)
     
-    command = 'echo "{msg}" | /use/sbin/sendmail {to_addr}'.format(msg=msg, to_addr=to_addr)
+    command = 'echo "{msg}" | /usr/sbin/sendmail {to_addr}'.format(msg=msg, to_addr=to_addr)
     os.system(command)
     print(msg)
 
@@ -35,7 +35,7 @@ You can see all the active alert messages here: http://readinghydro.org:8080/ale
 
     msg = text.format(to_addr=to_addr, role=role, token=token)
     
-    command = 'echo "{msg}" | /use/sbin/sendmail {to_addr}'.format(msg=msg, to_addr=to_addr)
+    command = 'echo "{msg}" | /usr/sbin/sendmail {to_addr}'.format(msg=msg, to_addr=to_addr)
     os.system(command)
     print(msg)
 
@@ -53,7 +53,7 @@ Please confirm reciept of this notice <a href="http://readinghydro.org:8080/ackr
 
     msg = text.format(to_addr=to_addr, message=message, token=token)
     
-    command = 'echo "{msg}" | /use/sbin/sendmail {to_addr}'.format(msg=msg, to_addr=to_addr)
+    command = 'echo "{msg}" | /usr/sbin/sendmail {to_addr}'.format(msg=msg, to_addr=to_addr)
     os.system(command)
     print(msg)
 
