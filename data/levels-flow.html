@@ -350,7 +350,7 @@ function selectTimescale(mystart, myend) {
                 ys1.push(myupstream);
                 const mydownstream = item.downstream;
                 ys2.push(mydownstream);
-                const myflow = item.gen1_flow_ls + item.gen2_flow_ls;
+                const myflow = (item.gen1_flow_ls + item.gen2_flow_ls)/1000;
                 ys3.push(myflow);
             }
 
