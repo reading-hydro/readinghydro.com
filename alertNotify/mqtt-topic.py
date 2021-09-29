@@ -13,22 +13,21 @@ contacts = {
     'stuart':{'email': 'stuart.ward.uk@gmail.com', 'phone': '447782325143'},
     'austin':{'email': 'austindangerjacobs@gmail.com', 'phone': '447505306153'},
     'jo':{'email': 'jo.ramsay@gmail.com', 'phone': '447576276209'},
-    'rupert':{'email': 'info@rupes.net', 'phone': '447951305579'},
+    'rupert':{'email': 'rgw.smart@gmail.com', 'phone': '447951305579'},
     'tim':{'email': 'tim@milkreading.co.uk', 'phone': '447825303659'},
     'sophie':{'email':'sophie@fenwickpaul.com', 'phone': '447773767454'},
     'daniel':{'email': 'daniel.cameron@sky.com', 'phone': '447973656382'},
-    'will':{'email': 'will.roogus@gmail.com', 'phone': ''},
     'anita':{'email': 'anitapurser@hotmail.com', 'phone': '447914815343'},
     'neil':{'email': 'neilmaxbonner@hotmail.com', 'phone': '447767463321'}
     }
 
 
 def on_message(client, userdata, message):
-    decodedMessage = json.loads(message.payload)
+    decoded_message = json.loads(message.payload)
     email1 = contacts.get(who_is_oncall.get('primary')).get('email')
     email2 = contacts.get(who_is_oncall.get('second')).get('email')
-    alertMessage = decodedMessage.get('MsgText')
-    alertTime = decodedMessage.get('TimeString')
+    alertMessage = decoded_message.get('MsgText')
+    alertTime = decoded_message.get('TimeString')
     token = generate_token(email1, 'At: {time} message: {message}'.format(time=alertTime, message=alertMessage), datetime.timedelta(seconds=5*60))
     sendMail_alert(email1,alertMessage,alertTime, token)
     sendMail_alert(email2,alertMessage,alertTime, token)
@@ -88,8 +87,8 @@ who_is_oncall = {'primary' : '', 'second': ''}
 google_api_key = get_secret('GOOGLE_API_KEY')
 
 try:
-    client.connect(mqtt_broker,mqtt_broker_port)
-    print("connecting to broker",mqtt_broker)
+    client.connect(mqtt_broker, mqtt_broker_port)
+    print("connecting to broker", mqtt_broker)
     client.loop_start()
 
 except:
