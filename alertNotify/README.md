@@ -56,4 +56,4 @@ Sends the various alert and esclation emails
 
 1. Create a databse for the contact information and methods for manageing contacts.
 2. Add TLS to the restServer.
-3. Use key management for the cerdentials for Google API and MQTT broker
+
