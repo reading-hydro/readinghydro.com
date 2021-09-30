@@ -134,7 +134,6 @@ try:
         latest_request = request.urlopen('https://readinghydro.org:9445/api/plc/current')
         latest_data = json.loads(latest_request.read())
         latest_data_time = datetime.datetime.strptime(latest_data.get('received_at'), '%Y-%m-%dT%H:%M:%S.%fZ')
-        print('That is {minutes:.2} Minutes ago'.format(minutes=(now_utc-latest_data_time).seconds/60), next_data_report_time)
         if latest_data_time < now_utc - datetime.timedelta(seconds=20*60):
             if now > next_data_report_time:
                 next_data_report_time = now + datetime.timedelta(seconds=15*60)
@@ -145,8 +144,6 @@ try:
                 token = generate_token(email1, 'At: {time} message: {message}'.format(time=now_string, message=alertMessage), datetime.timedelta(seconds=5*60))
                 sendMail_alert(email1,alertMessage,now_string, token)
                 sendMail_alert(email2,alertMessage,now_string, token)
-
-
 
         time.sleep(30)
         pass
