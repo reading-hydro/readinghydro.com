@@ -223,9 +223,9 @@ var global_data = await getData();
         label1.className = "lab"
         label2.className = "lab"
 
-        title.innerHTML = "Energy/power output"
+        title.innerHTML = "Energy/power output for both turbines"
         //subtitle1.innerHTML = `Current conditions: <span id="ts">${luxon.DateTime.fromISO(global_data[0].received_at).toFormat('ff')} </span>`
-        subtitle2.innerHTML = "<span>Power generation over selected period</span>"
+        subtitle2.innerHTML = "<span>Power being generated over selected period</span>"
         button1.innerHTML = "Last day"
         button1.onclick = function(){picker1.setDate(yesterday, true); picker2.setDate(today, true); selectTimescale(yesterday, today)}
         button2.innerHTML = "Last week"
@@ -412,7 +412,7 @@ function selectTimescale(mystart, myend) {
                                         }]
                                 },
                         title: {
-                            text: "Power generation (kW)",
+                            text: "Power (kW)",
                                 },
                         legend: {
                             display: false,
