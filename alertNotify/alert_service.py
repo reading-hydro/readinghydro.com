@@ -2,7 +2,7 @@
 import json
 import cgi
 import paho.mqtt.client as mqtt
-import time, datetime
+import time, datetime, pytz
 import threading
 from tokenHandeler import generate_token, expired_token, check_dup, active_token, check_token
 from sendmail import sendMail_alert, sendMail_shift, sendMail_esclate
@@ -265,8 +265,9 @@ restThread.start()
 
 try:
     while True:
+        tz_london = pytz.timezone('Europe/London')
         now_utc = datetime.datetime.utcnow()
-        now = datetime.datetime.now()
+        now = datetime.datetime.now(tz_london)
         now_utc_string = now.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
         now_string = now.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
         if last_hour != now.hour:
@@ -294,8 +295,8 @@ try:
                 dup_count = entry.get('count')
                 alertMessage = 'Repeated: {count} message: {message}'.format(count=dup_count, message=entry.get('message'))
                 token = generate_token(email1, alertMessage, datetime.timedelta(seconds=5*60))
-                sendMail_alert(email1,alertMessage,alertTime, token)
-                sendMail_alert(email2,alertMessage,alertTime, token)
+                sendMail_alert(email1,alertMessage,now_utc_string, token)
+                sendMail_alert(email2,alertMessage,now_utc_string, token)
 
 
 
