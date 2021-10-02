@@ -291,8 +291,7 @@ try:
 # look through the alert list for any expited alerts that have not been acknowleged.
         tokenlist = expired_token()
         for entry in tokenlist:
-            token = generate_token('alerts@readinghydro.org','Esculate: '+entry.get('message'), datetime.timedelta(seconds=5*60))
-            sendMail_esclate('alerts@readinghydro.org', 'Esculate: '+entry.get('message'), token)
+            sendMail_esclate('alerts@readinghydro.org', 'Esculate: '+entry.get('message'))
 
 # check the data feeds to see if we have current data, if not raise an alert
         latest_request = request.urlopen('https://readinghydro.org:9445/api/plc/current')

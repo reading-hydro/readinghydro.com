@@ -37,7 +37,7 @@ You can see all the active alert messages here: http://readinghydro.org:8080/ale
     command = 'echo "{msg}" | /usr/sbin/sendmail {to_addr}'.format(msg=msg, to_addr=to_addr)
     os.system(command)
 
-def sendMail_esclate(to_addr, message, token):
+def sendMail_esclate(to_addr, message):
  
     text = '''\
 From: turbine.house@readinghydro.org
@@ -46,10 +46,9 @@ Subject: Hydro ALERT ESCALATION
 Hello this is an automated message from the Reading Hydro turbine room:
 {message}
 The alert has not been acknowleged
-Please confirm reciept of this notice http://readinghydro.org:8080/ackresp?token={token}
 '''
 
-    msg = text.format(to_addr=to_addr, message=message, token=token)
+    msg = text.format(to_addr=to_addr, message=message)
     
     command = 'echo "{msg}" | /usr/sbin/sendmail {to_addr}'.format(msg=msg, to_addr=to_addr)
     os.system(command)
@@ -60,4 +59,4 @@ if __name__ == '__main__':
 
     sendMail_alert('stuart.ward.uk@gmail.com','test alert', datetime.datetime.now(), 'ABCD1234')
     sendMail_shift('stuart.ward.uk@gmail.com', 'primary', 'EFGH1234')
-    sendMail_esclate('stuart.ward.uk@gmail.com', 'Orignal message is here', 'JKLM1234')
+    sendMail_esclate('stuart.ward.uk@gmail.com', 'Orignal message is here')
