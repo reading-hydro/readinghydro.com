@@ -71,6 +71,7 @@ def on_message(client, userdata, message):
         token = generate_token(email1, 'At: {time} message: {message}'.format(time=alertTime, message=alertMessage), datetime.timedelta(seconds=5*60))
         sendMail_alert(email1,alertMessage,alertTime, token)
         sendMail_alert(email2,alertMessage,alertTime, token)
+    return
 
 def on_connect(client, userdata, flags, rc):
     if rc==0:
@@ -79,9 +80,11 @@ def on_connect(client, userdata, flags, rc):
 
     else:
         print("Connection fail")
+    return
 
 def on_log(client, userdata, level, buf):
-    print("log: ",buf)
+#   print("log: ",buf)
+    return
 
 # we are useing AWS Secrets Manager to hold API keys, and mqtt account password This retrieves a secret
 
@@ -224,6 +227,7 @@ def restServer():
     # Launch a basic server
     httpd = make_server('', 8080, dispatcher)
     httpd.serve_forever()
+    return
    
 # This section starts the mqtt subscribe thread
 
