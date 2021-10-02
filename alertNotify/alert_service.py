@@ -67,9 +67,10 @@ def on_message(client, userdata, message):
     email2 = contacts.get(who_is_oncall.get('second')).get('email')
     alertMessage = decoded_message.get('MsgText')
     alertTime = decoded_message.get('TimeString')
-    token = generate_token(email1, 'At: {time} message: {message}'.format(time=alertTime, message=alertMessage), datetime.timedelta(seconds=5*60))
-    sendMail_alert(email1,alertMessage,alertTime, token)
-    sendMail_alert(email2,alertMessage,alertTime, token)
+    if not(check_dup(alertMessage)):
+        token = generate_token(email1, 'At: {time} message: {message}'.format(time=alertTime, message=alertMessage), datetime.timedelta(seconds=5*60))
+        sendMail_alert(email1,alertMessage,alertTime, token)
+        sendMail_alert(email2,alertMessage,alertTime, token)
 
 def on_connect(client, userdata, flags, rc):
     if rc==0:
@@ -82,23 +83,15 @@ def on_connect(client, userdata, flags, rc):
 def on_log(client, userdata, level, buf):
     print("log: ",buf)
 
-
-
-# Use this code snippet in your app.
-# If you need more information about configurations or implementing the sample code, visit the AWS docs:  
-# https://aws.amazon.com/developers/getting-started/python/
+# we are useing AWS Secrets Manager to hold API keys, and mqtt account password This retrieves a secret
 
 import boto3
-import base64
-from botocore.exceptions import ClientError
-
 
 def get_secret(MySecretString):
 
     secret_name = "RdgHydroServerSecrets"
     region_name = "eu-west-2"
 
-    # Create a Secrets Manager client
     session = boto3.session.Session()
     client = session.client(service_name='secretsmanager',region_name=region_name)
 
@@ -263,7 +256,7 @@ except:
     print("connection failed")
 
 # Start the restServer in another thread
-print('Starting the REST Server')
+
 restThread = threading.Thread(target=restServer, daemon=True)
 restThread.start()
 
@@ -289,9 +282,22 @@ try:
                     sendMail_shift(email, role, generate_token(email, message, datetime.timedelta(seconds=15*60)))
 
 # look through the alert list for any expited alerts that have not been acknowleged.
+# or entries that record repeated events even if acknowleged
+
         tokenlist = expired_token()
         for entry in tokenlist:
-            sendMail_esclate('alerts@readinghydro.org', 'Esculate: '+entry.get('message'))
+            if entry.get('count') == 0:
+                sendMail_esclate('alerts@readinghydro.org', 'Esculate: '+entry.get('message'))
+            else:
+                email1 = contacts.get(who_is_oncall.get('primary')).get('email')
+                email2 = contacts.get(who_is_oncall.get('second')).get('email')
+                dup_count = entry.get('count')
+                alertMessage = 'Repeated: {count} message: {message}'.format(count=dup_count, message=entry.get('message'))
+                token = generate_token(email1, alertMessage, datetime.timedelta(seconds=5*60))
+                sendMail_alert(email1,alertMessage,alertTime, token)
+                sendMail_alert(email2,alertMessage,alertTime, token)
+
+
 
 # check the data feeds to see if we have current data, if not raise an alert
         latest_request = request.urlopen('https://readinghydro.org:9445/api/plc/current')

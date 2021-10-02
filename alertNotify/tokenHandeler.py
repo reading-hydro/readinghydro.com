@@ -50,6 +50,7 @@ def expired_token() -> list:
     for entry in token_table:
         if entry.get('time') < datetime.datetime.now() :
             if entry.get('ack'):
+                if entry.get('count') >0: tokens.append(entry)
                 token_table.remove(entry)
             else:
                 tokens.append(entry)
