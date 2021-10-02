@@ -84,7 +84,7 @@ _ack_list_head = '''\
    </head>
    <body>
      <h1>Acknowlegement alerts currently active</h1>
-     <table><tr><th>Token</th><th>Email address</th><th>Expiary Time</th>,<th>Status</th><th>Message</th></tr>'''
+     <table><tr><th>Token</th><th>Email address</th><th>Expiary Time</th><th>Status</th><th>Message</th></tr>'''
 _ack_list_body = '''\
     <tr><td><a href="http://readinghydro.org:8080/ackresp?token={token}">Token</a></td><td>{email}</td>
     <td>{time}</td><td>{status}</td><td>{message}</td></tr>
@@ -112,7 +112,7 @@ def restServer():
 
     # Create the dispatcher and register functions
     dispatcher = PathDispatcher()
-    dispatcher.register('GET', '/whoisoncall', whoisoncall)
+#   dispatcher.register('GET', '/whoisoncall', whoisoncall)
     dispatcher.register('GET', '/ackresp', ackresp)
     dispatcher.register('GET', '/alertlist', alertlist)
 

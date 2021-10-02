@@ -11,7 +11,7 @@ Subject: Hydro ALERT: {alert}
 Hello this is an automated alert from the Reading Hydro turbine room:
 Alert received at: {time}
 Alert Message: {alert}
-Please confirm reciept of this alert <a href="http://readinghydro.org:8080/ackresp?token={token}">by clicking here</a>.
+Please confirm reciept of this alert http://readinghydro.org:8080/ackresp?token={token}
 You can see all the active alert messages here: http://readinghydro.org:8080/alertlist
 '''
 
@@ -19,7 +19,6 @@ You can see all the active alert messages here: http://readinghydro.org:8080/ale
     
     command = 'echo "{msg}" | /usr/sbin/sendmail {to_addr}'.format(msg=msg, to_addr=to_addr)
     os.system(command)
-    print(msg)
 
 def sendMail_shift(to_addr, role, token):
  
@@ -29,7 +28,7 @@ To: {to_addr}
 Subject: Hydro On-Call Shift 
 Hello this is an automated message from the Reading Hydro turbine room:
 You are sheduled as {role} On-Call for today
-Please confirm reciept of this notice <a href="http://readinghydro.org:8080/ackresp?token={token}">by clicking here</a>.
+Please confirm reciept of this notice http://readinghydro.org:8080/ackresp?token={token}
 You can see all the active alert messages here: http://readinghydro.org:8080/alertlist
 '''
 
@@ -37,7 +36,6 @@ You can see all the active alert messages here: http://readinghydro.org:8080/ale
     
     command = 'echo "{msg}" | /usr/sbin/sendmail {to_addr}'.format(msg=msg, to_addr=to_addr)
     os.system(command)
-    print(msg)
 
 def sendMail_esclate(to_addr, message, token):
  
@@ -48,18 +46,18 @@ Subject: Hydro ALERT ESCALATION
 Hello this is an automated message from the Reading Hydro turbine room:
 {message}
 The alert has not been acknowleged
-Please confirm reciept of this notice <a href="http://readinghydro.org:8080/ackresp?token={token}">by clicking here</a>.
+Please confirm reciept of this notice http://readinghydro.org:8080/ackresp?token={token}
 '''
 
     msg = text.format(to_addr=to_addr, message=message, token=token)
     
     command = 'echo "{msg}" | /usr/sbin/sendmail {to_addr}'.format(msg=msg, to_addr=to_addr)
     os.system(command)
-    print(msg)
 
+if __name__ == '__main__':
 # Example:
-#import datetime
+    import datetime
 
-#sendMail_alert('stuart.ward.uk@gmail.com','test alert', datetime.datetime.now(), 'ABCD1234')
-#sendMail_shift('stuart.ward.uk@gmail.com', 'primary', 'EFGH1234')
-#sendMail_esclate('stuart.ward.uk@gmail.com', 'Orignal message is here', 'JKLM1234')
+    sendMail_alert('stuart.ward.uk@gmail.com','test alert', datetime.datetime.now(), 'ABCD1234')
+    sendMail_shift('stuart.ward.uk@gmail.com', 'primary', 'EFGH1234')
+    sendMail_esclate('stuart.ward.uk@gmail.com', 'Orignal message is here', 'JKLM1234')
