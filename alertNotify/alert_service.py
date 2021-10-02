@@ -68,7 +68,8 @@ def on_message(client, userdata, message):
     alertMessage = decoded_message.get('MsgText')
     alertTime = decoded_message.get('TimeString')
     if not(check_dup(alertMessage)):
-        token = generate_token(email1, 'At: {time} message: {message}'.format(time=alertTime, message=alertMessage), datetime.timedelta(seconds=5*60))
+        token = generate_token(email1, 'At: {time} message: {message}'.format(time=alertTime, 
+                                message=alertMessage), datetime.timedelta(seconds=15*60))
         sendMail_alert(email1,alertMessage,alertTime, token)
         sendMail_alert(email2,alertMessage,alertTime, token)
     return
@@ -297,7 +298,7 @@ try:
                 email2 = contacts.get(who_is_oncall.get('second')).get('email')
                 dup_count = entry.get('count')
                 alertMessage = 'Repeated: {count} message: {message}'.format(count=dup_count, message=entry.get('message'))
-                token = generate_token(email1, alertMessage, datetime.timedelta(seconds=5*60))
+                token = generate_token(email1, alertMessage, datetime.timedelta(seconds=15*60))
                 sendMail_alert(email1,alertMessage,now_utc_string, token)
                 sendMail_alert(email2,alertMessage,now_utc_string, token)
 
@@ -314,7 +315,7 @@ try:
                 email2 = contacts.get(who_is_oncall.get('second')).get('email')
                 alertMessage = 'No data recieved since '+latest_data_time.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
                 alertMessage += ' That is {minutes:.2} Minutes ago'.format(minutes=(now_utc-latest_data_time).seconds/60)
-                token = generate_token(email1, 'At: {time} message: {message}'.format(time=now_string, message=alertMessage), datetime.timedelta(seconds=5*60))
+                token = generate_token(email1, 'At: {time} message: {message}'.format(time=now_string, message=alertMessage), datetime.timedelta(seconds=15*60))
                 sendMail_alert(email1,alertMessage,now_string, token)
                 sendMail_alert(email2,alertMessage,now_string, token)
 
