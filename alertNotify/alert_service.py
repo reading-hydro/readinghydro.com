@@ -223,7 +223,6 @@ def restServer():
 
     # Launch a basic server
     httpd = make_server('', 8080, dispatcher)
-    print('Serving on port 8080...')
     httpd.serve_forever()
    
 # This section starts the mqtt subscribe thread
@@ -314,6 +313,11 @@ try:
                 token = generate_token(email1, 'At: {time} message: {message}'.format(time=now_string, message=alertMessage), datetime.timedelta(seconds=5*60))
                 sendMail_alert(email1,alertMessage,now_string, token)
                 sendMail_alert(email2,alertMessage,now_string, token)
+
+# check the REST server is running, restart it if not
+        if not(restThread.is_alive()):
+            print('Restarting rest Server')
+            restThread.start()
 
         time.sleep(30)
         pass
