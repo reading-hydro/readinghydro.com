@@ -177,11 +177,13 @@ def ackresp(environ, start_response):
         resp = _ack_resp_ok
     else:
         resp = _ack_resp_fail
+    tokenlist = active_token()
     for entry in tokenlist:
-        status='live'
+        status='Live'
         if entry.get('ack'): status='Acknowleged'
         resp = resp + _ack_list_body.format(token=entry.get('token'), email=entry.get('email'), 
-                                            time=entry.get('time'), status=status, count=entry.get('count'), message=entry.get('message'))
+                                            time=entry.get('time'), status=status, 
+                                            count=entry.get('count'), message=entry.get('message'))
     resp = resp + _ack_list_tail
     yield resp.encode('utf-8')
 
@@ -208,10 +210,11 @@ def alertlist(environ, start_response):
     tokenlist = active_token()
     resp = _ack_list_head
     for entry in tokenlist:
-        status='live'
+        status='Live'
         if entry.get('ack'): status='Acknowleged'
         resp = resp + _ack_list_body.format(token=entry.get('token'), email=entry.get('email'), 
-                                            time=entry.get('time'), status=status, count=entry.get('count'), message=entry.get('message'))
+                                            time=entry.get('time'), status=status, 
+                                            count=entry.get('count'), message=entry.get('message'))
     resp = resp + _ack_list_tail
     yield resp.encode('utf-8')
 
