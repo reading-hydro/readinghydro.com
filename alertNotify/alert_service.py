@@ -155,7 +155,7 @@ _ack_resp_ok = '''\
    <body>
      <h1>Acknowlegement of alert Sucessful</h1>
      <h1>Acknowlegement alerts currently active</h1>
-     <table><tr><th>Token</th><th>Email address</th><th>Expiary Time</th>,<th>Status</th><th>Message</th></tr>'''
+     <table><tr><th>Token</th><th>Email address</th><th>Expiary Time</th><th>Status</th><th>Message</th></tr>'''
 
 _ack_resp_fail = '''\
 <html>
@@ -165,7 +165,7 @@ _ack_resp_fail = '''\
    <body>
      <h1>Acknowlegement of alert Failed</h1>
      <h1>Acknowlegement alerts currently active</h1>
-     <table><tr><th>Token</th><th>Email address</th><th>Expiary Time</th>,<th>Status</th><th>Message</th></tr>'''
+     <table><tr><th>Token</th><th>Email address</th><th>Expiary Time</th><th>Status</th><th>Message</th></tr>'''
 
 def ackresp(environ, start_response):
     start_response('200 OK', [ ('Content-type', 'text/html')])
@@ -190,7 +190,7 @@ _ack_list_head = '''\
    </head>
    <body>
      <h1>Acknowlegement alerts currently active</h1>
-     <table><tr><th>Token</th><th>Email address</th><th>Expiary Time</th>,<th>Status</th><th>Message</th></tr>'''
+     <table><tr><th>Token</th><th>Email address</th><th>Expiary Time</th><th>Status</th><th>Message</th></tr>'''
 _ack_list_body = '''\
     <tr><td><a href="http://readinghydro.org:8080/ackresp?token={token}">Token</a></td><td>{email}</td>
     <td>{time}</td><td>{status}</td><td>{message}</td></tr>
