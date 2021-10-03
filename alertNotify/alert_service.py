@@ -1,4 +1,5 @@
 #! /usr/bin/python3
+import sys
 import json
 import cgi
 import paho.mqtt.client as mqtt
@@ -48,13 +49,13 @@ def calendar_read(api_key):
     oncall = []
 
     if not len(events['items']):
-        print('No upcoming events found.')
+        print('No upcoming events found.', file=sys.stderr)
     else :
         for event in events['items']:
             start = event['start'].get('dateTime', event['start'].get('date'))
             end = event['end'].get('dateTime' , event['end'].get('date'))
             if (start < now < end):
-                print('oncall active',event['summary'])
+                print('oncall active',event['summary'], file=sys.stderr)
                 entry = event['summary'].lower().split()
                 oncall.append({'name': entry[0], 'role': entry[1], 'time': now})
     return oncall
@@ -84,7 +85,7 @@ def on_connect(client, userdata, flags, rc):
     return
 
 def on_log(client, userdata, level, buf):
-#   print("log: ",buf)
+#   print("log: ",buf, file=sys.stderr)
     return
 
 # we are useing AWS Secrets Manager to hold API keys, and mqtt account password This retrieves a secret
@@ -140,7 +141,7 @@ _oncall_resp = '''\
 
 def whoisoncall(environ, start_response):
     start_response('200 OK', [ ('Content-type','text/html')])
-    print(who_is_oncall)
+    print(who_is_oncall, file=sys.stderr)
     resp = _oncall_resp.format(name1=who_is_oncall.get('primary'), name2=who_is_oncall.get('second'))
     yield resp.encode('utf-8')
 
@@ -253,11 +254,11 @@ google_api_key = get_secret('GOOGLE_API_KEY')
 
 try:
     client.connect(mqtt_broker, mqtt_broker_port)
-    print("connecting to broker", mqtt_broker)
+    print("connecting to mqtt broker", mqtt_broker, file=sys.stderr)
     client.loop_start()
 
 except:
-    print("connection failed")
+    print("mqtt broker connection failed", file=sys.stderr)
 
 # Start the restServer in another thread
 
@@ -321,14 +322,14 @@ try:
 
 # check the REST server is running, restart it if not
         if not(restThread.is_alive()):
-            print('Restarting rest Server')
+            print('Restarting rest Server', file=sys.stderr)
             restThread.start()
 
         time.sleep(30)
         pass
 
 except KeyboardInterrupt:
-    print("interrrupted by keyboard")
+    print("interrrupted by keyboard", file=sys.stderr)
 
 client.loop_stop() #stop loop
 time.sleep(5)
