@@ -23,6 +23,16 @@ contacts = {
     'neil':{'email': 'neilmaxbonner@hotmail.com', 'phone': '447767463321'}
     }
 
+# table to keep a list of recent alert messages
+
+alert_log_list = []
+
+def log_alert_message(time: str, message: str) -> None:
+    alert_log_list.append({'time': time, 'message': message})
+    while len(alert_log_list) > 60:
+        alert_log_list.remove(alert_log_list[0])
+    return
+
 # Read the google calendar to see who is on call
 
 def calendar_read(api_key):
@@ -73,6 +83,7 @@ def on_message(client, userdata, message):
                                 message=alertMessage), datetime.timedelta(seconds=15*60))
         sendMail_alert(email1,alertMessage,alertTime, token)
         sendMail_alert(email2,alertMessage,alertTime, token)
+        log_alert_message(alertTime, alertMessage)
     return
 
 def on_connect(client, userdata, flags, rc):
@@ -166,6 +177,14 @@ _ack_resp_fail = '''\
      <h1>Acknowlegement alerts currently active</h1>
      <table><tr><th>Token</th><th>Email address</th><th>Expiary Time</th><th>Status</th><th>Count</th><th>Message</th></tr>
      '''
+_ack_list_body = '''\
+    <tr><td><a href="http://readinghydro.org:8080/ackresp?token={token}">Token</a></td><td>{email}</td>
+    <td>{time}</td><td>{status}</td><td>{count}</td><td>{message}</td></tr>
+    '''
+_ack_list_tail = '''\
+    </table>
+   </body>
+</html>'''
 
 def ackresp(environ, start_response):
     start_response('200 OK', [ ('Content-type', 'text/html')])
@@ -185,20 +204,19 @@ def ackresp(environ, start_response):
     resp = resp + _ack_list_tail
     yield resp.encode('utf-8')
 
-_ack_list_head = '''\
+_alert_list_head = '''\
 <html>
   <head>
      <title>Reading Hydro On-Call</title>
    </head>
    <body>
-     <h1>Acknowlegement alerts currently active</h1>
-     <table><tr><th>Token</th><th>Email address</th><th>Expiary Time</th><th>Status</th><th>Count</th><th>Message</th></tr>
+     <h1>Alert history</h1>
+     <table><tr><th>Time</th><th>Message</th></tr>
      '''
-_ack_list_body = '''\
-    <tr><td><a href="http://readinghydro.org:8080/ackresp?token={token}">Token</a></td><td>{email}</td>
-    <td>{time}</td><td>{status}</td><td>{count}</td><td>{message}</td></tr>
+_alert_list_body = '''\
+    <tr><td>{time}</td><td>{message}</td></tr>
     '''
-_ack_list_tail = '''\
+_alert_list_tail = '''\
     </table>
    </body>
 </html>'''
@@ -206,14 +224,10 @@ _ack_list_tail = '''\
 def alertlist(environ, start_response):
     start_response('200 OK', [ ('Content-type', 'text/html')])
     tokenlist = active_token()
-    resp = _ack_list_head
-    for entry in tokenlist:
-        status='Live'
-        if entry.get('ack'): status='Acknowleged'
-        resp = resp + _ack_list_body.format(token=entry.get('token'), email=entry.get('email'), 
-                                            time=entry.get('time'), status=status, 
-                                            count=entry.get('count'), message=entry.get('message'))
-    resp = resp + _ack_list_tail
+    resp = _alert_list_head
+    for entry in alert_log_list:
+        resp = resp + _alert_list_body.format(time=entry.get('time'), message=entry.get('message'))
+    resp = resp + _alert_list_tail
     yield resp.encode('utf-8')
 
 
@@ -230,7 +244,14 @@ def restServer():
     httpd = make_server('', 8080, dispatcher)
     httpd.serve_forever()
     return
-   
+
+# System startup
+
+tz_london = pytz.timezone('Europe/London')
+now = datetime.datetime.now(tz_london)
+now_string = now.strftime('%Y-%m-%dT%H:%M:%S')
+log_alert_message(now_string, 'Alert Service startup')
+
 # This section starts the mqtt subscribe thread
 
 mqtt_broker = 'readinghydro.org'
@@ -248,7 +269,10 @@ client.on_log = on_log
 client.tls_set("/etc/ssl/certs/ca-certificates.crt")
 who_is_oncall = {'primary' : '', 'second': ''}
 
-next_data_report_time = datetime.datetime.now()
+got_api_data = True
+latest_data_time = datetime.datetime.utcnow()
+latest_data = latest_data_time.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+next_data_report_time = datetime.datetime.utcnow()
 
 google_api_key = get_secret('GOOGLE_API_KEY')
 
@@ -270,11 +294,10 @@ restThread.start()
 
 try:
     while True:
-        tz_london = pytz.timezone('Europe/London')
         now_utc = datetime.datetime.utcnow()
         now = datetime.datetime.now(tz_london)
-        now_utc_string = now.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
-        now_string = now.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+        now_utc_string = now.strftime('%Y-%m-%dT%H:%M:%SZ')
+        now_string = now.strftime('%Y-%m-%dT%H:%M:%S')
         if last_hour != now.hour:
             last_hour = now.hour
             new_who_is_oncall = calendar_read(google_api_key)
@@ -286,6 +309,7 @@ try:
                     email = contacts.get(who_is_oncall.get(role)).get('email')
                     message='Sending oncall reminder to '+ who_is_oncall.get(role)+ ' at '+email+' for role '+role
                     sendMail_shift(email, role, generate_token(email, message, datetime.timedelta(seconds=15*60)))
+                    log_alert_message(now_string, message)
 
 # look through the alert list for any expited alerts that have not been acknowleged.
 # or entries that record repeated events even if acknowleged
@@ -302,16 +326,24 @@ try:
                 token = generate_token(email1, alertMessage, datetime.timedelta(seconds=15*60))
                 sendMail_alert(email1,alertMessage,now_utc_string, token)
                 sendMail_alert(email2,alertMessage,now_utc_string, token)
-
-
+                log_alert_message(now_string, alertMessage)
 
 # check the data feeds to see if we have current data, if not raise an alert
-        latest_request = request.urlopen('https://readinghydro.org:9445/api/plc/current')
-        latest_data = json.loads(latest_request.read())
-        latest_data_time = datetime.datetime.strptime(latest_data.get('received_at'), '%Y-%m-%dT%H:%M:%S.%fZ')
+
+        try:
+            latest_request = request.urlopen('https://readinghydro.org:9445/api/plc/current')
+        except:
+            if got_api_data:
+                log_alert_message(now_string, 'Failed to get API data, Latest data at: '+latest_data)
+                got_api_data = False
+        else:
+            got_api_data = True
+            latest_data = json.loads(latest_request.read())
+            latest_data_time = datetime.datetime.strptime(latest_data.get('received_at'), '%Y-%m-%dT%H:%M:%S.%fZ')
+
         if latest_data_time < now_utc - datetime.timedelta(seconds=20*60):
-            if now > next_data_report_time:
-                next_data_report_time = now + datetime.timedelta(seconds=15*60)
+            if now_utc > next_data_report_time:
+                next_data_report_time = now_utc + datetime.timedelta(seconds=15*60)
                 email1 = contacts.get(who_is_oncall.get('primary')).get('email')
                 email2 = contacts.get(who_is_oncall.get('second')).get('email')
                 alertMessage = 'No data recieved since '+latest_data_time.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
@@ -319,17 +351,20 @@ try:
                 token = generate_token(email1, 'At: {time} message: {message}'.format(time=now_string, message=alertMessage), datetime.timedelta(seconds=15*60))
                 sendMail_alert(email1,alertMessage,now_string, token)
                 sendMail_alert(email2,alertMessage,now_string, token)
+                log_alert_message(now_string, alertMessage)
 
 # check the REST server is running, restart it if not
         if not(restThread.is_alive()):
             print('Restarting rest Server', file=sys.stderr)
             restThread.start()
 
-        time.sleep(30)
+        time.sleep(10)
         pass
 
 except KeyboardInterrupt:
     print("interrrupted by keyboard", file=sys.stderr)
+
+log_alert_message(now_string, 'Alert Service shutdown')
 
 client.loop_stop() #stop loop
 time.sleep(5)
