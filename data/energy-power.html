@@ -316,15 +316,18 @@ function selectTimescale(mystart, myend) {
                 selection = reduced
                 }
 
-            const xs = []
-            const ys = []
+                const xs = []
+            const ys_tony = []
+            const ys_sophie = []
             for(item of selection) {                
                 //convert the timestamp to milliseconds (faster)                
                 const mydate1 = new Date(item.received_at)
                 const mydate = mydate1.getTime()
                 xs.push(mydate);
-                const mypower = (item.gen1_power_kw + item.gen2_power_kw).toFixed(2);
-                ys.push(mypower);
+                const mypower1 = item.gen1_power_kw.toFixed(2);
+                ys_tony.push(mypower1);
+                const mypower2 = item.gen2_power_kw.toFixed(2);
+                ys_sophie.push(mypower2)
             }
 
             // Add active class to the current button on click
@@ -370,14 +373,23 @@ function selectTimescale(mystart, myend) {
                 data: {
                     labels: xs,
                     datasets: [
-                        {
-                        
-                        data: ys,
+                        {           
+                        label: 'Tony (turbine 1)  ',             
+                        data: ys_tony,
+                        fill: true,
+                        backgroundColor: 'rgba(143, 118, 242, 1)',
+                        borderColor: 'rgba(143, 118, 242, 1)',
+                        borderWidth: 1,
+                        radius: 0,
+                        },
+                        {           
+                        label: 'Sophie (turbine 2)',             
+                        data: ys_sophie,
                         fill: true,
                         backgroundColor: 'rgba(230, 48, 86, 0.8)',
                         borderColor: 'rgba(230, 48, 86, 0.9)',
                         borderWidth: 1,
-                        radius: 0
+                        radius: 0,
                         },                        
                     ]
                     },
@@ -402,6 +414,7 @@ function selectTimescale(mystart, myend) {
 
                                 ],
                                 yAxes: [{
+                                    stacked: true,
                                     ticks: {
                                         fontSize: 15,
                                         fontStyle: "bold",
@@ -415,7 +428,7 @@ function selectTimescale(mystart, myend) {
                             text: "Power (kW)",
                                 },
                         legend: {
-                            display: false,
+                            display: true,
                                 }
                             } 
             });                
