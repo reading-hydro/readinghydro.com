@@ -41,10 +41,12 @@ def calendar_read(api_key):
 
 # Dictionary of query parameters (if any)
     now = datetime.datetime.utcnow().isoformat() + 'Z'
+    now_end = (datetime.datetime.utcnow() + datetime.timedelta(days=1)).isoformat() + 'Z'
     parms = {
-    'maxResults' : '20',
+    'maxResults' : '10',
     'singleEvents' : 'true',
     'timeMin' : now,
+    'timeMax' : now_end,
     'key' : api_key
     }
 
@@ -64,12 +66,11 @@ def calendar_read(api_key):
         for event in events['items']:
             start = event['start'].get('dateTime', event['start'].get('date'))
             end = event['end'].get('dateTime' , event['end'].get('date'))
-            print(start, end, event['summary'])
             if (start < now < end):
-                print('oncall active',event['summary'], file=sys.stderr)
                 entry = event['summary'].lower().split()
                 if entry[0] in contacts:
                     oncall.append({'name': entry[0], 'role': entry[1], 'time': now})
+                    print('oncall active',event['summary'], file=sys.stderr)
     return oncall
 
 
@@ -81,8 +82,7 @@ def on_message(client, userdata, message):
     alertMessage = decoded_message.get('MsgText')
     alertTime = decoded_message.get('TimeString')
     if not(check_dup(alertMessage)):
-        token = generate_token(email1, 'At: {time} message: {message}'.format(time=alertTime, 
-                                message=alertMessage), datetime.timedelta(seconds=15*60))
+        token = generate_token(email1, alertMessage, datetime.timedelta(seconds=15*60))
         sendMail_alert(email1,alertMessage,alertTime, token)
         sendMail_alert(email2,alertMessage,alertTime, token)
         log_alert_message(alertTime, alertMessage)
@@ -303,7 +303,6 @@ try:
         if last_hour != now.hour:
             last_hour = now.hour
             new_who_is_oncall = calendar_read(google_api_key)
-            print(new_who_is_oncall)
             for role in ('primary', 'second'):
                 for person in new_who_is_oncall:
                     if person['role'] == role:
