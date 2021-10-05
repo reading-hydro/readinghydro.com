@@ -42,7 +42,7 @@ def calendar_read(api_key):
 # Dictionary of query parameters (if any)
     now = datetime.datetime.utcnow().isoformat() + 'Z'
     parms = {
-    'maxResults' : '5',
+    'maxResults' : '20',
     'singleEvents' : 'true',
     'timeMin' : now,
     'key' : api_key
@@ -64,10 +64,12 @@ def calendar_read(api_key):
         for event in events['items']:
             start = event['start'].get('dateTime', event['start'].get('date'))
             end = event['end'].get('dateTime' , event['end'].get('date'))
+            print(start, end, event['summary'])
             if (start < now < end):
                 print('oncall active',event['summary'], file=sys.stderr)
                 entry = event['summary'].lower().split()
-                oncall.append({'name': entry[0], 'role': entry[1], 'time': now})
+                if entry[0] in contacts:
+                    oncall.append({'name': entry[0], 'role': entry[1], 'time': now})
     return oncall
 
 
@@ -301,6 +303,7 @@ try:
         if last_hour != now.hour:
             last_hour = now.hour
             new_who_is_oncall = calendar_read(google_api_key)
+            print(new_who_is_oncall)
             for role in ('primary', 'second'):
                 for person in new_who_is_oncall:
                     if person['role'] == role:
@@ -356,6 +359,7 @@ try:
 # check the REST server is running, restart it if not
         if not(restThread.is_alive()):
             print('Restarting rest Server', file=sys.stderr)
+            log_alert_message(now_string, 'Restarting REST server')
             restThread.start()
 
         time.sleep(10)
