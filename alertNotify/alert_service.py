@@ -20,7 +20,8 @@ contacts = {
     'sophie':{'email':'sophie@fenwickpaul.com', 'phone': '447773767454'},
     'daniel':{'email': 'daniel.cameron@sky.com', 'phone': '447973656382'},
     'anita':{'email': 'anitapurser@hotmail.com', 'phone': '447914815343'},
-    'neil':{'email': 'neilmaxbonner@hotmail.com', 'phone': '447767463321'}
+    'neil':{'email': 'neilmaxbonner@hotmail.com', 'phone': '447767463321'},
+    'jeremy':{'email': 'jeremy.work@thakes.co.uk', 'phone': '447970615951'}
     }
 
 # table to keep a list of recent alert messages
