@@ -31,12 +31,19 @@ def check_dup(message: str) -> bool:
     return False
 
 def check_token(token: str) -> bool:
+    token_state = False
+    token_email = ''
     for entry in token_table:
         if entry.get('token') == token:
             if entry.get('time') > datetime.datetime.now() :
                 entry.update({'ack': True})
-                return True
-    return False        
+                token_email = entry.get('email')
+                token_state = True
+    if token_state:
+        for entry in token_table:
+            if entry.get('email') == token_email:
+                entry.update({'ack': True})
+    return token_state        
 
 def active_token() -> list:
     tokens = []
@@ -59,9 +66,11 @@ def expired_token() -> list:
 
 if __name__ == '__main__':
     import time
-    t = generate_token('stuart.ward.uk@gmail.com','message contents', datetime.timedelta(seconds=5*60))
+    t = generate_token('stuart.ward.uk@gmail.com','message 1 contents', datetime.timedelta(seconds=5*60))
+    t = generate_token('stuart.ward.uk@gmail.com','message 2 contents', datetime.timedelta(seconds=5*60))
+    t = generate_token('stuart.ward.uk@gmail.com','message 3 contents', datetime.timedelta(seconds=5*60))
     print(token_table)
-    if check_dup('message contents'):
+    if check_dup('message 1 contents'):
         print('Duplicate found')
     time.sleep(5)
     print(active_token())
