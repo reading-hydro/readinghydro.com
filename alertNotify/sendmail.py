@@ -11,8 +11,8 @@ Subject: Hydro ALERT: {alert}
 Hello this is an automated alert from the Reading Hydro turbine room:
 Alert received at: {time}
 Alert Message: {alert}
-Please confirm reciept of this alert http://readinghydro.org:8080/ackresp?token={token}
-You can see all the active alert messages here: http://readinghydro.org:8080/alertlist
+Please confirm reciept of this alert https://readinghydro.org/ackresp?token={token}
+You can see all the active alert messages here: https://readinghydro.org/alertlist
 '''
 
     msg = text.format(to_addr=to_addr, alert=alert, time=time, token=token)
@@ -28,8 +28,8 @@ To: {to_addr}
 Subject: Hydro On-Call Shift 
 Hello this is an automated message from the Reading Hydro turbine room:
 You are sheduled as {role} On-Call for today
-Please confirm reciept of this notice http://readinghydro.org:8080/ackresp?token={token}
-You can see all the active alert messages here: http://readinghydro.org:8080/alertlist
+Please confirm reciept of this notice https://readinghydro.org/ackresp?token={token}
+You can see all the active alert messages here: https://readinghydro.org/alertlist
 '''
 
     msg = text.format(to_addr=to_addr, role=role, token=token)
