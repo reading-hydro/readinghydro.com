@@ -82,11 +82,13 @@ def on_message(client, userdata, message):
     email2 = contacts.get(who_is_oncall.get('second')).get('email')
     alertMessage = decoded_message.get('MsgText')
     alertTime = decoded_message.get('TimeString')
+    alert_time_data = datetime.datetime.strptime(alertTime, '%d/%m/%Y %H:%M:$S')
+    alert_time_string = datetime.datetime.strftime(alert_time_data, '%Y-%m-%dT%H:%M:%SZ')
+    log_alert_message(alert_time_string, alertMessage)
     if not(check_dup(alertMessage)):
         token = generate_token(email1, alertMessage, datetime.timedelta(seconds=15*60))
         sendMail_alert(email1,alertMessage,alertTime, token)
         sendMail_alert(email2,alertMessage,alertTime, token)
-        log_alert_message(alertTime, alertMessage)
     return
 
 def on_connect(client, userdata, flags, rc):
@@ -349,8 +351,8 @@ try:
                 next_data_report_time = now_utc + datetime.timedelta(seconds=15*60)
                 email1 = contacts.get(who_is_oncall.get('primary')).get('email')
                 email2 = contacts.get(who_is_oncall.get('second')).get('email')
-                alertMessage = 'No data recieved since '+latest_data_time.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
-                alertMessage += ' That is {minutes:.2} Minutes ago'.format(minutes=(now_utc-latest_data_time).seconds/60)
+                alertMessage = 'No data recieved since '+latest_data_time.strftime('%Y-%m-%dT%H:%M:%SZ')
+                alertMessage += ' That is {minutes:7.2f} Minutes ago'.format(minutes=(now_utc-latest_data_time).seconds/60)
                 token = generate_token(email1, 'At: {time} message: {message}'.format(time=now_string, message=alertMessage), datetime.timedelta(seconds=15*60))
                 sendMail_alert(email1,alertMessage,now_string, token)
                 sendMail_alert(email2,alertMessage,now_string, token)
