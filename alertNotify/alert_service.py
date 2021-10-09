@@ -9,6 +9,12 @@ from tokenHandeler import generate_token, expired_token, check_dup, active_token
 from sendmail import sendMail_alert, sendMail_shift, sendMail_esclate
 from urllib import request, parse
 
+# timing parameters
+
+NO_DATA_REPORT_EVENT = datetime.timedelta(seconds=20*60)
+NO_DATA_RE_REPORT_TIME = datetime.timedelta(seconds=15*60)
+ALERT_ESCALATION_TIME = datetime.timedelta(seconds=15*60)
+
 # Contacts hard coded for the moment need to add this in a database.
 
 contacts = {
@@ -40,7 +46,7 @@ def calendar_read(api_key):
     SCOPE = 'https://www.googleapis.com/calendar/v3/calendars/'
     CALENDAR_ID = '6fue264k25k03v1ogsmkb2pk5g%40group.calendar.google.com'
 
-# Dictionary of query parameters (if any)
+# Dictionary of query parameters
     now = datetime.datetime.utcnow().isoformat() + 'Z'
     now_end = (datetime.datetime.utcnow() + datetime.timedelta(days=1)).isoformat() + 'Z'
     parms = {
@@ -86,7 +92,7 @@ def on_message(client, userdata, message):
     alert_time_string = datetime.datetime.strftime(alert_time_data, '%Y-%m-%dT%H:%M:%SZ')
     log_alert_message(alert_time_string, alertMessage)
     if not(check_dup(alertMessage)):
-        token = generate_token(email1, alertMessage, datetime.timedelta(seconds=15*60))
+        token = generate_token(email1, alertMessage, ALERT_ESCALATION_TIME)
         sendMail_alert(email1,alertMessage,alertTime, token)
         sendMail_alert(email2,alertMessage,alertTime, token)
     return
@@ -313,7 +319,7 @@ try:
                 if last_hour == 9:
                     email = contacts.get(who_is_oncall.get(role)).get('email')
                     message='Sending oncall reminder to '+ who_is_oncall.get(role)+ ' at '+email+' for role '+role
-                    sendMail_shift(email, role, generate_token(email, message, datetime.timedelta(seconds=15*60)))
+                    sendMail_shift(email, role, generate_token(email, message, ALERT_ESCALATION_TIME))
                     log_alert_message(now_string, message)
 
 # look through the alert list for any expited alerts that have not been acknowleged.
@@ -327,8 +333,8 @@ try:
                 email1 = contacts.get(who_is_oncall.get('primary')).get('email')
                 email2 = contacts.get(who_is_oncall.get('second')).get('email')
                 dup_count = entry.get('count')
-                alertMessage = 'Repeated: {count} message: {message}'.format(count=dup_count, message=entry.get('message'))
-                token = generate_token(email1, alertMessage, datetime.timedelta(seconds=15*60))
+                alertMessage = 'Repeated: {count:4f} message: {message}'.format(count=dup_count, message=entry.get('message'))
+                token = generate_token(email1, alertMessage, ALERT_ESCALATION_TIME)
                 sendMail_alert(email1,alertMessage,now_utc_string, token)
                 sendMail_alert(email2,alertMessage,now_utc_string, token)
                 log_alert_message(now_string, alertMessage)
@@ -346,13 +352,13 @@ try:
             latest_data = json.loads(latest_request.read())
             latest_data_time = datetime.datetime.strptime(latest_data.get('received_at'), '%Y-%m-%dT%H:%M:%S.%fZ')
 
-        if latest_data_time < now_utc - datetime.timedelta(seconds=20*60):
+        if latest_data_time < now_utc - NO_DATA_REPORT_EVENT:
             if now_utc > next_data_report_time:
-                next_data_report_time = now_utc + datetime.timedelta(seconds=15*60)
+                next_data_report_time = now_utc + NO_DATA_RE_REPORT_TIME)
                 email1 = contacts.get(who_is_oncall.get('primary')).get('email')
                 email2 = contacts.get(who_is_oncall.get('second')).get('email')
                 alertMessage = 'No data recieved since '+latest_data_time.strftime('%Y-%m-%dT%H:%M:%SZ')
-                alertMessage += ' That is {minutes:7.2f} Minutes ago'.format(minutes=(now_utc-latest_data_time).seconds/60)
+                alertMessage += ' That is {minutes:5.2f} Minutes ago'.format(minutes=(now_utc-latest_data_time).seconds/60)
                 token = generate_token(email1, 'At: {time} message: {message}'.format(time=now_string, message=alertMessage), datetime.timedelta(seconds=15*60))
                 sendMail_alert(email1,alertMessage,now_string, token)
                 sendMail_alert(email2,alertMessage,now_string, token)
