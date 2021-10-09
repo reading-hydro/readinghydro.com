@@ -354,7 +354,7 @@ try:
 
         if latest_data_time < now_utc - NO_DATA_REPORT_EVENT:
             if now_utc > next_data_report_time:
-                next_data_report_time = now_utc + NO_DATA_RE_REPORT_TIME)
+                next_data_report_time = now_utc + NO_DATA_RE_REPORT_TIME
                 email1 = contacts.get(who_is_oncall.get('primary')).get('email')
                 email2 = contacts.get(who_is_oncall.get('second')).get('email')
                 alertMessage = 'No data recieved since '+latest_data_time.strftime('%Y-%m-%dT%H:%M:%SZ')
