@@ -294,6 +294,7 @@ try:
 
 except:
     print("mqtt broker connection failed", file=sys.stderr)
+    log_alert_message(now_string, "mqtt broker connection failed")
 
 # Start the restServer in another thread
 
@@ -315,7 +316,9 @@ try:
             for role in ('primary', 'second'):
                 for person in new_who_is_oncall:
                     if person['role'] == role:
-                        who_is_oncall.update({role: person.get('name')})
+                        if person.get('name') != who_is_oncall.get(role):
+                            who_is_oncall.update({role: person.get('name')})
+                            log_alert_message(now_string,"On-Call for {role} is now {name}".format(role=role, name=person.get('name')))
                 if last_hour == 9:
                     email = contacts.get(who_is_oncall.get(role)).get('email')
                     message='Sending oncall reminder to '+ who_is_oncall.get(role)+ ' at '+email+' for role '+role
@@ -333,7 +336,7 @@ try:
                 email1 = contacts.get(who_is_oncall.get('primary')).get('email')
                 email2 = contacts.get(who_is_oncall.get('second')).get('email')
                 dup_count = entry.get('count')
-                alertMessage = 'Repeated: {count:4f} message: {message}'.format(count=dup_count, message=entry.get('message'))
+                alertMessage = 'Repeated: {count:d} message: {message}'.format(count=dup_count, message=entry.get('message'))
                 token = generate_token(email1, alertMessage, ALERT_ESCALATION_TIME)
                 sendMail_alert(email1,alertMessage,now_utc_string, token)
                 sendMail_alert(email2,alertMessage,now_utc_string, token)
