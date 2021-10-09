@@ -181,7 +181,7 @@ _ack_resp_fail = '''\
      <table><tr><th>Token</th><th>Email address</th><th>Expiary Time</th><th>Status</th><th>Count</th><th>Message</th></tr>
      '''
 _ack_list_body = '''\
-    <tr><td><a href="http://readinghydro.org:8080/ackresp?token={token}">Token</a></td><td>{email}</td>
+    <tr><td><a href="https://readinghydro.org/ackresp?token={token}">Token</a></td><td>{email}</td>
     <td>{time}</td><td>{status}</td><td>{count}</td><td>{message}</td></tr>
     '''
 _ack_list_tail = '''\
