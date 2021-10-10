@@ -88,8 +88,12 @@ def on_message(client, userdata, message):
     email2 = contacts.get(who_is_oncall.get('second')).get('email')
     alertMessage = decoded_message.get('MsgText')
     alertTime = decoded_message.get('TimeString')
-    alert_time_data = datetime.datetime.strptime(alertTime, '%d/%m/%Y %H:%M:$S')
-    alert_time_string = datetime.datetime.strftime(alert_time_data, '%Y-%m-%dT%H:%M:%SZ')
+    try:
+        alert_time_data = datetime.datetime.strptime(alertTime, '%d/%m/%Y %H:%M:$S')
+    except ValueError:
+        alert_time_string = alertTime
+    else:
+        alert_time_string = datetime.datetime.strftime(alert_time_data, '%Y-%m-%dT%H:%M:%SZ')
     log_alert_message(alert_time_string, alertMessage)
     if not(check_dup(alertMessage)):
         token = generate_token(email1, alertMessage, ALERT_ESCALATION_TIME)
