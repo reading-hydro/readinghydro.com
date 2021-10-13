@@ -89,7 +89,7 @@ def on_message(client, userdata, message):
     alertMessage = decoded_message.get('MsgText')
     alertTime = decoded_message.get('TimeString')
     try:
-        alert_time_data = datetime.datetime.strptime(alertTime, '%d/%m/%Y %H:%M:%%H:S')
+        alert_time_data = datetime.datetime.strptime(alertTime, '%d/%m/%Y %H:%M:%H:S')
     except ValueError:
         alert_time_string = alertTime
     else:
