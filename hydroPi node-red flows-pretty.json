@@ -2992,7 +2992,7 @@
     "type": "function",
     "z": "e887e495.f74df8",
     "name": "Just get the unread messages",
-    "func": "var messages=msg.payload.split('\\n');\nconst numberOfLines = messages.length;\nnode.warn(\"Number of Lines is \"+numberOfLines);\nvar firstMsgRow = global.get('lastMsgRow');\nif(firstMsgRow < 1 ) {\n    firstMsgRow=1;\n} else if(firstMsgRow>numberOfLines) {\n    firstMsgRow=numberOfLines;\n}\nglobal.set('firstMsgRow',firstMsgRow);\nglobal.set('lastMsgRow',numberOfLines);\nnode.warn(\"First row is: \"+firstMsgRow+\" and Last row is: \"+numberOfLines);\n\nmessages.splice(0,firstMsgRow-1);\nvar newPayload={ payload: messages.join('\\n') };\nnode.warn(\"msg.payload is \"+newPayload.payload);\nreturn newPayload;",
+    "func": "var messages=msg.payload.split('\\n');\nconst numberOfLines = messages.length;\nnode.warn(\"Number of Lines is \"+numberOfLines);\nvar firstMsgRow = global.get('lastMsgRow');\nif(firstMsgRow < 1 ) {\n    if(numberOfLines>3) {\n        firstMsgRow=numberOfLines-3;\n    } else {\n        firstMsgRow=1;\n    }\n} else if(firstMsgRow>numberOfLines) {\n    firstMsgRow=numberOfLines;\n}\nglobal.set('firstMsgRow',firstMsgRow);\nglobal.set('lastMsgRow',numberOfLines);\nnode.warn(\"First row is: \"+firstMsgRow+\" and Last row is: \"+numberOfLines);\n\nmessages.splice(0,firstMsgRow-1);\nvar newPayload={ payload: messages.join('\\n') };\nnode.warn(\"msg.payload is \"+newPayload.payload);\nreturn newPayload;",
     "outputs": 1,
     "noerr": 0,
     "initialize": "",
