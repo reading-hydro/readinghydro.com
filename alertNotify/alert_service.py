@@ -212,7 +212,7 @@ def ackresp(environ, start_response):
     tokenlist = active_token()
     for entry in tokenlist:
         status='Live'
-        if entry.get('ack'): status='Acknowleged'
+        if entry.get('ack'): status='Acknowledged'
         resp = resp + _ack_list_body.format(token=entry.get('token'), email=entry.get('email'), 
                                             time=entry.get('time'), status=status, 
                                             count=entry.get('count'), message=entry.get('message'))
