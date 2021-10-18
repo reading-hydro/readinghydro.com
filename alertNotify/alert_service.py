@@ -6,7 +6,7 @@ import paho.mqtt.client as mqtt
 import time, datetime, pytz
 import threading
 from tokenHandeler import generate_token, expired_token, check_dup, active_token, check_token
-from sendmail import sendMail_alert, sendMail_shift, sendMail_esclate
+from sendmail import sendMail_alert, sendMail_shift, sendMail_escalate
 from urllib import request, parse
 
 # timing parameters
@@ -177,8 +177,8 @@ _ack_resp_ok = '''\
      <title>Reading Hydro On-Call</title>
    </head>
    <body>
-     <h1>Acknowlegement of alert Sucessful</h1>
-     <h1>Acknowlegement alerts currently active</h1>
+     <h1>Acknowledgement of alert Sucessful</h1>
+     <h1>Acknowledgement alerts currently active</h1>
      <table><tr><th>Token</th><th>Email address</th><th>Expiary Time</th><th>Status</th><th>Count</th><th>Message</th></tr>
      '''
 
@@ -188,8 +188,8 @@ _ack_resp_fail = '''\
      <title>Reading Hydro On-Call</title>
    </head>
    <body>
-     <h1>Acknowlegement of alert Failed</h1>
-     <h1>Acknowlegement alerts currently active</h1>
+     <h1>Acknowledgement of alert Failed</h1>
+     <h1>Acknowledgement alerts currently active</h1>
      <table><tr><th>Token</th><th>Email address</th><th>Expiary Time</th><th>Status</th><th>Count</th><th>Message</th></tr>
      '''
 _ack_list_body = '''\
@@ -229,7 +229,7 @@ _alert_list_head = '''\
      <table><tr><th>Time</th><th>Message</th></tr>
      '''
 _alert_list_body = '''\
-    <tr><td>{time}</td><td>{message}</td></tr>
+    <tr><td>{time} </td><td>{message}</td></tr>
     '''
 _alert_list_tail = '''\
     </table>
@@ -335,7 +335,7 @@ try:
         tokenlist = expired_token()
         for entry in tokenlist:
             if entry.get('count') == 0:
-                sendMail_esclate('alerts@readinghydro.org', 'Esculate: '+entry.get('message'))
+                sendMail_escalate('alerts@readinghydro.org', 'Escalate: '+entry.get('message'))
             else:
                 email1 = contacts.get(who_is_oncall.get('primary')).get('email')
                 email2 = contacts.get(who_is_oncall.get('second')).get('email')
