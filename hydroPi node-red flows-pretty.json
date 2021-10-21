@@ -2992,7 +2992,7 @@
     "type": "function",
     "z": "e887e495.f74df8",
     "name": "Just get the unread messages",
-    "func": "var messages=msg.payload.split('\\n');\nconst numberOfLines = messages.length;\nnode.warn(\"Number of Lines is \"+numberOfLines);\nvar firstMsgRow = global.get('lastMsgRow');\nif(firstMsgRow < 1 ) {\n    if(numberOfLines>3) {\n        firstMsgRow=numberOfLines-3;\n    } else {\n        firstMsgRow=1;\n    }\n} else if(firstMsgRow>numberOfLines) {\n    firstMsgRow=numberOfLines;\n}\nglobal.set('firstMsgRow',firstMsgRow);\nglobal.set('lastMsgRow',numberOfLines);\nnode.warn(\"First row is: \"+firstMsgRow+\" and Last row is: \"+numberOfLines);\n\nmessages.splice(0,firstMsgRow-1);\nvar newPayload={ payload: messages.join('\\n') };\nnode.warn(\"msg.payload is \"+newPayload.payload);\nreturn newPayload;",
+    "func": "// Check the return code from cURL was zero\nif (msg.rc.code===0) {\n    var messages=msg.payload.split('\\n');\n    const numberOfLines = messages.length;\n    node.warn(\"Number of Lines is \"+numberOfLines);\n    var firstMsgRow = global.get('lastMsgRow');\n    if(firstMsgRow < 1 ) {\n        if(numberOfLines>3) {\n            firstMsgRow=numberOfLines-3;\n        } else {\n            firstMsgRow=1;\n        }\n    } else if(firstMsgRow>numberOfLines) {\n        firstMsgRow=numberOfLines;\n    }\n    global.set('firstMsgRow',firstMsgRow);\n    global.set('lastMsgRow',numberOfLines);\n    node.warn(\"First row is: \"+firstMsgRow+\" and Last row is: \"+numberOfLines);\n    \n    messages.splice(0,firstMsgRow-1);\n    var newPayload={ payload: messages.join('\\n') };\n    node.warn(\"msg.payload is \"+newPayload.payload);\n    return newPayload;\n} else {\n    // We got an error code from cURL - ignore any payload\n    node.warn(\"Error code from reading Alerts file: \"+msg.rc.code);\n    var emptyPayload={payload:{}}\n    return emptyPayload\n}",
     "outputs": 1,
     "noerr": 0,
     "initialize": "",
@@ -3099,7 +3099,7 @@
     "name": "curl the file",
     "x": 330,
     "y": 300,
-    "wires": [["f9167e9a.80f3f"], [], []]
+    "wires": [["f9167e9a.80f3f"], ["dc58ba04.b168e8"], []]
   },
   {
     "id": "6e24f2f9.231c9c",
@@ -3133,6 +3133,23 @@
     "statusType": "auto",
     "x": 1750,
     "y": 1640,
+    "wires": []
+  },
+  {
+    "id": "dc58ba04.b168e8",
+    "type": "debug",
+    "z": "e887e495.f74df8",
+    "name": "Return code from Curl",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "rc",
+    "targetType": "msg",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 580,
+    "y": 300,
     "wires": []
   }
 ]
