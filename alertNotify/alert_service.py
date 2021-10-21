@@ -84,12 +84,12 @@ def calendar_read(api_key):
 
 
 def on_message(client, userdata, message):
+    print('mqtt message: ', message.payload, file=sys.stderr)
     decoded_message = json.loads(message.payload)
     email1 = contacts.get(who_is_oncall.get('primary')).get('email')
     email2 = contacts.get(who_is_oncall.get('second')).get('email')
     alertMessage = decoded_message.get('MsgText')
     alertTime = decoded_message.get('TimeString')
-    log_alert_message(alertTime,'Debug: '+decoded_message)
     try:
         alert_time_data = datetime.datetime.strptime(alertTime, '%d/%m/%Y %H:%M:%S')
     except ValueError:
@@ -97,8 +97,9 @@ def on_message(client, userdata, message):
         alert_age = datetime.timedelta(seconds=1)
     else:
         alert_time_string = datetime.datetime.strftime(alert_time_data, '%Y-%m-%dT%H:%M:%S')
-        alert_age = datetime.datetime.now(tz_london) - alert_time_data
-    if alert_age > IGNORE_ALERTS_OLDER_THAN:
+        compare_now = datetime.datetime.strptime(datetime.datetime.now(tz_london).strftime('%d/%m/%Y %H:%M:%S'), '%d/%m/%Y %H:%M:%S')
+        alert_age = compare_now - alert_time_data
+    if alert_age < IGNORE_ALERTS_OLDER_THAN:
         log_alert_message(alert_time_string, alertMessage)
         if not(check_dup(alertMessage)):
             token = generate_token(email1, alertMessage, ALERT_ESCALATION_TIME)
