@@ -89,6 +89,7 @@ def on_message(client, userdata, message):
     email2 = contacts.get(who_is_oncall.get('second')).get('email')
     alertMessage = decoded_message.get('MsgText')
     alertTime = decoded_message.get('TimeString')
+    log_alert_message(alertTime,'Debug: '+decoded_message)
     try:
         alert_time_data = datetime.datetime.strptime(alertTime, '%d/%m/%Y %H:%M:%S')
     except ValueError:
