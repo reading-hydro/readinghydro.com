@@ -14,6 +14,7 @@ from urllib import request, parse
 NO_DATA_REPORT_EVENT = datetime.timedelta(seconds=20*60)
 NO_DATA_RE_REPORT_TIME = datetime.timedelta(seconds=15*60)
 ALERT_ESCALATION_TIME = datetime.timedelta(seconds=15*60)
+IGNORE_ALERTS_OLDER_THAN = datetime.timedelta(seconds=10*60)
 
 # Contacts hard coded for the moment need to add this in a database.
 
@@ -92,13 +93,20 @@ def on_message(client, userdata, message):
         alert_time_data = datetime.datetime.strptime(alertTime, '%d/%m/%Y %H:%M:%S')
     except ValueError:
         alert_time_string = alertTime
+        alert_age = datetime.timedelta(seconds=1)
     else:
         alert_time_string = datetime.datetime.strftime(alert_time_data, '%Y-%m-%dT%H:%M:%S')
-    log_alert_message(alert_time_string, alertMessage)
-    if not(check_dup(alertMessage)):
-        token = generate_token(email1, alertMessage, ALERT_ESCALATION_TIME)
-        sendMail_alert(email1,alertMessage,alertTime, token)
-        sendMail_alert(email2,alertMessage,alertTime, token)
+        alert_age = datetime.datetime.now(tz_london) - alert_time_data
+    if alert_age > IGNORE_ALERTS_OLDER_THAN:
+        log_alert_message(alert_time_string, alertMessage)
+        if not(check_dup(alertMessage)):
+            token = generate_token(email1, alertMessage, ALERT_ESCALATION_TIME)
+            sendMail_alert(email1,alertMessage,alertTime, token)
+            sendMail_alert(email2,alertMessage,alertTime, token)
+    else:
+        if not(check_dup('Ignoring old alerts')):
+            token = generate_token(email1,'Ignoring old alerts', ALERT_ESCALATION_TIME)
+            check_token(token)
     return
 
 def on_connect(client, userdata, flags, rc):
@@ -174,7 +182,7 @@ def whoisoncall(environ, start_response):
 _ack_resp_ok = '''\
 <html>
   <head>
-     <title>Reading Hydro On-Call</title>
+     <title>Reading Hydro Alert Acknowledgement</title>
    </head>
    <body>
      <h1>Acknowledgement of alert Sucessful</h1>
@@ -185,7 +193,7 @@ _ack_resp_ok = '''\
 _ack_resp_fail = '''\
 <html>
   <head>
-     <title>Reading Hydro On-Call</title>
+     <title>Reading Hydro Alert Acknowledgement</title>
    </head>
    <body>
      <h1>Acknowledgement of alert Failed</h1>
@@ -222,7 +230,7 @@ def ackresp(environ, start_response):
 _alert_list_head = '''\
 <html>
   <head>
-     <title>Reading Hydro On-Call</title>
+     <title>Reading Hydro Alert Activity</title>
    </head>
    <body>
      <h1>Alert history</h1>
