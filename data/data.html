@@ -3,54 +3,16 @@
         <script src="https://cdn.jsdelivr.net/npm/luxon@2.0.1/build/global/luxon.min.js"></script>
         <style>
 
-           #tit {
+           .tit {
                clear: left;
                 font-family: Arial, Helvetica, sans-serif;
                 font-size: 20px;
                 text-align: center;
                            }
-            #sub1 {
+            .sub1 {
                 font-family: Arial, Helvetica, sans-serif;
                 font-size: 18px;
                 text-align: center;
-            }
-            #sub2 {
-                clear: left;
-                font-family: Arial, Helvetica, sans-serif;
-                font-size: 18px;
-                text-align: center;
-                line-height: 60px;
-            }
-            #dpk1 {
-                margin: 10px;
-                font-family: Arial, Helvetica, sans-serif;
-            }
-            #dpk2 {
-                margin: 10px;
-                font-family: Arial, Helvetica, sans-serif;
-            }
-            
-            .btn {
-                font-size: 18px;
-                font-family: Arial, Helvetica, sans-serif;
-                padding: 10px 16px;
-                margin: 5px;
-                border-radius: 4px;
-                background-color: #e7e7e7;
-            }
-            .lab {
-                font-family: Arial, Helvetica, sans-serif;
-                font-style: normal;
-                white-space: nowrap;
-            }
-
-            /* Style the active class, and buttons on mouse-over */
-            .active, .btn:hover {
-            background-color: #1a73e8;
-            color: white;
-            }
-            #ts {
-                white-space: nowrap;
             }
             .box {
                 width: 230px;
@@ -69,9 +31,14 @@
                 display:flex;                
                 align-items: center;
                 justify-content: center;
-                font-size: 80px;
                 font-weight: bold;
                 color: white;               
+            }
+            .font80 {
+                font-size: 80px;
+            }
+            .font30 {
+                font-size: 30px;
             }
             .cwra {
                 width: 540px;
@@ -82,49 +49,49 @@
             .cle {
                 clear: left;
             }
+            .ts {
+                white-space: nowrap;
+            }
+            .wra1 {
+               /* local */
+               /* max-width: 1160px; */
+               /* Wordpress */
+               max-width: 1080px;
+               margin: auto;
+            }
            #con {
                 max-width: 1280px;
                 margin: auto;
            }
-           #wra1 {
-               /* local */
-               /* max-width: 1160px; */
-               /* Wordpress */
-               max-width: 1080px;
-               margin: auto;
+            #pow1 {
+                background-color: #ff6d56;
             }
-            #btw {
-                max-width: 1160px;
-                margin: auto;
-                text-align:center;
+            #pow2 {
+                background-color: #ff6d56;
             }
-            #dtw {
-                max-width: 1160px;
-                margin: auto;
-                text-align:center;
+            #srpm1 {
+                background-color: #418CDA;
             }
-            #wra2 {
-               /* local */
-               /* max-width: 1160px; */
-               /* Wordpress */
-               max-width: 1080px;
-               margin: auto;
+            #srpm2 {
+                background-color: #418CDA;
             }
-            #wra3 {
-               max-width: 1160px;
-               margin: auto;
+            #stor1 {
+               background-color: #ffbe0a;
+            }
+            #stor2 {
+               background-color: #ffbe0a;
+            }
+            #opho1 {
+               background-color: #8ac539;
+            }
+            #opho2 {
+               background-color: #8ac539;
             }
            #tem {
-               background-color: #ff6d56;
+               background-color: #ffbe0a;
             }
            #hum {
                background-color: #57b7dd;
-            }
-           #gen1 {
-               background-color: #ffbe0a;
-            }
-           #gen2 {
-               background-color: #8ac539;
             }
            #up {
                background-color: #409AE6;
@@ -142,36 +109,18 @@
 
 
             @media only screen and (max-width: 1190px) {
-                #wra1 {
-                max-width: 580px;                
-                }
-                #wra2 {
-                max-width: 580px;                
-                }
-                #wra3 {
+                .wra1 {
                 max-width: 580px;                
                 }
             }
             @media only screen and (max-width: 610px) {
-                #wra1 {
-                max-width: 290px;
-                 }
-                 #btw {
-                max-width: 300px;
-                 }
-                 #dtw {
-                width: 260px;
-                 }                 
-                 #wra2 {
-                max-width: 290px;
-                 }
-                 #wra3 {
+                .wra1 {
                 max-width: 290px;
                  }
             }
         
        </style>        
-        
+
          <script>
 
         // Start an IIFE to use `await` at the top level
@@ -236,26 +185,18 @@
 
                 
                 container.id = "con"
-                title1.id = "tit"
-                title2.id = "tit"
-                title3.id = "tit"
-                title4.id = "tit"
-                subtitle1.id = "sub1"
-                subtitle2.id = "sub2"
-                subtitle3.id = "sub2"
-                subtitle4.id = "sub2"
 
-                nowPower_G1.id = "tem"
-                nowScrewRPM_G1.id = "fl"
-                nowTorque_G1.id = "gen1"
-                nowOpHours_G1.id = "gen2"
+                nowPower_G1.id = "pow1"
+                nowScrewRPM_G1.id = "srpm1"
+                nowTorque_G1.id = "stor1"
+                nowOpHours_G1.id = "opho1"
 
-                nowPower_G2.id = "tem"
-                nowScrewRPM_G2.id = "fl"
-                nowTorque_G2.id = "gen1"
-                nowOpHours_G2.id = "gen2"
+                nowPower_G2.id = "pow2"
+                nowScrewRPM_G2.id = "srpm2"
+                nowTorque_G2.id = "stor2"
+                nowOpHours_G2.id = "opho2"
 
-                nowtemp.id = "gen1"
+                nowtemp.id = "tem"
                 nowhumid.id = "hum"
                 
                 now_upst.id = "up"
@@ -263,10 +204,19 @@
                 now_head.id = "he"
                 now_flow.id = "fl"
 
-                wrap11.id = "wra1"
-                wrap12.id = "wra2"
-                wrap13.id = "wra2"
-                wrap14.id = "wra2"
+                wrap11.className = "wra1"
+                wrap12.className = "wra1"
+                wrap13.className = "wra1"
+                wrap14.className = "wra1"
+
+                title1.className = "tit"
+                title2.className = "tit"
+                title3.className = "tit"
+                title4.className = "tit"
+                subtitle1.className = "sub1"
+                subtitle2.className = "sub1"
+                subtitle3.className = "sub1"
+                subtitle4.className = "sub1"
 
                 nowPower_G1.className = "box"
                 nowScrewRPM_G1.className = "box"
@@ -286,24 +236,23 @@
                 now_head.className = "box"
                 now_flow.className = "box"
 
-                inner_nowPower_G1.className = "inner"
-                inner_nowScrewRPM_G1.className = "inner"
-                inner_nowTorque_G1.className = "inner"
-                inner_nowOpHours_G1.className = "inner"
+                inner_nowPower_G1.className = "inner font80"
+                inner_nowScrewRPM_G1.className = "inner font80"
+                inner_nowTorque_G1.className = "inner font80"
+                inner_nowOpHours_G1.className = "inner font80"
 
-                inner_nowPower_G2.className = "inner"
-                inner_nowScrewRPM_G2.className = "inner"
-                inner_nowTorque_G2.className = "inner"
-                inner_nowOpHours_G2.className = "inner"
+                inner_nowPower_G2.className = "inner font80"
+                inner_nowScrewRPM_G2.className = "inner font80"
+                inner_nowTorque_G2.className = "inner font80"
+                inner_nowOpHours_G2.className = "inner font80"
 
-                inner_nowtemp.className = "inner"
-                inner_nowhumid.className = "inner"
+                inner_nowtemp.className = "inner font80"
+                inner_nowhumid.className = "inner font80"
 
-                inner_now_upst.className = "inner"
-                inner_now_down.className = "inner"
-                inner_now_head.className = "inner"
-                inner_now_flow.className = "inner"
-
+                inner_now_upst.className = "inner font80"
+                inner_now_down.className = "inner font80"
+                inner_now_head.className = "inner font80"
+                inner_now_flow.className = "inner font80"
 
                 clear.className = "cle"
 
@@ -359,7 +308,7 @@
                 var selection1 = global_data1.filter(function(item){
                         return item.device_id == 'rdghydro-ers001'
                     })
-                subtitle1.innerHTML = `Current conditions: <span id="ts">${luxon.DateTime.fromISO(selection1[0].received_at).toFormat('ff')} </span>`
+                subtitle1.innerHTML = `Current conditions: <span class="ts">${luxon.DateTime.fromISO(selection1[0].received_at).toFormat('ff')} </span>`
 
                 nowtemp.innerHTML = "Temperature (&deg;C)"
                 nowhumid.innerHTML = "Humidity (&percnt;)"
@@ -375,7 +324,7 @@
                 container.append(wrap11, clear)
 
                 title2.innerHTML = '<a href="/water-level-data/">Water levels and flow</a>'
-                subtitle2.innerHTML = `Current conditions: <span id="ts">${luxon.DateTime.fromISO(global_data2.received_at).toFormat('ff')} </span>`
+                subtitle2.innerHTML = `Current conditions: <span class="ts">${luxon.DateTime.fromISO(global_data2.received_at).toFormat('ff')} </span>`
 
                 now_upst.innerHTML = "Upstream (metres AOD)"
                 now_down.innerHTML = "Downstream (metres AOD)"
@@ -425,3 +374,4 @@
         }
         
         </script>
+
