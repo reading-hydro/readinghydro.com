@@ -59,6 +59,13 @@
                max-width: 1080px;
                margin: auto;
             }
+            .wra1a {
+                /* local */
+                /* max-width: 580px; */
+                /* Wordpress */
+                max-width: 540px;
+                margin: auto;
+            }
            #con {
                 max-width: 1280px;
                 margin: auto;
@@ -93,10 +100,22 @@
            #hum {
                background-color: #57b7dd;
             }
+            #lig {
+                background-color: #ff6d56;
+            }
+            #mot {
+                background-color: #8ac539;
+            }
+            #smo {
+                background-color: #a98cbc;
+            }
+            #doo {
+                background-color: #fa9233;
+            }
            #up {
                background-color: #409AE6;
             }
-           #do {
+           #dow {
                background-color: #52B4E6;
             }
            #he {
@@ -106,10 +125,11 @@
                background-color: #418CDA;
             }
 
-
-
             @media only screen and (max-width: 1190px) {
                 .wra1 {
+                max-width: 580px;                
+                }
+                .wra1a {
                 max-width: 580px;                
                 }
             }
@@ -117,6 +137,9 @@
                 .wra1 {
                 max-width: 290px;
                  }
+                 .wra1a {
+                max-width: 290px;
+                }
             }
         
        </style>        
@@ -152,6 +175,10 @@
 
                 const nowtemp = document.createElement('div')
                 const nowhumid = document.createElement('div')
+                const nowlight = document.createElement('div')
+                const nowmotion = document.createElement('div')
+                const nowsmoke = document.createElement('div')
+                const nowdoor = document.createElement('div')
                 
                 const now_upst = document.createElement('div')
                 const now_down = document.createElement('div')
@@ -170,6 +197,10 @@
 
                 const inner_nowtemp = document.createElement('div')
                 const inner_nowhumid = document.createElement('div')
+                const inner_nowlight = document.createElement('div')
+                const inner_nowmotion = document.createElement('div')
+                const inner_nowsmoke = document.createElement('div')
+                const inner_nowdoor = document.createElement('div')
                 
                 const inner_now_upst = document.createElement('div')
                 const inner_now_down = document.createElement('div')
@@ -177,13 +208,13 @@
                 const inner_now_flow = document.createElement('div')
                 
                 const wrap11 = document.createElement('div')
+                const wrap11a = document.createElement('div')
                 const wrap12 = document.createElement('div')
                 const wrap13 = document.createElement('div')
                 const wrap14 = document.createElement('div')
 
                 const clear = document.createElement('p')
 
-                
                 container.id = "con"
 
                 nowPower_G1.id = "pow1"
@@ -198,13 +229,18 @@
 
                 nowtemp.id = "tem"
                 nowhumid.id = "hum"
+                nowlight.id = "lig"
+                nowmotion.id = "mot"
+                nowsmoke.id = "smo"
+                nowdoor.id = "doo"
                 
                 now_upst.id = "up"
-                now_down.id = "do"
+                now_down.id = "dow"
                 now_head.id = "he"
                 now_flow.id = "fl"
 
                 wrap11.className = "wra1"
+                wrap11a.className = "wra1a"
                 wrap12.className = "wra1"
                 wrap13.className = "wra1"
                 wrap14.className = "wra1"
@@ -230,6 +266,10 @@
 
                 nowtemp.className = "box"
                 nowhumid.className = "box"
+                nowlight.className = "box"
+                nowmotion.className = "box"
+                nowsmoke.className = "box"
+                nowdoor.className = "box"
                 
                 now_upst.className = "box"
                 now_down.className = "box"
@@ -248,6 +288,10 @@
 
                 inner_nowtemp.className = "inner font80"
                 inner_nowhumid.className = "inner font80"
+                inner_nowlight.className = "inner font80"
+                inner_nowmotion.className = "inner font80"
+                inner_nowsmoke.className = "inner font30"
+                inner_nowdoor.className = "inner font30"
 
                 inner_now_upst.className = "inner font80"
                 inner_now_down.className = "inner font80"
@@ -257,7 +301,7 @@
                 clear.className = "cle"
 
                 title3.innerHTML = '<a href="/power-output-data/">Turbine 1 (Tony)</a>'
-                subtitle3.innerHTML = 'Current performance of Turbine'
+                subtitle3.innerHTML = `Current performance of Turbine 1: <span class="ts">${luxon.DateTime.fromISO(global_data2.received_at).toFormat('ff')} </span>`
 
                 nowPower_G1.innerHTML = 'Power Generated (kW)'
                 nowScrewRPM_G1.innerHTML = 'Screw Speed (RPM)'
@@ -280,7 +324,7 @@
                 container.append(wrap13, clear)
 
                 title4.innerHTML = '<a href="/power-output-data/">Turbine 2 (Sophie)</a>'
-                subtitle4.innerHTML = 'Current performance of Turbine'
+                subtitle4.innerHTML = `Current performance of Turbine 2: <span class="ts">${luxon.DateTime.fromISO(global_data2.received_at).toFormat('ff')} </span>`
 
                 nowPower_G2.innerHTML = 'Power Generated (kW)'
                 nowScrewRPM_G2.innerHTML = 'Screw Speed (RPM)'
@@ -308,20 +352,39 @@
                 var selection1 = global_data1.filter(function(item){
                         return item.device_id == 'rdghydro-ers001'
                     })
+                var smoke_data = global_data1.filter(function(item){
+                        return item.device_id == 'dilu-smoke-002'
+                    })
+                var door_data = global_data1.filter(function(item){
+                                return item.device_id == 'dilu-door-005'
+                            })
                 subtitle1.innerHTML = `Current conditions: <span class="ts">${luxon.DateTime.fromISO(selection1[0].received_at).toFormat('ff')} </span>`
 
                 nowtemp.innerHTML = "Temperature (&deg;C)"
                 nowhumid.innerHTML = "Humidity (&percnt;)"
+                nowlight.innerHTML = "Light (Lux)" 
+                nowmotion.innerHTML = "Motion counts"
+                nowsmoke.innerHTML = "Smoke alarm status"
+                nowdoor.innerHTML = "Door status"
                 inner_nowtemp.textContent = selection1[0].temperature
                 inner_nowhumid.textContent = selection1[0].humidity
+                inner_nowlight.textContent = selection1[0].light
+                inner_nowmotion.textContent = selection1[0].motion 
+                inner_nowsmoke.textContent = smoke_data[0].smokeStatus 
+                inner_nowdoor.textContent = door_data[0].doorStatus
 
                 nowtemp.append(inner_nowtemp)
                 nowhumid.append(inner_nowhumid)
+                nowlight.append(inner_nowlight)
+                nowmotion.append(inner_nowmotion)
+                nowsmoke.append(inner_nowsmoke)
+                nowdoor.append(inner_nowdoor)
 
-                wrap11.append(nowtemp, nowhumid, clear)
+                wrap11.append(nowtemp, nowhumid, nowlight, nowmotion, clear)
+                wrap11a.append(nowsmoke, nowdoor, clear)
                 container.append(title1)
                 container.append(subtitle1)
-                container.append(wrap11, clear)
+                container.append(wrap11, wrap11a, clear)
 
                 title2.innerHTML = '<a href="/water-level-data/">Water levels and flow</a>'
                 subtitle2.innerHTML = `Current conditions: <span class="ts">${luxon.DateTime.fromISO(global_data2.received_at).toFormat('ff')} </span>`
@@ -351,8 +414,6 @@
                 var target = document.getElementsByClassName("entry-content");
                 target[0].append(container)
 
-            
-
         //closing of IIFE function
         })();
 
@@ -374,4 +435,3 @@
         }
         
         </script>
-
