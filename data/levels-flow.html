@@ -165,8 +165,7 @@
  
 </style>        
 
-<script type="text/javascript">//<!--
-// NOTE the javascript script tags must be written exactly as shown to avoid issues with ampersands in Wordpress   
+<script type="text/javascript">
 
 // Start an IIFE to use `await` at the top level
 (async function(){
@@ -419,9 +418,13 @@ function selectTimescale(mystart, myend) {
                 var is_u = ci.isDatasetVisible(0)
                 var is_d = ci.isDatasetVisible(1)
                 // if downstream only is visible, hide HOL
-                    if (!is_u && is_d) {
+                // flag is used to avoid Boolean ampersand, which causes problems in Wordpress
+                    var flag = 0
+                    if(!is_u){ flag++ }
+                    if(is_d){ flag++ }
+                    if (flag == 2) {
                         ci.config.options.annotation.annotations[0] = ''
-                        ci.update()
+                        ci.update() 
                     } else {
                         ci.config.options.annotation.annotations[0] = anno_HOL
                         ci.update()
@@ -581,4 +584,4 @@ async function getData() {
     return data           
 }
     
-//--></script>
+</script>
