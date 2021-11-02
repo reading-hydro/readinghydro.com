@@ -165,7 +165,8 @@
  
 </style>        
 
- <script>
+<script type="text/javascript">//<!--
+// NOTE the javascript script tags must be written exactly as shown to avoid issues with ampersands in Wordpress   
 
 // Start an IIFE to use `await` at the top level
 (async function(){
@@ -384,7 +385,48 @@ function selectTimescale(mystart, myend) {
             Chart.defaults.global.title.fontStyle = 'bold'
             Chart.defaults.global.legend.labels.fontSize = 15
             Chart.defaults.global.legend.labels.fontStyle = 'bold'
+
+            var anno_HOL = {
+                                    type: 'line',
+                                    id: 'line1',
+                                    mode: 'horizontal',
+                                    scaleID: 'y-axis-0',
+                                    value: 36.737,
+                                    borderWidth: 1,
+                                    borderDash: [2,2],
+                                    borderColor: '#E4004D',
+                                    label: {
+                                        backgroundColor: 'rgba(255,255,255,0)',
+                                        fontColor: '#E4004D',
+                                        content: 'Hands off level',
+                                        position: 'right',
+                                        yAdjust: 10,
+                                        enabled: true,
+                                    }
+                                }
            
+            // Change legend click handler to accommodate annotations
+            // Store the original click handler for reuse
+            var defaultLegendClickHandler = Chart.defaults.global.legend.onClick;
+          
+            // New click handler is called from myChart5
+            var newLegendClickHandler = function (e, legendItem) {
+                var index = legendItem.datasetIndex;
+                var ci = myChart5;
+                var meta = ci.getDatasetMeta(index);
+                
+                defaultLegendClickHandler.call(this, e, legendItem);
+                var is_u = ci.isDatasetVisible(0)
+                var is_d = ci.isDatasetVisible(1)
+                // if downstream only is visible, hide HOL
+                    if (!is_u && is_d) {
+                        ci.config.options.annotation.annotations[0] = ''
+                        ci.update()
+                    } else {
+                        ci.config.options.annotation.annotations[0] = anno_HOL
+                        ci.update()
+                    }
+            };
 
         //Graph 1 - Water levels            
         if (myChart5) {
@@ -418,29 +460,11 @@ function selectTimescale(mystart, myend) {
                         },                        
                     ]
                     },
-                    options: {
+                options: {
                         annotation: {
                                 drawTime: 'afterDraw',
-                                annotations: [{
-                                    type: 'line',
-                                    id: 'line1',
-                                    mode: 'horizontal',
-                                    scaleID: 'y-axis-0',
-                                    value: 36.737,
-                                    borderWidth: 1,
-                                    borderDash: [2,2],
-                                    borderColor: '#E4004D',
-                                    label: {
-                                        backgroundColor: 'rgba(255,255,255,0)',
-                                        fontColor: '#E4004D',
-                                        content: 'Hands off level',
-                                        position: 'right',
-                                        yAdjust: 10,
-                                        enabled: true,
-                                    }
-                                }
-                            ]
-                            },
+                                annotations: [anno_HOL]
+                        },
                         scales: {
                                 xAxes: [{
                                     type: 'time',
@@ -461,8 +485,6 @@ function selectTimescale(mystart, myend) {
                                 ],
                                 yAxes: [{
                                     ticks: {
-                                        min: 34.5,
-                                        max: 37.5,
                                         fontSize: 15,
                                         fontStyle: "bold",
                                             },
@@ -476,9 +498,11 @@ function selectTimescale(mystart, myend) {
                                 },
                         legend: {
                             display: true,
+                            onClick: newLegendClickHandler
                                 }
                             } 
             });
+            
             
         //Graph 2 - Flow
         /* if (myChart6) {
@@ -551,12 +575,10 @@ function selectTimescale(mystart, myend) {
 
 // functions
 async function getData() {
-    //local
-    //const response = await fetch('/powergen') 
-    //Wordpress
+
     const response = await fetch('https://readinghydro.org:9445/api/plc/all') 
     const data = await response.json() 
     return data           
 }
     
-</script>
+//--></script>
