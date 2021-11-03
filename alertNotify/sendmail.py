@@ -30,7 +30,7 @@ Hello this is an automated message from the Reading Hydro turbine room:
 You are sheduled as {role} On-Call for today
 Please confirm receipt of this notice https://readinghydro.org/ackresp?token={token}
 Current on-call roles are listed here: https://readinghydro.org/whoisoncall
-You can see all the active alert messages here: https://readinghydro.org/alertlist
+You can see all the alert messages here: https://readinghydro.org/alertlist
 '''
 
     msg = text.format(to_addr=to_addr, role=role, token=token)
@@ -47,6 +47,8 @@ Subject: Hydro ALERT ESCALATION
 Hello this is an automated message from the Reading Hydro turbine room:
 {message}
 The alert has not been acknowledged
+Current on-call roles are listed here: https://readinghydro.org/whoisoncall
+You can see all the alert messages here: https://readinghydro.org/alertlist
 '''
 
     msg = text.format(to_addr=to_addr, message=message)
