@@ -114,10 +114,10 @@ def on_message(client, userdata, message):
 def on_connect(client, userdata, flags, rc):
     if rc==0:
         client.subscribe(topic,qos)
-        print("Connected and subscribed to ",topic)
+        print("Connected and subscribed to ",topic, file=sys.stderr)
 
     else:
-        print("Connection fail")
+        print("Connection fail", file=sys.stderr)
     return
 
 def on_log(client, userdata, level, buf):
@@ -292,14 +292,18 @@ client.on_connect = on_connect
 client.on_message = on_message
 client.on_log = on_log
 client.tls_set("/etc/ssl/certs/ca-certificates.crt")
-who_is_oncall = {'primary' : '', 'second': ''}
 
+# set the time and oncall initial values
+
+who_is_oncall = {'primary' : '', 'second': ''}
 got_api_data = True
 latest_data_time = datetime.datetime.utcnow()
 latest_data = latest_data_time.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
 next_data_report_time = datetime.datetime.utcnow()
 
 google_api_key = get_secret('GOOGLE_API_KEY')
+
+# Start the mqtt subscribe loop
 
 try:
     client.connect(mqtt_broker, mqtt_broker_port)
