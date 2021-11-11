@@ -372,18 +372,19 @@ try:
             got_api_data = True
             latest_data = json.loads(latest_request.read())
             latest_data_time = datetime.datetime.strptime(latest_data.get('received_at'), '%Y-%m-%dT%H:%M:%S.%fZ')
-
-        if latest_data_time < now_utc - NO_DATA_REPORT_EVENT:
-            if now_utc > next_data_report_time:
-                next_data_report_time = now_utc + NO_DATA_RE_REPORT_TIME
-                email1 = contacts.get(who_is_oncall.get('primary')).get('email')
-                email2 = contacts.get(who_is_oncall.get('second')).get('email')
-                alertMessage = 'No data recieved since '+latest_data_time.strftime('%Y-%m-%dT%H:%M:%SZ')
-                alertMessage += ' That is {minutes:5.2f} Minutes ago'.format(minutes=(now_utc-latest_data_time).seconds/60)
-                token = generate_token(email1, 'At: {time} message: {message}'.format(time=now_string, message=alertMessage), datetime.timedelta(seconds=15*60))
-                sendMail_alert(email1,alertMessage,now_string, token)
-                sendMail_alert(email2,alertMessage,now_string, token)
-                log_alert_message(now_string, alertMessage)
+        
+        if got_api_data:
+            if latest_data_time < now_utc - NO_DATA_REPORT_EVENT:
+                if now_utc > next_data_report_time:
+                    next_data_report_time = now_utc + NO_DATA_RE_REPORT_TIME
+                    email1 = contacts.get(who_is_oncall.get('primary')).get('email')
+                    email2 = contacts.get(who_is_oncall.get('second')).get('email')
+                    alertMessage = 'No data recieved since '+latest_data_time.strftime('%Y-%m-%dT%H:%M:%SZ')
+                    alertMessage += ' That is {minutes:5.2f} Minutes ago'.format(minutes=(now_utc-latest_data_time).seconds/60)
+                    token = generate_token(email1, 'At: {time} message: {message}'.format(time=now_string, message=alertMessage), datetime.timedelta(seconds=15*60))
+                    sendMail_alert(email1,alertMessage,now_string, token)
+                    sendMail_alert(email2,alertMessage,now_string, token)
+                    log_alert_message(now_string, alertMessage)
 
 # check the REST server is running, restart it if not
         if not(restThread.is_alive()):
