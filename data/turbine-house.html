@@ -10,39 +10,47 @@
 
 <style>
 
-    #tit {
+    .tt {
          font-family: Arial, Helvetica, sans-serif;
          font-size: 20px;
          text-align: center;
+         margin-bottom: 30px;
                     }
-     #sub1 {
+     .sub1 {
          font-family: Arial, Helvetica, sans-serif;
          font-size: 18px;
          text-align: center;
+         padding-right: 60px;
+         margin-bottom: 20px;
      }
-     #sub2 {
-         clear: left;
+     .sub2 {
          font-family: Arial, Helvetica, sans-serif;
          font-size: 18px;
          text-align: center;
-         line-height: 60px;
+         padding-bottom: 20px;
      }
-     #dpk1 {
-         margin: 10px;
-         font-family: Arial, Helvetica, sans-serif;
+     .wra {
+        max-width: 1280px;
+        margin: auto;
      }
-     #dpk2 {
-         margin: 10px;
-         font-family: Arial, Helvetica, sans-serif;
+
+     .col_lef {
+        max-width: 500px;
+        padding-bottom: 40px;
+        float: left;
      }
-     
+     .col_rig {
+        max-width: 780px;
+        padding-bottom: 40px;
+        float: left;
+     }
      .btn {
          font-size: 18px;
          font-family: Arial, Helvetica, sans-serif;
          padding: 10px 16px;
          margin: 5px;
          border-radius: 4px;
-         background-color: #e7e7e7;
+         background-color: #d3d3d3;
      }
      .lab {
          font-family: Arial, Helvetica, sans-serif;
@@ -55,173 +63,217 @@
      background-color: #1a73e8;
      color: white;
      }
-     #ts {
-         white-space: nowrap;
-     }
      .box {
-         width: 230px;
-         height: 230px;
-         margin: 20px;
-         padding: 5px 10px;
+         width: 420px;
+         height: 70px;
+         margin: 5px 0;
+         padding: 5px 20px 5px 10px;
          font-family: Arial, Helvetica, sans-serif;
-         font-size: 17px;
+         font-size: 22px;
          color: white;
          float: left;
      }
      .inner {
-         height: 230px; 
-         margin-top: -30px;
-         text-align:center;
+         height: 70px; 
+         margin-top: -20px;
+         text-align: right;
          display:flex;                
          align-items: center;
-         justify-content: center;
+         justify-content: flex-end;
          font-weight: bold;
          color: white;               
      }
-     .font80 {
-         font-size: 80px;            
+     .fontbig {
+         font-size: 38px;            
      }
-     .font30 {
-         font-size: 30px;            
+     .fontsmall {
+         font-size: 25px;            
      }
      .cwra {
-         width: 540px;
-         height: 270px;
-         margin: 20px;
-         float: left;
+         width: 780px;
+         height: 390px;
+         margin: auto;
      }
      .cle {
          clear: left;
      }
-    #con {
-         max-width: 1280px;
-         margin: auto;
-    }
-    #wra1 {
-        /* local */
-        /* max-width: 1160px; */
-        /* Wordpress */
-        max-width: 1080px;
-        margin: auto;
+     #ts {
+         white-space: nowrap;
      }
-     #wra1a {
-         /* local */
-        /* max-width: 580px; */
-        /* Wordpress */
-        max-width: 540px;
+    #con {
+        max-width: 1280px;
          margin: auto;
+         /* override WP theme */
+        line-height: 1.0;
+    }
+     #pan {
+         max-width: 760px;
+         border: lightgrey solid 2px;
+         background-color: #e7e7e7;
+         padding-top: 10px;
+         margin: 5px auto;
+     }
+     #dpk1, #dpk2 {
+         margin: 10px;
+         font-family: Arial, Helvetica, sans-serif;
+         /* override WP theme */
+         background: white;
+         border: 1px solid black;
      }
      #btw {
-         max-width: 1160px;
+         max-width: 780px;
          margin: auto;
          text-align:center;
      }
      #dtw {
-         max-width: 1160px;
+         max-width: 780px;
          margin: auto;
          text-align:center;
      }
-     #wra2 {
-        max-width: 1160px;
-        margin: auto;
-     }
-     #wra3 {
-        max-width: 1160px;
-        margin: auto;
-     }
     #tem {
-        background-color: #ff6d56;
+        background-color: #ED6651;
      }
     #hum {
-        background-color: #57b7dd;
-     }
-    #lig {
-        background-color: #ffbe0a;
-     }
-    #mot {
-        background-color: #8ac539;
-     }
-    #smo {
-        background-color: #a98cbc;
-     }
-    #doo {
-        background-color: #fa9233;
+        background-color: #4694B3;
      }
 
-     #chart1 {
+     #ca_tem {
          height: 100%;                          
      }
-     #chart2 {
+     #ca_hum {
          height: 100%;                          
      }
 
-     @media only screen and (max-width: 1190px) {
-         #wra1 {
+     @media only screen and (max-width: 1420px) {
+         .wra {
          max-width: 580px;                
          }
-         #wra1a {
+         .col_lef {
+         max-width: 580px;
+         float: none;                
+         }
+         .sub1 {
+         padding-right: 0;
+          }
+         .box {
+         float: none;
+         margin: 5px auto;
+        }
+         .col_rig {
          max-width: 580px;                
          }
-         #wra2 {
-         max-width: 580px;                
-         }
-         #wra3 {
-         max-width: 580px;                
-         }
+         .cwra {
+         width: 580px;
+         height: 290px; 
+         margin: auto;        
+        }
      }
      @media only screen and (max-width: 610px) {
-         #wra1 {
-         max-width: 290px;
-          }
-          #wra1a {
-         max-width: 290px;
+         .wra {
+         max-width: 350px;
           }
           #btw {
          max-width: 300px;
           }
           #dtw {
-         width: 260px;
+         width: 300px;
           }                 
-          #wra2 {
+          .col_lef {
          max-width: 350px;
+         float: none;  
           }
-          #wra3 {
+          .sub1, .sub2 {
+         padding-right: 0;
+         font-size: 17px;
+         margin-bottom: 10px;
+          }
+          .box {
+         width: 320px;
+         float: none;  
+         margin: 5px auto;
+        }
+        .fontbig {
+            font-size: 30px;
+        }
+        .fontsmall {
+            font-size: 20px;
+        }
+          .col_rig {
          max-width: 350px;
           }
           .cwra {
               width: 350px;
-              height: 300px;
+              height: 290px;
               margin: auto;
           }
           
      }
+     @media only screen and (max-width: 360px) {
+         /* this is for really tiny phones */
+        .box {
+         width: 270px;
+         float: none;  
+         margin: 5px auto;
+        }
+     }
+     
  
 </style>
 
- <script>
+<script type="text/javascript">
+//<!--
+// DO NOT REMOVE the comment above, it stops Wordpress from escaping ampersands
+        
+        // set default API query date to last day
+        var today_q = new Date()
+        today_q.setDate(today_q.getDate())
 
-// Start an IIFE to use `await` at the top level
-(async function(){
-        var global_data_0 = await getData();
+        var ds1 = luxon.DateTime.fromJSDate(today_q).toFormat('yyyyLLdd')
+        var ds2 = luxon.DateTime.fromJSDate(today_q).toFormat('yyyyLLdd')
+        
+        //check for query string and set new dates
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        if (urlParams.has('var1')) {
+                var myds1 = urlParams.get('var1')
+                var myds2 = urlParams.get('var2')
+                var myhighlight = urlParams.get('var3')
+        
+                var myurl = 'https://readinghydro.org:9445/api/ttn/between/' + myds1 + '/' + myds2   
+                // set param1 to the earlier date requested
+                var param1 = myds1
+                var param2 = myds2
+                var param3 = myhighlight
+        } else {
+                var myurl = 'https://readinghydro.org:9445/api/ttn/between/' + ds1 + '/' + ds2
+                var param1 = ds1
+                var param2 = ds2
+                var param3 = 0
+        }
+        
+        GoDoIt(myurl, param1, param2, param3)
+        
+        async function GoDoIt (){
+        var myreturn = await getData(myurl, param1, param2, param3);
+        var global_data_0 = myreturn[0]
         var global_data = global_data_0.filter(function(item){
                         return item.device_id == 'rdghydro-ers001'
                     })
-        var smoke_data = global_data_0.filter(function(item){
-                        return item.device_id == 'dilu-smoke-002'
-                    })
-        var door_data = global_data_0.filter(function(item){
-                        return item.device_id == 'dilu-door-005'
-                    })
+        var param1 = myreturn[1]
+        var param2 = myreturn[2]
+        var param3 = myreturn[3]
 
-        var myChart1
-        var myChart2
-        var myChart3
-        var myChart4
+        var myChart_temp
+        var myChart_humid
 
         const container = document.createElement('div')
         const title = document.createElement('h1')
         const subtitle1 = document.createElement('div')
         const subtitle2 = document.createElement('div')
+        const col_wrapper = document.createElement('div')
+        const col_left = document.createElement('div')
+        const col_right = document.createElement('div')
+        const panel = document.createElement('div')
         const buttonwrap = document.createElement('div')
         const button1 = document.createElement('button')
         const button2 = document.createElement('button')
@@ -234,36 +286,16 @@
         const label2 = document.createElement('label')
         const nowtemp = document.createElement('div')
         const nowhumid = document.createElement('div')
-        const nowlight = document.createElement('div')
-        const nowmotion = document.createElement('div')
-        const nowsmoke = document.createElement('div')
-        const nowdoor = document.createElement('div')
         const inner_nowtemp = document.createElement('div')
         const inner_nowhumid = document.createElement('div')
-        const inner_nowlight = document.createElement('div')
-        const inner_nowmotion = document.createElement('div')
-        const inner_nowsmoke = document.createElement('div')
-        const inner_nowdoor = document.createElement('div')
-        const wrap1 = document.createElement('div')
-        const wrap1a = document.createElement('div')
-        const wrap2 = document.createElement('div')
-        const wrap3 = document.createElement('div')
+        const canvwrap_temp = document.createElement('div')
+        const canvwrap_humid = document.createElement('div')
         const clear = document.createElement('p')
-        const canv1 = document.createElement('canvas')
-        const canv2 = document.createElement('canvas')
-        const canv3 = document.createElement('canvas')
-        const canv4 = document.createElement('canvas')
-
-        const canvwrap1 = document.createElement('div')
-        const canvwrap2 = document.createElement('div')
-        const canvwrap3 = document.createElement('div')
-        const canvwrap4 = document.createElement('div')
-
+        const canv_temp = document.createElement('canvas')
+        const canv_humid = document.createElement('canvas')
         
-        container.id = "con"
-        title.id = "tit"
-        subtitle1.id = "sub1"
-        subtitle2.id = "sub2"
+        container.id = "con"							 
+        panel.id = "pan"
         buttonwrap.id = "btw"
         datewrap.id = "dtw"
         datepick1.type = "text"
@@ -274,97 +306,90 @@
         label2.for = "dpk2"
         nowtemp.id = "tem"
         nowhumid.id = "hum"
-        nowlight.id = "lig"
-        nowmotion.id = "mot"
-        nowsmoke.id = "smo"
-        nowdoor.id = "doo"
-        wrap1.id = "wra1"
-        wrap1a.id = "wra1a"
-        wrap2.id = "wra2"
-        wrap3.id = "wra3"
-        canv1.id = "chart1"
-        canv2.id = "chart2"
-        canv3.id = "chart3"
-        canv4.id = "chart4"
+        canv_temp.id = "ca_tem"
+        canv_humid.id = "ca_hum"
 
+        title.className = "tt"
+        subtitle1.className = "sub1"
+        subtitle2.className = "sub2"
+        col_wrapper.className = "wra"
+        col_left.className = "col_lef"
+        col_right.className = "col_rig"
         nowtemp.className = "box"
         nowhumid.className = "box"
-        nowlight.className = "box"
-        nowmotion.className = "box"
-        nowsmoke.className = "box"
-        nowdoor.className = "box"
-        inner_nowtemp.className = "inner font80"
-        inner_nowhumid.className = "inner font80"
-        inner_nowlight.className = "inner font80"
-        inner_nowmotion.className = "inner font80"
-        inner_nowsmoke.className = "inner font30"
-        inner_nowdoor.className = "inner font30"
+        inner_nowtemp.className = "inner fontbig"
+        inner_nowhumid.className = "inner fontbig"
         clear.className = "cle"
-        button1.className = "btn"
-        button2.className = "btn active"
+        button1.className = "btn active"
+        button2.className = "btn"
         button3.className = "btn"
         button4.className = "btn"
+        if (param3 == 1) {
+            button1.className = "btn"
+            button2.className = "btn active"
+            button3.className = "btn"
+            button4.className = "btn"
+        }
+        if (param3 == 2) {
+            button1.className = "btn"
+            button2.className = "btn"
+            button3.className = "btn active"
+            button4.className = "btn"
+        }
+        if (param3 == 3) {
+            button1.className = "btn"
+            button2.className = "btn"
+            button3.className = "btn"
+            button4.className = "btn active"
+        }
+        if (param3 == 4) {
+            button1.className = "btn"
+            button2.className = "btn"
+            button3.className = "btn"
+            button4.className = "btn"
+        } 
         label1.className = "lab"
         label2.className = "lab"
-        canvwrap1.className = "cwra"
-        canvwrap2.className = "cwra"
-        canvwrap3.className = "cwra"
-        canvwrap4.className = "cwra"
+        canvwrap_temp.className = "cwra"
+        canvwrap_humid.className = "cwra"
 
         title.innerHTML = "Turbine House"
         subtitle1.innerHTML = `Current conditions: <span id="ts">${luxon.DateTime.fromISO(global_data[0].received_at).toFormat('ff')} </span>`
         subtitle2.innerHTML = "<span>Conditions over selected period</span>"
         button1.innerHTML = "Last day"
-        button1.onclick = function(){picker1.setDate(yesterday, true); picker2.setDate(today, true); selectTimescale(yesterday, today)}
+        button1.onclick = function(){picker2.setDate(today_end, true); picker1.setDate(today, true); selectTimescale(today, today_end, param1, param2, param3)}
         button2.innerHTML = "Last week"
-        button2.onclick = function(){picker1.setDate(lastweek, true); picker2.setDate(today, true); selectTimescale(lastweek, today)}
+        button2.onclick = function(){picker2.setDate(today_end, true); picker1.setDate(lastweek, true); param3 = 1; selectTimescale(lastweek, today_end, param1, param2, param3)}
         button3.innerHTML = "Last month"
-        button3.onclick = function(){picker1.setDate(lastmonth, true); picker2.setDate(today, true); selectTimescale(lastmonth, today)}
+        button3.onclick = function(){picker2.setDate(today_end, true); picker1.setDate(lastmonth, true); param3 = 2; selectTimescale(lastmonth, today_end, param1, param2, param3)}
         button4.innerHTML = "Last year"
-        button4.onclick = function(){picker1.setDate(lastyear, true); picker2.setDate(today, true); selectTimescale(lastyear, today)}
+        button4.onclick = function(){picker2.setDate(today_end, true); picker1.setDate(lastyear, true); param3 = 3; selectTimescale(lastyear, today_end, param1, param2, param3)}
 
         nowtemp.innerHTML = "Temperature (&deg;C)"
         nowhumid.innerHTML = "Humidity (&percnt;)"
-        nowlight.innerHTML = "Light (Lux)" 
-        nowmotion.innerHTML = "Motion counts"
-        nowsmoke.innerHTML = "Smoke alarm status"
-        nowdoor.innerHTML = "Door status"
         label1.innerHTML = "Start date"
         label2.innerHTML = "End date"
         inner_nowtemp.textContent = global_data[0].temperature
         inner_nowhumid.textContent = global_data[0].humidity
-        inner_nowlight.textContent = global_data[0].light
-        inner_nowmotion.textContent = global_data[0].motion 
-        inner_nowsmoke.textContent = smoke_data[0].smokeStatus 
-        inner_nowdoor.textContent = door_data[0].doorStatus 
 
         nowtemp.append(inner_nowtemp)
         nowhumid.append(inner_nowhumid)
-        nowlight.append(inner_nowlight)
-        nowmotion.append(inner_nowmotion)
-        nowsmoke.append(inner_nowsmoke)
-        nowdoor.append(inner_nowdoor)
 
-        wrap1.append(nowtemp, nowhumid, nowlight, nowmotion, clear)
-        wrap1a.append(nowsmoke, nowdoor, clear)
-        container.append(title)
-        container.append(subtitle1)
-        container.append(wrap1)
-        container.append(wrap1a)
-        container.append(subtitle2)
+        col_left.append(subtitle1)
+        col_left.append(nowtemp, nowhumid, clear)
+        
+        col_right.append(subtitle2)
         buttonwrap.append(button1, button2, button3, button4, clear)
-        container.append(buttonwrap)
         datewrap.append(label1, datepick1, label2, datepick2, clear)
-        container.append(datewrap)
-        canvwrap1.append(canv1)
-        canvwrap2.append(canv2)                
-        canvwrap3.append(canv3)
-        canvwrap4.append(canv4)
-        wrap2.append(canvwrap1, canvwrap2, clear)
-        wrap3.append(canvwrap3, canvwrap4)
+        panel.append(buttonwrap, datewrap)
+        col_right.append(panel)
+        canvwrap_temp.append(canv_temp)
+        canvwrap_humid.append(canv_humid)                
+        col_right.append(canvwrap_temp, canvwrap_humid)
 
-        container.append(wrap2)
-        container.append(wrap3)
+        //col_wrapper.append(title) //Hide title for Wordpress
+        col_wrapper.append(col_left, col_right)
+        container.append(col_wrapper)
         
         //local
         //document.body.append(container)
@@ -374,26 +399,74 @@
     
     //filter by date
     let today = new Date()
-    let yesterday = new Date()
-    let daybefore = new Date()
+    let today_end = new Date()
+							  
     let lastweek = new Date()
     let lastmonth = new Date()
     let lastyear = new Date()
-    yesterday.setDate(today.getDate() - 1)
-    daybefore.setDate(today.getDate() - 2)
+    today.setDate(today.getDate())
+    today_end.setDate(today.getDate())
     lastweek.setDate(today.getDate() - 7)
     lastmonth.setDate(today.getDate() - 31)
     lastyear.setDate(today.getDate() - 365)
+    
+    today = luxon.DateTime.fromJSDate(today).startOf('day').toJSDate()
+    today_end = luxon.DateTime.fromJSDate(today).endOf('day').toJSDate()
+    lastweek = luxon.DateTime.fromJSDate(lastweek).startOf('day').toJSDate()
+    lastmonth = luxon.DateTime.fromJSDate(lastmonth).startOf('day').toJSDate()
+    lastyear = luxon.DateTime.fromJSDate(lastyear).startOf('day').toJSDate()
+
+    // convert params to dates
+    var param1_date = luxon.DateTime.fromFormat(param1, 'yyyyLLdd').startOf('day').toJSDate()
+    var param2_date = luxon.DateTime.fromFormat(param2, 'yyyyLLdd').endOf('day').toJSDate()
 
     var picked = false
+    // datepicker
+    const picker1 = datepicker('#dpk1', { id: 1, dateSelected: param1_date, onSelect: instance => {picked = true; selectTimescale(picker1.getRange().start, dayEnd(picker1.getRange().end), param1, param2, param3 ) }})
+    const picker2 = datepicker('#dpk2', { id: 1, dateSelected: param2_date, onSelect: instance => {picked = true; selectTimescale(picker2.getRange().start, dayEnd(picker2.getRange().end), param1, param2, param3 ) }})
 
-    const picker1 = datepicker('#dpk1', { id: 1, dateSelected: lastweek, onSelect: instance => {picked = true; selectTimescale(picker1.getRange().start, picker1.getRange().end ) }})
-    const picker2 = datepicker('#dpk2', { id: 1, dateSelected: today, onSelect: instance => {picked = true; selectTimescale(picker2.getRange().start, picker2.getRange().end ) }})
+    // push end date to end of day
+    function dayEnd(pick){
+        var dayend = luxon.DateTime.fromJSDate(pick).endOf('day').toJSDate()
+        return dayend
+    }
 
+// if reloaded with last week, month or year buttons
+if (param2_date.getDate() == today.getDate()) {
+   picker2.setDate(today_end, true)
+}
 
-selectTimescale(lastweek, today)
+//default timescale for first page load = last week
+if (!urlParams.has('var1')) {
+    selectTimescale(today, today_end, param1, param2, param3)
+    picker2.setDate(today_end, true)
+} else {
+    selectTimescale(param1_date, param2_date, param1, param2, param3)   
+}
 
-function selectTimescale(mystart, myend) {
+//else select timescale using parameters from buttons or datepicker
+function selectTimescale(mystart, myend, myparam1, myparam2, myparam3) {
+
+//reload page and fetch more data if needed
+        if (myparam1) {
+            var myparam1_date = luxon.DateTime.fromFormat(myparam1, 'yyyyLLdd').startOf('day').toJSDate()
+            } else {
+                myparam1_date = today
+            }
+
+    if (mystart < myparam1_date) {
+        
+            if (picked == true) {
+                myparam3 = 4
+            } 
+
+            var newstart = luxon.DateTime.fromJSDate(mystart).toFormat('yyyyLLdd')
+            var newend = luxon.DateTime.fromJSDate(myend).toFormat('yyyyLLdd')
+            var path = window.location.href.split('?')[0]
+            location.href = path + '?var1=' + newstart + '&var2=' + newend + '&var3=' + myparam3
+            return
+        } 
+
     var selection = global_data.filter(function(item){
                 return new Date(item.received_at) >= mystart
             })
@@ -472,12 +545,12 @@ function selectTimescale(mystart, myend) {
 
 
         //Graph 1 - temperature            
-        if (myChart1) {
-            myChart1.destroy();
+        if (myChart_temp) {
+            myChart_temp.destroy();
             }
 
-        var ctx1 = document.getElementById('chart1').getContext('2d');
-        myChart1 = new Chart(ctx1, {
+        var ctx_tem = document.getElementById('ca_tem').getContext('2d');
+        myChart_temp = new Chart(ctx_tem, {
                 type: 'line',
                 data: {
                     labels: xs,
@@ -528,12 +601,12 @@ function selectTimescale(mystart, myend) {
         // End of graph 1
 
         //Graph 2 - humidity
-        if (myChart2) {
-            myChart2.destroy();
+        if (myChart_humid) {
+            myChart_humid.destroy();
             }
 
-        var ctx2 = document.getElementById('chart2').getContext('2d');
-        myChart2 = new Chart(ctx2, {
+        var ctx_hum = document.getElementById('ca_hum').getContext('2d');
+        myChart_humid = new Chart(ctx_hum, {
                 type: 'line',
                 data: {
                     labels: xs,
@@ -585,136 +658,21 @@ function selectTimescale(mystart, myend) {
             });
         // End of graph 2
 
-        //Graph 3 - light
-        if (myChart3) {
-            myChart3.destroy();
-            }
-
-        var ctx3 = document.getElementById('chart3').getContext('2d'); 
-        myChart3 = new Chart(ctx3, {
-                type: 'line',
-                data: {
-                    labels: xs,
-                    datasets: [
-                        {                               
-                        data: ys3,
-                        fill: true,
-                        backgroundColor: 'rgb(255, 190, 10, 0.7)',
-                        borderColor: 'rgb(255, 190, 10)',
-                        borderWidth: 1,
-                        radius: 0
-                        },                        
-                    ]
-                    },
-                    options: {
-                        scales: {
-                                xAxes: [{
-                                    type: 'time',
-                                    time: {
-                                        minUnit: myunit,
-                                    }, 
-                                    distribution: 'linear',
-                                    ticks: {
-                                        fontStyle: "bold",
-                                        min: mystarttime,
-                                        max: myendtime,
-                                            },
-                                    scaleLabel: {
-                                        display: false,                                                                  
-                                            }
-                                        }
-                                ],
-                                yAxes: [{
-                                    ticks: {
-                                        fontSize: 15,
-                                        fontStyle: "bold",
-                                            },
-                                            scaleLabel: {
-                                        display: false                                      
-                                            }
-                                        }]
-                                },
-                        title: {
-                            text: "Light (Lux)",
-                                }
-                            } 
-            });
-        // End of graph 3
-
-        //Graph 4 - motion
-        if (myChart4) {
-            myChart4.destroy();
-            }
-
-        var ctx4 = document.getElementById('chart4').getContext('2d'); 
-        myChart4 = new Chart(ctx4, {
-                type: 'line',
-                data: {
-                    labels: xs,
-                    datasets: [
-                        {                              
-                        data: ys4,
-                        fill: true,
-                        backgroundColor: 'rgb(138, 197, 57, 0.7)',
-                        borderColor: 'rgb(138, 197, 57)',
-                        borderWidth: 1,
-                        radius: 0
-                        },                        
-                    ]
-                    },
-                    options: {
-                        scales: {
-
-                                xAxes: [{
-                                    type: 'time',
-                                    time: {
-                                        minUnit: myunit,
-                                    },
-                                    distribution: 'linear',
-                                    ticks: {
-                                        fontStyle: "bold",
-                                        min: mystarttime,
-                                        max: myendtime,
-                                            },
-                                    scaleLabel: {
-                                        display: false,                                                                  
-                                            }
-                                        }
-                                ],
-                                yAxes: [{
-                                    ticks: {
-                                        fontSize: 15,
-                                        fontStyle: "bold",
-                                            },
-                                            scaleLabel: {
-                                        display: false                                      
-                                            }
-                                        }]
-                                },
-                        title: {
-                            text: "Motion counts",
-                                }
-                            } 
-            });
-        // End of graph 4
-
         }
         // End of selectTimescale
 
-//closing of IIFE function
-})();
-
+// closing of GoDoIt function
+};
 
 // functions
 async function getData() {
-    //local
-    //const response = await fetch('/hook') 
-    //Wordpress
-    const response = await fetch('https://readinghydro.org:9445/api/ttn/all') 
-    const data = await response.json() 
-    return data           
+
+    const response = await fetch(myurl) 
+    const data = await response.json()
+    var arr = [data, param1, param2, param3] 
+    return arr           
 }
     
-</script>
-
+// DO NOT REMOVE the comment below, it stops Wordpress from escaping ampersands
+//--></script>  
 
