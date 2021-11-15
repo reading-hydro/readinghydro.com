@@ -379,7 +379,7 @@ try:
                     next_data_report_time = now_utc + NO_DATA_RE_REPORT_TIME
                     email1 = contacts.get(who_is_oncall.get('primary')).get('email')
                     email2 = contacts.get(who_is_oncall.get('second')).get('email')
-                    alertMessage = 'No data recieved since '+latest_data_time.strftime('%Y-%m-%dT%H:%M:%SZ')
+                    alertMessage = 'No data received since '+latest_data_time.strftime('%Y-%m-%dT%H:%M:%SZ')
                     alertMessage += ' That is {minutes:5.2f} Minutes ago'.format(minutes=(now_utc-latest_data_time).seconds/60)
                     token = generate_token(email1, 'At: {time} message: {message}'.format(time=now_string, message=alertMessage), datetime.timedelta(seconds=15*60))
                     sendMail_alert(email1,alertMessage,now_string, token)
