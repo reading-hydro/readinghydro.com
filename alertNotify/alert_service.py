@@ -363,7 +363,7 @@ try:
 # check the data feeds to see if we have current data, if not raise an alert
 
         try:
-            latest_request = request.urlopen('https://readinghydro.org:9445/api/plc/current')
+            latest_request = request.urlopen('https://readinghydro.org:9445/api/plc/current',timeout=3)
         except:
             if got_api_data:
                 log_alert_message(now_string, 'Failed to get API data, Latest data at: '+latest_data)

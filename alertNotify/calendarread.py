@@ -22,12 +22,16 @@ def calendarread(api_key):
     # Encode the query string
     querystring = parse.urlencode(parms)
     url =  SCOPE+CALENDAR_ID+'/events?'
+    oncall = []
 
     # Make a GET request and read the response
-    requ = request.Request(url + querystring, headers={'Accept': 'application/json'})
-    u = request.urlopen(requ)
+    try:
+        requ = request.Request(url + querystring, headers={'Accept': 'application/json'})
+        u = request.urlopen(requ,timeout=3)
+    except:
+        return oncall
+    
     events =json.loads(u.read())
-    oncall = []
 
     if not len(events['items']):
         print('No upcoming events found.')
