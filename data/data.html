@@ -128,7 +128,7 @@
                background-color: #ED6651;
             }
            #hum {
-               background-color: #4694B3;
+               background-color: #167CAC;
             }
 
             @media only screen and (max-width: 1100px) {
@@ -190,8 +190,8 @@
         (async function(){
         var global_data1 = await getData1();
         var global_data2 = await getData2();
-
-        var HOL = 36.727
+        var setdata = await getData3()
+        var HOL = setdata.level
 
         // This is the LIVE DATA summary page
                 const container = document.createElement('div')                
@@ -391,7 +391,7 @@
                 now_upst.innerHTML = "Upstream (metres AOD)"
                 now_down.innerHTML = "Downstream (metres AOD)"
                 now_head.innerHTML = "Head (metres)" 
-                now_aboveHOL.innerHTML = "Level above hands-off (metres)"
+                now_aboveHOL.innerHTML = "Above set level (metres)"
                 inner_now_upst.textContent = global_data2.upstream.toFixed(3)
                 inner_now_down.textContent = global_data2.downstream.toFixed(3)
                 inner_now_head.textContent = (global_data2.upstream - global_data2.downstream).toFixed(3)
@@ -404,8 +404,8 @@
 
                 wrap_RC.append(title_RC)
                 wrap_RC.append(subtitle_RC)
-                //wrap_RC.append(now_upst, now_down, now_head, now_aboveHOL, clear)
-                wrap_RC.append(now_upst, now_down, now_head, clear)
+                wrap_RC.append(now_upst, now_down, now_head, now_aboveHOL, clear)
+                //wrap_RC.append(now_upst, now_down, now_head, clear)
                 wrap_TH_RC.append(wrap_RC)
 
                 title_TH.innerHTML = '<a href="/turbine-house-data/">Turbine House<br />click for data history</a>'
@@ -453,5 +453,11 @@
             const data = await response.json() 
             return data           
         }
+
+        async function getData3() {
+            const response = await fetch('https://readinghydro.org:9445/api/setlevel/current') 
+            const data = await response.json()
+            return data           
+            }
         
         </script>

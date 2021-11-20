@@ -283,7 +283,9 @@ var param1 = myreturn[1]
 var param2 = myreturn[2]
 var param3 = myreturn[3]
 
-        var HOL = 36.727
+var setdata = await getData2()
+var HOL = setdata.level
+
         var myChart_levels
 
         const container = document.createElement('div')
@@ -397,7 +399,7 @@ var param3 = myreturn[3]
         now_upst.innerHTML = "Upstream (metres AOD)"
         now_down.innerHTML = "Downstream (metres AOD)"
         now_head.innerHTML = "Head (metres)" 
-        now_aboveHOL.innerHTML = "Level above hands-off (metres)"
+        now_aboveHOL.innerHTML = "Above set level (metres)"
         label1.innerHTML = "Start date"
         label2.innerHTML = "End date"
         inner_now_upst.textContent = global_data[0].upstream.toFixed(3)
@@ -411,8 +413,8 @@ var param3 = myreturn[3]
         now_aboveHOL.append(inner_now_aboveHOL)
 
         col_left.append(subtitle1)
-        //col_left.append(now_upst, now_down, now_head, now_aboveHOL, clear)
-        col_left.append(now_upst, now_down, now_head, clear)
+        col_left.append(now_upst, now_down, now_head, now_aboveHOL, clear)
+        //col_left.append(now_upst, now_down, now_head, clear)
         
         col_right.append(subtitle2)
         buttonwrap.append(button1, button2, button3, button4, clear)
@@ -584,7 +586,7 @@ function selectTimescale(mystart, myend, myparam1, myparam2, myparam3) {
                                     label: {
                                         backgroundColor: 'rgba(255,255,255,0)',
                                         fontColor: '#E4004D',
-                                        content: 'Hands off level',
+                                        content: 'Set level',
                                         position: 'right',
                                         yAdjust: 10,
                                         enabled: true,
@@ -709,6 +711,13 @@ async function getData() {
     var arr = [data, param1, param2, param3] 
     return arr           
 }
+async function getData2() {
+
+const response = await fetch('https://readinghydro.org:9445/api/setlevel/current') 
+const data = await response.json()
+return data           
+}
+
     
 // DO NOT REMOVE the comment below, it stops Wordpress from escaping ampersands
 //--></script>  
