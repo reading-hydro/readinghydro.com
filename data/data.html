@@ -356,7 +356,7 @@
 
                 wrap_PO.append(title_PO)
                 wrap_T1.append(subtitle_T1)
-                wrap_T1.append(nowPower_G1, nowScrewRPM_G1, nowTorque_G1, nowDriveRPM_G1, nowOpHours_G1, clear)
+                wrap_T1.append(nowPower_G1, nowScrewRPM_G1, nowDriveRPM_G1, nowOpHours_G1, clear) // torque removed
                 wrap_PO.append(wrap_T1)
 
                 subtitle_T2.innerHTML = `Turbine 2 (Sophie): <span class="ts">${luxon.DateTime.fromISO(global_data2.received_at).toFormat('ff')} </span><br />Current performance of turbine and generator`
@@ -380,7 +380,7 @@
                 nowOpHours_G2.append(inner_nowOpHours_G2)
 
                 wrap_T2.append(subtitle_T2)
-                wrap_T2.append(nowPower_G2, nowScrewRPM_G2, nowTorque_G2, nowDriveRPM_G2, nowOpHours_G2, clear)
+                wrap_T2.append(nowPower_G2, nowScrewRPM_G2, nowDriveRPM_G2, nowOpHours_G2, clear) // torque removed
                 wrap_PO.append(wrap_T2)
 
                 container.append(wrap_PO)
