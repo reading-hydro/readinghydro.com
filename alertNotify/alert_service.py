@@ -235,7 +235,7 @@ _alert_list_head = '''\
      <title>Reading Hydro Alert Activity</title>
    </head>
    <body>
-     <h1>Alert history</h1>
+     <h1>Alert history at {time}</h1>
      <table><tr><th>Time</th><th>Message</th></tr>
      '''
 _alert_list_body = '''\
@@ -249,7 +249,7 @@ _alert_list_tail = '''\
 def alertlist(environ, start_response):
     start_response('200 OK', [ ('Content-type', 'text/html')])
     tokenlist = active_token()
-    resp = _alert_list_head
+    resp = _alert_list_head.format(time=datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ'))
     for entry in alert_log_list:
         resp = resp + _alert_list_body.format(time=entry.get('time'), message=entry.get('message'))
     resp = resp + _alert_list_tail
