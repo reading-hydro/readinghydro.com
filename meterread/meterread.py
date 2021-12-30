@@ -10,34 +10,41 @@ ACK = b"\x06"
 NACK = b"\x15"
 
 
-def messageverify(meaasge, checkc):
-    return True
+def messageverify(message, checkc) -> bool:
+    bcc = 0
+    for b in message:
+        x = b & 0x7F
+        bcc ^= x
+        bcc &= 0x7F
+    checkis = bcc.to_bytes(length=1, byteorder="big")
+    print('Check Char is:',checkis,' expecting:',checkc)
+    return (checkis==checkc)
 
 
 def main():
-    portconnector = serial.Serial('/dev/ttyUSB0',baudrate=9600, bytesize=7, parity='E', timeout=5)
-    portconnector.write(b'/?!\r\n')
+    portcon = serial.Serial('/dev/ttyUSB0',baudrate=9600, bytesize=7, parity='E', timeout=5)
+    portcon.write(b'/?!\r\n')
     print('> /?!<CR><LF>')
-    ident = portconnector.readline()
+    ident = portcon.readline()
     print('< ',ident)
-    portconnector.write(ACK+b'0Z0\r\n')
-    print('> <ACK>0Z0<CR><LF>')
     while True:
-        prelim = portconnector.read_until(terminator=STX, size=1024)
+        prelim = portcon.read_until(terminator=STX, size=1024)
         print('< ',prelim)
-        message = portconnector.read_until(terminator=ETX, size=1024)
+        message = portcon.read_until(terminator=ETX, size=1024)
         print('< ',message)
-        checkc = portconnector.read(size=1)
+        checkc = portcon.read(size=1)
         print('< Check character', checkc)
         if messageverify(message,checkc):
-            portconnector.write(ACK)
-            print('> <ACK>')
+            portcon.write(ACK+b'0Z0\r\n')
+            print('> <ACK>0Z0<CR><LF>')
         else:
-            portconnector.write(NACK)
+            portcon.write(NACK)
             print('> NACK')
 
     return
 
+# mess = b'1-0:0.9.2*255(0211227)\r\n1-0:0.9.1*255(120524)\r\n1-0:1.8.0*255(0000501.088*kWh)\r\n!\r\n\x03'
+# messageverify(mess,b'v')
 
 if __name__ == '__main__':
     main()
