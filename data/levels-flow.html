@@ -16,6 +16,9 @@
          text-align: center;
          margin-bottom: 30px;
                     }
+    .notes {
+        text-align: center;
+     }
      .sub1 {
          font-family: Arial, Helvetica, sans-serif;
          font-size: 18px;
@@ -290,6 +293,7 @@ var HOL = setdata.level
 
         const container = document.createElement('div')
         const title = document.createElement('h1')
+        const notes = document.createElement('p')
         const subtitle1 = document.createElement('div')
         const subtitle2 = document.createElement('div')
         const col_wrapper = document.createElement('div')
@@ -338,6 +342,7 @@ var HOL = setdata.level
         canv_aboveHOL.id = "ca_flo"
 
         title.className = "tt"
+        notes.className = "notes"
         subtitle1.className = "sub1"
         subtitle2.className = "sub2"
         col_wrapper.className = "col_wra"
@@ -385,6 +390,7 @@ var HOL = setdata.level
         canvwrap_levels.className = "cwra_lev"
 
         title.innerHTML = "River Conditions"
+        notes.innerHTML = "<a href='#notes'>See below for explanatory notes</a>"
         subtitle1.innerHTML = `Current conditions: <span id="ts">${luxon.DateTime.fromISO(global_data[0].received_at).toFormat('ff')} </span>`
         subtitle2.innerHTML = "<span>Conditions over selected period</span>"
         button1.innerHTML = "Last day"
@@ -423,7 +429,7 @@ var HOL = setdata.level
         col_right.append(panel)
         canvwrap_levels.append(canv_levels)
         col_right.append(canvwrap_levels)
-
+        container.append(notes)
         //col_wrapper.append(title) //Hide title for Wordpress
         col_wrapper.append(col_left, col_right)
         container.append(col_wrapper)
@@ -473,7 +479,7 @@ if (param2_date.getDate() == today.getDate()) {
    picker2.setDate(today_end, true)
 }
 
-//default timescale for first page load = last week
+//default timescale for first page load = last day
 if (!urlParams.has('var1')) {
     selectTimescale(today, today_end, param1, param2, param3)
     picker2.setDate(today_end, true)
@@ -499,7 +505,8 @@ function selectTimescale(mystart, myend, myparam1, myparam2, myparam3) {
 
             var newstart = luxon.DateTime.fromJSDate(mystart).toFormat('yyyyLLdd')
             var newend = luxon.DateTime.fromJSDate(myend).toFormat('yyyyLLdd')
-            var path = window.location.href.split('?')[0]
+            var path = window.location.href.split(/[?#]/)[0] // Remove parameters and/or anchor
+            var path2 = window.location.pathname
             location.href = path + '?var1=' + newstart + '&var2=' + newend + '&var3=' + myparam3
             return
         } 

@@ -88,9 +88,6 @@
             #srpm1 {
                 background-color: #7A65CF;
             }
-            #stor1 {
-                background-color: #7A65CF;
-            }
             #drpm1 {
                 background-color: #7A65CF;
             }
@@ -101,9 +98,6 @@
                 background-color: #DE2F55;
             }
             #srpm2 {
-                background-color: #DE2F55;
-            }
-            #stor2 {
                 background-color: #DE2F55;
             }
             #drpm2 {
@@ -206,13 +200,11 @@
 
                 const nowPower_G1 = document.createElement('div')
                 const nowScrewRPM_G1 = document.createElement('div')
-                const nowTorque_G1 = document.createElement('div')
                 const nowDriveRPM_G1 = document.createElement('div')
                 const nowOpHours_G1 = document.createElement('div')
 
                 const nowPower_G2 = document.createElement('div')
                 const nowScrewRPM_G2 = document.createElement('div')
-                const nowTorque_G2 = document.createElement('div')
                 const nowDriveRPM_G2 = document.createElement('div')
                 const nowOpHours_G2 = document.createElement('div')
                 
@@ -226,13 +218,11 @@
 
                 const inner_nowPower_G1 = document.createElement('div')
                 const inner_nowScrewRPM_G1 = document.createElement('div')
-                const inner_nowTorque_G1 = document.createElement('div')
                 const inner_nowDriveRPM_G1 = document.createElement('div')
                 const inner_nowOpHours_G1 = document.createElement('div')
 
                 const inner_nowPower_G2 = document.createElement('div')
                 const inner_nowScrewRPM_G2 = document.createElement('div')
-                const inner_nowTorque_G2 = document.createElement('div')
                 const inner_nowDriveRPM_G2 = document.createElement('div')
                 const inner_nowOpHours_G2 = document.createElement('div')
 
@@ -258,13 +248,11 @@
 
                 nowPower_G1.id = "pow1"
                 nowScrewRPM_G1.id = "srpm1"
-                nowTorque_G1.id = "stor1"
                 nowDriveRPM_G1.id = "drpm1"
                 nowOpHours_G1.id = "opho1"
 
                 nowPower_G2.id = "pow2"
                 nowScrewRPM_G2.id = "srpm2"
-                nowTorque_G2.id = "stor2"
                 nowDriveRPM_G2.id = "drpm2"
                 nowOpHours_G2.id = "opho2"
                 
@@ -293,13 +281,11 @@
 
                 nowPower_G1.className = "box_data"
                 nowScrewRPM_G1.className = "box_data"
-                nowTorque_G1.className = "box_data"
                 nowDriveRPM_G1.className = "box_data"
                 nowOpHours_G1.className = "box_data"
 
                 nowPower_G2.className = "box_data"
                 nowScrewRPM_G2.className = "box_data"
-                nowTorque_G2.className = "box_data"
                 nowDriveRPM_G2.className = "box_data"
                 nowOpHours_G2.className = "box_data"
                 
@@ -313,13 +299,11 @@
 
                 inner_nowPower_G1.className = "inner fontbig"
                 inner_nowScrewRPM_G1.className = "inner fontbig"
-                inner_nowTorque_G1.className = "inner fontbig"
                 inner_nowDriveRPM_G1.className = "inner fontbig"
                 inner_nowOpHours_G1.className = "inner fontbig"
 
                 inner_nowPower_G2.className = "inner fontbig"
                 inner_nowScrewRPM_G2.className = "inner fontbig"
-                inner_nowTorque_G2.className = "inner fontbig"
                 inner_nowDriveRPM_G2.className = "inner fontbig"
                 inner_nowOpHours_G2.className = "inner fontbig"
 
@@ -333,54 +317,48 @@
 
                 clear.className = "cle"
 
-                title_PO.innerHTML = '<a href="/power-output-data/">Power Output<br />click for data history</a>'
+                title_PO.innerHTML = '<a href="/power-output-data/">Power Generation<br />click for data history</a>'
                 subtitle_T1.innerHTML = `Turbine 1 (Tony): <span class="ts">${luxon.DateTime.fromISO(global_data2.received_at).toFormat('ff')} </span><br />Current performance of turbine and generator`
 
                 nowPower_G1.innerHTML = 'Power Generation (kW)'
                 nowScrewRPM_G1.innerHTML = 'Screw Speed (RPM)'
-                nowTorque_G1.innerHTML = 'Screw Torque (Nm)'
                 nowDriveRPM_G1.innerHTML = 'Drive Speed (RPM)'
                 nowOpHours_G1.innerHTML = 'Total Operating (Hours)'
 
                 inner_nowPower_G1.textContent = global_data2.gen1_power_kw
                 inner_nowScrewRPM_G1.textContent = global_data2.gen1_screw_rpm
-                inner_nowTorque_G1.textContent = global_data2.gen1_torque
                 inner_nowDriveRPM_G1.textContent = global_data2.gen1_drive_rpm
                 inner_nowOpHours_G1.textContent = global_data2.gen1_operating_hours
 
                 nowPower_G1.append(inner_nowPower_G1)
                 nowScrewRPM_G1.append(inner_nowScrewRPM_G1)
-                nowTorque_G1.append(inner_nowTorque_G1)
                 nowDriveRPM_G1.append(inner_nowDriveRPM_G1)
                 nowOpHours_G1.append(inner_nowOpHours_G1)
 
                 wrap_PO.append(title_PO)
                 wrap_T1.append(subtitle_T1)
-                wrap_T1.append(nowPower_G1, nowScrewRPM_G1, nowDriveRPM_G1, nowOpHours_G1, clear) // torque removed
+                wrap_T1.append(nowPower_G1, nowScrewRPM_G1, nowDriveRPM_G1, nowOpHours_G1, clear)
                 wrap_PO.append(wrap_T1)
 
                 subtitle_T2.innerHTML = `Turbine 2 (Sophie): <span class="ts">${luxon.DateTime.fromISO(global_data2.received_at).toFormat('ff')} </span><br />Current performance of turbine and generator`
 
                 nowPower_G2.innerHTML = 'Power Generation (kW)'
                 nowScrewRPM_G2.innerHTML = 'Screw Speed (RPM)'
-                nowTorque_G2.innerHTML = 'Screw Torque (Nm)'
                 nowDriveRPM_G2.innerHTML = 'Drive Speed (RPM)'
                 nowOpHours_G2.innerHTML = 'Total Operating (Hours)'
 
                 inner_nowPower_G2.textContent = global_data2.gen2_power_kw
                 inner_nowScrewRPM_G2.textContent = global_data2.gen2_screw_rpm
-                inner_nowTorque_G2.textContent = global_data2.gen2_torque
                 inner_nowDriveRPM_G2.textContent = global_data2.gen2_drive_rpm
                 inner_nowOpHours_G2.textContent = global_data2.gen2_operating_hours
 
                 nowPower_G2.append(inner_nowPower_G2)
                 nowScrewRPM_G2.append(inner_nowScrewRPM_G2)
-                nowTorque_G2.append(inner_nowTorque_G2)
                 nowDriveRPM_G2.append(inner_nowDriveRPM_G2)
                 nowOpHours_G2.append(inner_nowOpHours_G2)
 
                 wrap_T2.append(subtitle_T2)
-                wrap_T2.append(nowPower_G2, nowScrewRPM_G2, nowDriveRPM_G2, nowOpHours_G2, clear) // torque removed
+                wrap_T2.append(nowPower_G2, nowScrewRPM_G2, nowDriveRPM_G2, nowOpHours_G2, clear)
                 wrap_PO.append(wrap_T2)
 
                 container.append(wrap_PO)
@@ -417,7 +395,7 @@
                 subtitle_TH.innerHTML = `Current conditions: <span class="ts">${luxon.DateTime.fromISO(selection1[0].received_at).toFormat('ff')} </span>`
 
                 nowtemp.innerHTML = "Temperature (&deg;C)"
-                nowhumid.innerHTML = "Humidity (&percnt;)"
+                nowhumid.innerHTML = "Relative Humidity (&percnt;)"
 
                 inner_nowtemp.textContent = selection1[0].temperature
                 inner_nowhumid.textContent = selection1[0].humidity
@@ -461,3 +439,4 @@
             }
         
         </script>
+

@@ -16,6 +16,9 @@
          text-align: center;
          margin-bottom: 30px;
                     }
+    .notes {
+        text-align: center;
+     }
      .sub1 {
          font-family: Arial, Helvetica, sans-serif;
          font-size: 18px;
@@ -268,6 +271,7 @@
 
         const container = document.createElement('div')
         const title = document.createElement('h1')
+        const notes = document.createElement('p')
         const subtitle1 = document.createElement('div')
         const subtitle2 = document.createElement('div')
         const col_wrapper = document.createElement('div')
@@ -310,6 +314,7 @@
         canv_humid.id = "ca_hum"
 
         title.className = "tt"
+        notes.className = "notes"
         subtitle1.className = "sub1"
         subtitle2.className = "sub2"
         col_wrapper.className = "wra"
@@ -354,6 +359,7 @@
         canvwrap_humid.className = "cwra"
 
         title.innerHTML = "Turbine House"
+        notes.innerHTML = "<a href='#notes'>See below for explanatory notes</a>"
         subtitle1.innerHTML = `Current conditions: <span id="ts">${luxon.DateTime.fromISO(global_data[0].received_at).toFormat('ff')} </span>`
         subtitle2.innerHTML = "<span>Conditions over selected period</span>"
         button1.innerHTML = "Last day"
@@ -366,7 +372,7 @@
         button4.onclick = function(){picker2.setDate(today_end, true); picker1.setDate(lastyear, true); param3 = 3; selectTimescale(lastyear, today_end, param1, param2, param3)}
 
         nowtemp.innerHTML = "Temperature (&deg;C)"
-        nowhumid.innerHTML = "Humidity (&percnt;)"
+        nowhumid.innerHTML = "Relative Humidity (&percnt;)"
         label1.innerHTML = "Start date"
         label2.innerHTML = "End date"
         inner_nowtemp.textContent = global_data[0].temperature
@@ -386,7 +392,7 @@
         canvwrap_temp.append(canv_temp)
         canvwrap_humid.append(canv_humid)                
         col_right.append(canvwrap_temp, canvwrap_humid)
-
+        container.append(notes)
         //col_wrapper.append(title) //Hide title for Wordpress
         col_wrapper.append(col_left, col_right)
         container.append(col_wrapper)
@@ -436,7 +442,7 @@ if (param2_date.getDate() == today.getDate()) {
    picker2.setDate(today_end, true)
 }
 
-//default timescale for first page load = last week
+//default timescale for first page load = last day
 if (!urlParams.has('var1')) {
     selectTimescale(today, today_end, param1, param2, param3)
     picker2.setDate(today_end, true)
@@ -462,7 +468,7 @@ function selectTimescale(mystart, myend, myparam1, myparam2, myparam3) {
 
             var newstart = luxon.DateTime.fromJSDate(mystart).toFormat('yyyyLLdd')
             var newend = luxon.DateTime.fromJSDate(myend).toFormat('yyyyLLdd')
-            var path = window.location.href.split('?')[0]
+            var path = window.location.href.split(/[?#]/)[0] // Remove parameters and/or anchor
             location.href = path + '?var1=' + newstart + '&var2=' + newend + '&var3=' + myparam3
             return
         } 
@@ -512,6 +518,12 @@ function selectTimescale(mystart, myend, myparam1, myparam2, myparam3) {
                 const mymot = item.motion;
                 ys4.push(mymot);
             }
+
+            var ymin1 = Math.round(Math.min(...ys1)-1)
+            var ymax1 = Math.round(Math.max(...ys1)+1)
+
+            var ymin2 = Math.round(Math.min(...ys2)-1)
+            var ymax2 = Math.round(Math.max(...ys2)+1)
 
             // Add active class to the current button on click
             var btns = document.getElementsByClassName("btn");
@@ -585,6 +597,8 @@ function selectTimescale(mystart, myend, myparam1, myparam2, myparam3) {
                             ],
                             yAxes: [{
                                 ticks: {
+                                    min: ymin1,
+                                    max: ymax1,
                                     fontSize: 15,
                                     fontStyle: "bold",
                                         },
@@ -643,6 +657,8 @@ function selectTimescale(mystart, myend, myparam1, myparam2, myparam3) {
                                 ],
                                 yAxes: [{
                                     ticks: {
+                                        min: ymin2,
+                                        max: ymax2,
                                         fontSize: 15,
                                         fontStyle: "bold",
                                             },
@@ -652,7 +668,7 @@ function selectTimescale(mystart, myend, myparam1, myparam2, myparam3) {
                                         }]
                                 },
                         title: {
-                            text: "Humidity (%)",
+                            text: "Relative Humidity (%)",
                                 }
                             } 
             });
@@ -675,4 +691,5 @@ async function getData() {
     
 // DO NOT REMOVE the comment below, it stops Wordpress from escaping ampersands
 //--></script>  
+
 
