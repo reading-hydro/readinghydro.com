@@ -64,7 +64,7 @@ def expired_token() -> list:
                 token_table.remove(entry)
     return tokens
 
-if __name__ == '__main__':
+def main():
     import time
     t = generate_token('stuart.ward.uk@gmail.com','message 1 contents', datetime.timedelta(seconds=5*60))
     t = generate_token('stuart.ward.uk@gmail.com','message 2 contents', datetime.timedelta(seconds=5*60))
@@ -76,3 +76,8 @@ if __name__ == '__main__':
     print(active_token())
     print(check_token(t))
     print(token_table)
+    return
+
+if __name__ == '__main__':
+    main()
+ 
