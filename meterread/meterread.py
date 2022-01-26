@@ -43,8 +43,8 @@ def main():
 
     return
 
-# mess = b'1-0:0.9.2*255(0211227)\r\n1-0:0.9.1*255(120524)\r\n1-0:1.8.0*255(0000501.088*kWh)\r\n!\r\n\x03'
-# messageverify(mess,b'v')
+mess = b'1-0:0.9.2*255(0211227)\r\n1-0:0.9.1*255(120524)\r\n1-0:1.8.0*255(0000501.088*kWh)\r\n!\r\n\x03'
+messageverify(mess,b'v')
 
 if __name__ == '__main__':
     main()
