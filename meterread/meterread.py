@@ -59,16 +59,18 @@ def main():
     readingimport = ''
     readingexport = ''
     elements = messageelement.findall(me2.decode())
-    jsonstring = '"date":"2{rdate}","time":"{rtime}","import":"{rimport}","export":"{rexport}"'
+    jsonstring = '"date":"{isodate}","import":{rimport},"export":{rexport}'
     for ele in elements:
         if ele[0] == '0.9.2': readingdate=ele[1]
         elif ele[0] == '0.9.1': readingtime=ele[1]
         elif ele[0] == '1.8.0': readingimport=ele[1]
         elif ele[0] == '2.8.0': readingexport=ele[1]
-    print('{'+jsonstring.format(rdate=readingdate, rtime=readingtime, rimport=readingimport, rexport=readingexport)+'}')
+    isodate = '2'+readingdate[:3]+'-'+readingdate[3:5]+'-'+readingdate[5:7]+'T'+readingtime[:2]+':'+readingtime[2:4]+':'+readingtime[4:6]+'Z'
+    print('{'+jsonstring.format(isodate=isodate, rimport=readingimport, rexport=readingexport)+'}')
     return
 
 #  b'/ISk5MT174-0002\r\n\x021-0:0.9.2*255(0220127)\r\n1-0:0.9.1*255(105644)\r\n1-0:1.8.0*255(0000502.853*kWh)\r\n1-0:2.8.0*255(0098697.318*kWh)\r\n!\r\n\x03\x19'
+# {"date":"2022-01-28T17:13:02Z","import":0000502.853,"export":0100056.776}
 
 if __name__ == '__main__':
     main()
