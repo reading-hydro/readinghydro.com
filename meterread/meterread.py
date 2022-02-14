@@ -67,7 +67,7 @@ def main():
     readingexport = ''
     if goodmessage:
         elements = messageelement.findall(me2.decode())
-        jsonstring = '"date":"{isodate}","import":{rimport},"export":{rexport}'
+        jsonstring = '"m1_datetime":"{isodate}","m1_import":{rimport},"m1_export":{rexport}'
         for ele in elements:
             if ele[0] == '0.9.2': readingdate=ele[1]
             elif ele[0] == '0.9.1': readingtime=ele[1]
