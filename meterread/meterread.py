@@ -24,7 +24,7 @@ def messageverify(message, checkc) -> bool:
 
 def main():
 
-    messageelement = re.compile('1-0:([\d.]+)\\*255\\(([\d.]+)')
+    messageelement = re.compile('1-0:([\d.]+)\\*255\\(0*([\d.]+)')
     goodmessage = False
     maxtries = 3
 
@@ -67,7 +67,7 @@ def main():
     readingexport = ''
     if goodmessage:
         elements = messageelement.findall(me2.decode())
-        jsonstring = '"m1_datetime":"{isodate}","m1_import":{rimport},"m1_export":{rexport}'
+        jsonstring = '"datetime":"{isodate}","import":{rimport},"export":{rexport}'
         for ele in elements:
             if ele[0] == '0.9.2': readingdate=ele[1]
             elif ele[0] == '0.9.1': readingtime=ele[1]
