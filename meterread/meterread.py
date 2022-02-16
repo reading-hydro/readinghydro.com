@@ -30,16 +30,16 @@ def main():
 
 # Connect to the meter via the serial interface and wait till we recieve a valid message
 # message starts with a STX and ends with ETX and check character
-# we retry reading till we get a good message
+# we retry reading upto 3 times till we get a good message
 
-    try: 
+    try:
         portcon = serial.Serial('/dev/ttyUSB0', baudrate=9600, bytesize=7, parity='E', timeout=5)
     except serial.serialutil.SerialException:
-        print('< unable to open serial port ttyUSB0')
+        print('< unable to open serial port ttyUSB0', file=sys.stderr)
         return 404
     while maxtries > 0:
         portcon.write(b'/?!\r\n')
-        maxtries-=1
+        maxtries -= 1
         try:
             message = portcon.read(size=1024)
         except serial.serialutil.SerialException:
@@ -61,10 +61,10 @@ def main():
                             portcon.write(NACK)
 
 # so now we have a good message need to parse the reading valuse out
-    readingdate = ''
-    readingtime = ''
-    readingimport = ''
-    readingexport = ''
+    readingdate = 'YYYMMDD'
+    readingtime = 'HHMMSS'
+    readingimport = '0'
+    readingexport = '0'
     if goodmessage:
         elements = messageelement.findall(me2.decode())
         jsonstring = '"datetime":"{isodate}","import":{rimport},"export":{rexport}'
@@ -77,7 +77,8 @@ def main():
                 readingimport = ele[1].lstrip('0')
             elif ele[0] == '2.8.0':
                 readingexport = ele[1].lstrip('0')
-        isodate = '2' + readingdate[:3] + '-' + readingdate[3:5] + '-' + readingdate[5:7] + 'T' + readingtime[:2] + ':' + readingtime[2:4] + ':' + readingtime[4:6] + 'Z'
+        isodate = '2' + readingdate[:3] + '-' + readingdate[3:5] + '-' + readingdate[5:7]
+        isodate += 'T' + readingtime[:2] + ':' + readingtime[2:4] + ':' + readingtime[4:6] + 'Z'
         print('{' + jsonstring.format(isodate=isodate, rimport=readingimport, rexport=readingexport) + '}')
     else:
         print('< Failed to read meter after 3 attempts')
@@ -85,6 +86,7 @@ def main():
 
 #  b'/ISk5MT174-0002\r\n\x021-0:0.9.2*255(0220127)\r\n1-0:0.9.1*255(105644)\r\n1-0:1.8.0*255(0000502.853*kWh)\r\n1-0:2.8.0*255(0098697.318*kWh)\r\n!\r\n\x03\x19'
 # {"date":"2022-01-28T17:13:02Z","import":502.853,"export":100056.776}
+
 
 if __name__ == '__main__':
     main()
