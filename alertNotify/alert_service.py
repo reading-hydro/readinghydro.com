@@ -287,7 +287,11 @@ def restServer():
     return
 
 # System startup
-
+# get the contacts data from the config file /etc/hydro/oncall-contacts.cfg
+f = open('/etc/hydro/oncall-contacts.cfg','r')
+contactsJSON = f.read(1024)
+contacts = json.loads(contactsJSON)
+f.close()
 
 tz_london = pytz.timezone('Europe/London')
 now = datetime.datetime.now(tz_london)
