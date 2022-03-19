@@ -19,10 +19,6 @@ NO_DATA_RE_REPORT_TIME = datetime.timedelta(seconds=15*60)
 ALERT_ESCALATION_TIME = datetime.timedelta(seconds=15*60)
 IGNORE_ALERTS_OLDER_THAN = datetime.timedelta(seconds=10*60)
 
-# Contacts hard coded for the moment need to add this in a database.
-
-
-
 # table to keep a list of recent alert messages
 
 alert_log_list = []
