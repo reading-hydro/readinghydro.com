@@ -1,3 +1,4 @@
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
@@ -154,6 +155,9 @@
     #opho1 {
         background-color: #7A65CF;
      }
+     #ener1 {
+        background-color: #7A65CF;
+     }
      #pow2 {
         background-color: #DE2F55;
      }
@@ -166,7 +170,9 @@
     #opho2 {
         background-color: #DE2F55;
      }
-
+     #ener2 {
+        background-color: #DE2F55;
+     }
      #ca_pow {
          height: 100%;                          
      }
@@ -314,18 +320,22 @@ var param3 = myreturn[3]
         const nowScrewRPM_G1 = document.createElement('div')
         const nowDriveRPM_G1 = document.createElement('div')
         const nowOpHours_G1 = document.createElement('div')
+        const nowEnergy_G1 = document.createElement('div')
         const inner_nowPower_G1 = document.createElement('div')
         const inner_nowScrewRPM_G1 = document.createElement('div')
         const inner_nowDriveRPM_G1 = document.createElement('div')
         const inner_nowOpHours_G1 = document.createElement('div')
+        const inner_nowEnergy_G1 = document.createElement('div')
         const nowPower_G2 = document.createElement('div')
         const nowScrewRPM_G2 = document.createElement('div')
         const nowDriveRPM_G2 = document.createElement('div')
         const nowOpHours_G2 = document.createElement('div')
+        const nowEnergy_G2 = document.createElement('div')
         const inner_nowPower_G2 = document.createElement('div')
         const inner_nowScrewRPM_G2 = document.createElement('div')
         const inner_nowDriveRPM_G2 = document.createElement('div')
         const inner_nowOpHours_G2 = document.createElement('div')
+        const inner_nowEnergy_G2 = document.createElement('div')
         const canvwrap_power = document.createElement('div')
         const clear = document.createElement('p')
         const canv_power = document.createElement('canvas')
@@ -344,10 +354,12 @@ var param3 = myreturn[3]
         nowScrewRPM_G1.id = "srpm1"
         nowDriveRPM_G1.id = "drpm1"
         nowOpHours_G1.id = "opho1"
+        nowEnergy_G1.id = "ener1"
         nowPower_G2.id = "pow2"
         nowScrewRPM_G2.id = "srpm2"
         nowDriveRPM_G2.id = "drpm2"
         nowOpHours_G2.id = "opho2"
+        nowEnergy_G2.id = "ener2"
         canv_power.id = "ca_pow"
 
         title.className = "tt"
@@ -364,18 +376,22 @@ var param3 = myreturn[3]
         nowScrewRPM_G1.className = "box"
         nowDriveRPM_G1.className = "box"
         nowOpHours_G1.className = "box"
+        nowEnergy_G1.className = "box"
         inner_nowPower_G1.className = "inner fontbig"
         inner_nowScrewRPM_G1.className = "inner fontbig"
         inner_nowDriveRPM_G1.className = "inner fontbig"
         inner_nowOpHours_G1.className = "inner fontbig"
+        inner_nowEnergy_G1.className = "inner fontbig"
         nowPower_G2.className = "box"
         nowScrewRPM_G2.className = "box"
         nowDriveRPM_G2.className = "box"
         nowOpHours_G2.className = "box"
+        nowEnergy_G2.className = "box"
         inner_nowPower_G2.className = "inner fontbig"
         inner_nowScrewRPM_G2.className = "inner fontbig"
         inner_nowDriveRPM_G2.className = "inner fontbig"
         inner_nowOpHours_G2.className = "inner fontbig"
+        inner_nowEnergy_G2.className = "inner fontbig"
         clear.className = "cle"
         button1.className = "btn active"
         button2.className = "btn"
@@ -427,35 +443,41 @@ var param3 = myreturn[3]
         nowScrewRPM_G1.innerHTML = 'Screw Speed (RPM)'
         nowDriveRPM_G1.innerHTML = 'Drive Speed (RPM)'
         nowOpHours_G1.innerHTML = 'Total Operating (Hours)'
+        nowEnergy_G1.innerHTML = 'Total Energy (MWh)'
         nowPower_G2.innerHTML = 'Power Generation (kW)'
         nowScrewRPM_G2.innerHTML = 'Screw Speed (RPM)'
         nowDriveRPM_G2.innerHTML = 'Drive Speed (RPM)'
         nowOpHours_G2.innerHTML = 'Total Operating (Hours)'
+        nowEnergy_G2.innerHTML = 'Total Energy (MWh)'
         label1.innerHTML = "Start date"
         label2.innerHTML = "End date"
         inner_nowPower_G1.textContent = global_data[0].gen1_power_kw
         inner_nowScrewRPM_G1.textContent = global_data[0].gen1_screw_rpm
         inner_nowDriveRPM_G1.textContent = global_data[0].gen1_drive_rpm
         inner_nowOpHours_G1.textContent = global_data[0].gen1_operating_hours
+        inner_nowEnergy_G1.textContent = global_data[0].gen1_energy_mwh
         inner_nowPower_G2.textContent = global_data[0].gen2_power_kw
         inner_nowScrewRPM_G2.textContent = global_data[0].gen2_screw_rpm
         inner_nowDriveRPM_G2.textContent = global_data[0].gen2_drive_rpm
         inner_nowOpHours_G2.textContent = global_data[0].gen2_operating_hours
+        inner_nowEnergy_G2.textContent = global_data[0].gen2_energy_mwh
 
         nowPower_G1.append(inner_nowPower_G1)
         nowScrewRPM_G1.append(inner_nowScrewRPM_G1)
         nowDriveRPM_G1.append(inner_nowDriveRPM_G1)
         nowOpHours_G1.append(inner_nowOpHours_G1)
+        nowEnergy_G1.append(inner_nowEnergy_G1)
 
         nowPower_G2.append(inner_nowPower_G2)
         nowScrewRPM_G2.append(inner_nowScrewRPM_G2)
         nowDriveRPM_G2.append(inner_nowDriveRPM_G2)
         nowOpHours_G2.append(inner_nowOpHours_G2)
+        nowEnergy_G2.append(inner_nowEnergy_G2)
 
         col_left_T1.append(subtitle1_T1)
-        col_left_T1.append(nowPower_G1, nowScrewRPM_G1, nowDriveRPM_G1, nowOpHours_G1, clear) 
+        col_left_T1.append(nowPower_G1, nowScrewRPM_G1, nowDriveRPM_G1, nowOpHours_G1, nowEnergy_G1, clear) 
         col_left_T2.append(subtitle1_T2)
-        col_left_T2.append(nowPower_G2, nowScrewRPM_G2, nowDriveRPM_G2, nowOpHours_G2, clear) 
+        col_left_T2.append(nowPower_G2, nowScrewRPM_G2, nowDriveRPM_G2, nowOpHours_G2, nowEnergy_G2, clear) 
         col_left.append(col_left_T1, col_left_T2)
 
         col_right.append(subtitle2)
