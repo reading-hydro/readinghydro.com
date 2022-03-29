@@ -151,7 +151,15 @@
     #ahol {
         background-color: #418AD9;
      }
-
+     #hol {
+        background-color: #418AD9;
+     }
+     #flo1 {
+        background-color: #37A19D;
+     }
+     #flo2 {
+        background-color: #37A19D;
+     }
      #ca_lev {
          height: 100%;                          
      }
@@ -290,6 +298,7 @@ var setdata = await getData2()
 var HOL = setdata.level
 
         var myChart_levels
+        var myChart_flow
 
         const container = document.createElement('div')
         const title = document.createElement('h1')
@@ -314,15 +323,21 @@ var HOL = setdata.level
         const now_down = document.createElement('div')
         const now_head = document.createElement('div')
         const now_aboveHOL = document.createElement('div')
+        const now_HOL = document.createElement('div')
+        const now_flow1 = document.createElement('div')
+        const now_flow2 = document.createElement('div')
         const inner_now_upst = document.createElement('div')
         const inner_now_down = document.createElement('div')
         const inner_now_head = document.createElement('div')
         const inner_now_aboveHOL = document.createElement('div')
+        const inner_now_HOL = document.createElement('div')
+        const inner_now_flow1 = document.createElement('div')
+        const inner_now_flow2 = document.createElement('div')
         const canvwrap_levels = document.createElement('div')
-        const canvwrap_aboveHOL = document.createElement('div')
+        const canvwrap_flow = document.createElement('div')
         const clear = document.createElement('p')
         const canv_levels = document.createElement('canvas')
-        const canv_aboveHOL = document.createElement('canvas')
+        const canv_flow = document.createElement('canvas')
         
         container.id = "con"
         panel.id = "pan"
@@ -338,8 +353,11 @@ var HOL = setdata.level
         now_down.id = "do"
         now_head.id = "he"
         now_aboveHOL.id = "ahol"
+        now_HOL.id = "hol"
+        now_flow1.id = "flo1"
+        now_flow2.id = "flo2"
         canv_levels.id = "ca_lev"
-        canv_aboveHOL.id = "ca_flo"
+        canv_flow.id = "ca_flo"
 
         title.className = "tt"
         notes.className = "notes"
@@ -352,10 +370,16 @@ var HOL = setdata.level
         now_down.className = "box"
         now_head.className = "box"
         now_aboveHOL.className = "box"
+        now_HOL.className = "box"
+        now_flow1.className = "box"
+        now_flow2.className = "box"
         inner_now_upst.className = "inner fontbig"
         inner_now_down.className = "inner fontbig"
         inner_now_head.className = "inner fontbig"
         inner_now_aboveHOL.className = "inner fontbig"
+        inner_now_HOL.className = "inner fontbig"
+        inner_now_flow1.className = "inner fontbig"
+        inner_now_flow2.className = "inner fontbig"
         clear.className = "cle"
         button1.className = "btn active"
         button2.className = "btn"
@@ -388,6 +412,7 @@ var HOL = setdata.level
         label1.className = "lab"
         label2.className = "lab"
         canvwrap_levels.className = "cwra_lev"
+        canvwrap_flow.className = "cwra_lev"
 
         title.innerHTML = "River Conditions"
         notes.innerHTML = "<a href='#notes'>See below for explanatory notes</a>"
@@ -406,20 +431,29 @@ var HOL = setdata.level
         now_down.innerHTML = "Downstream (metres AOD)"
         now_head.innerHTML = "Head (metres)" 
         now_aboveHOL.innerHTML = "Above set level (metres)"
+        now_HOL.innerHTML = "Present set level (metres)"
+        now_flow1.innerHTML = "Water flow turbine 1 (m<sup>3</sup>/s)"
+        now_flow2.innerHTML = "Water flow turbine 2 (m<sup>3</sup>/s)"
         label1.innerHTML = "Start date"
         label2.innerHTML = "End date"
         inner_now_upst.textContent = global_data[0].upstream.toFixed(3)
         inner_now_down.textContent = global_data[0].downstream.toFixed(3)
         inner_now_head.textContent = (global_data[0].upstream - global_data[0].downstream).toFixed(3)
         inner_now_aboveHOL.textContent = (global_data[0].upstream - HOL).toFixed(3)
+        inner_now_HOL.textContent = HOL.toFixed(3)
+        inner_now_flow1.textContent = (global_data[0].gen1_flow_ls/1000).toFixed(2)
+        inner_now_flow2.textContent = (global_data[0].gen2_flow_ls/1000).toFixed(2)
 
         now_upst.append(inner_now_upst)
         now_down.append(inner_now_down)
         now_head.append(inner_now_head)
         now_aboveHOL.append(inner_now_aboveHOL)
+        now_HOL.append(inner_now_HOL)
+        now_flow1.append(inner_now_flow1)
+        now_flow2.append(inner_now_flow2)
 
         col_left.append(subtitle1)
-        col_left.append(now_upst, now_down, now_head, now_aboveHOL, clear)
+        col_left.append(now_upst, now_down, now_head, now_aboveHOL, now_HOL, now_flow1, now_flow2, clear)
         //col_left.append(now_upst, now_down, now_head, clear)
         
         col_right.append(subtitle2)
@@ -429,6 +463,9 @@ var HOL = setdata.level
         col_right.append(panel)
         canvwrap_levels.append(canv_levels)
         col_right.append(canvwrap_levels)
+        canvwrap_flow.append(canv_flow)
+        col_right.append(canvwrap_flow)
+        
         container.append(notes)
         //col_wrapper.append(title) //Hide title for Wordpress
         col_wrapper.append(col_left, col_right)
@@ -539,6 +576,8 @@ function selectTimescale(mystart, myend, myparam1, myparam2, myparam3) {
             const xs = []
             const ys1 = []
             const ys2 = []
+            const ys3 = []
+            const ys4 = []
             for(item of selection) {                
                 //convert the timestamp to milliseconds (faster)                
                 const mydate1 = new Date(item.received_at)
@@ -548,7 +587,16 @@ function selectTimescale(mystart, myend, myparam1, myparam2, myparam3) {
                 ys1.push(myupstream);
                 const mydownstream = item.downstream;
                 ys2.push(mydownstream);
+                const myflow1_ls = item.gen1_flow_ls;
+                const myflow1 = (myflow1_ls/1000).toFixed(2);
+                ys3.push(myflow1);
+                const myflow2_ls = item.gen2_flow_ls;
+                const myflow2 = (myflow2_ls/1000).toFixed(2);
+                ys4.push(myflow2);
             }
+
+            var ymax1 = myround((Math.max(...ys1) + 0.2), 1) // max level plus 0.2
+            var ymin2 = myround((Math.min(...ys2) - 0.2), 1) // min level minus 0.2
 
             // Add active class to the current button on click
             var btns = document.getElementsByClassName("btn");
@@ -593,7 +641,7 @@ function selectTimescale(mystart, myend, myparam1, myparam2, myparam3) {
                                     label: {
                                         backgroundColor: 'rgba(255,255,255,0)',
                                         fontColor: '#E4004D',
-                                        content: 'Set level',
+                                        content: 'Present set level',
                                         position: 'right',
                                         yAdjust: 10,
                                         enabled: true,
@@ -618,14 +666,50 @@ function selectTimescale(mystart, myend, myparam1, myparam2, myparam3) {
                     var flag = 0
                     if(!is_u){ flag++ }
                     if(is_d){ flag++ }
-                    if (flag == 2) {
+                    if (flag == 2) { //downstream only visible. Don't show HOL. 
                         ci.config.options.annotation.annotations[0] = ''
+                        ci.options.scales.yAxes[0] = {
+                            ticks: {
+                                        min: ymin2,
+                                        fontSize: 15,
+                                        fontStyle: "bold",
+                                            },
+                                    scaleLabel: {
+                                        display: false                                      
+                                            }                                            
+                        };
                         ci.update() 
-                    } else {
+                    } else if(flag == 0) { //upstream only visible. Reset min tick value.
+                        ci.config.options.annotation.annotations[0] = anno_HOL;
+                        ci.options.scales.yAxes[0] = {
+                            ticks: {
+                                        min: HOL - 0.02,
+                                        fontSize: 15,
+                                        fontStyle: "bold",
+                                            },
+                                    scaleLabel: {
+                                        display: false                                      
+                                            }                                            
+                        };
+                        
+                        ci.update();  
+                    } else { //upstream and downstream are both visible. Reset min tick value.
                         ci.config.options.annotation.annotations[0] = anno_HOL
+                        ci.options.scales.yAxes[0] = {
+                            ticks: {
+                                        min: ymin2,
+                                        max: ymax1,
+                                        fontSize: 15,
+                                        fontStyle: "bold",
+                                            },
+                                    scaleLabel: {
+                                        display: false                                      
+                                            }                                            
+                        };
                         ci.update()
                     }
             };
+
 
         //Graph 1 - Water levels            
         if (myChart_levels) {
@@ -684,10 +768,12 @@ function selectTimescale(mystart, myend, myparam1, myparam2, myparam3) {
                                 ],
                                 yAxes: [{
                                     ticks: {
+                                        min: ymin2,
+                                        max: ymax1,
                                         fontSize: 15,
                                         fontStyle: "bold",
                                             },
-                                            scaleLabel: {
+                                    scaleLabel: {
                                         display: false                                      
                                             }
                                         }]
@@ -700,10 +786,83 @@ function selectTimescale(mystart, myend, myparam1, myparam2, myparam3) {
                             onClick: newLegendClickHandler
                                 }
                             } 
+                            
             });
             
-        // End of graph
+        // End of graph 1
 
+        //Graph 2 - Flow
+        // To unhide, also need to append div above
+         if (myChart_flow) {
+            myChart_flow.destroy();
+            }
+
+        var ctx_flo = document.getElementById('ca_flo').getContext('2d');
+        myChart_flow = new Chart(ctx_flo, {
+                type: 'line',
+                data: {
+                    labels: xs,
+                    datasets: [
+                    {   
+                        label: 'Tony (turbine 1)',                     
+                        data: ys3,
+                        fill: true,
+                        backgroundColor: 'rgba(58,170,166,1.0)',
+                        borderColor: 'rgba(58,170,166,1.0)',
+                        borderWidth: 1,
+                        radius: 0
+                        },
+                    {   label: 'Sophie (turbine 2)',                       
+                        data: ys4,
+                        fill: true,
+                        backgroundColor: 'rgba(128,226,222,1.0)',
+                        borderColor: 'rgba(128,226,222,1.0)',
+                        borderWidth: 1,
+                        radius: 0
+                        },                        
+                    ]
+                    },
+                    options: {                                
+                        scales: {
+
+                                xAxes: [{
+                                    type: 'time', 
+                                    time: {
+                                        minUnit: myunit,
+                                    },
+                                    distribution: 'linear',
+                                    ticks: {
+                                        fontStyle: "bold",
+                                        min: mystarttime,
+                                        max: myendtime,
+                                            },
+                                    scaleLabel: {
+                                        display: false,                                                                  
+                                            }
+                                        }
+
+                                ],
+                                yAxes: [{
+                                    stacked: true,
+                                    ticks: {
+                                        fontSize: 15,
+                                        fontStyle: "bold",
+                                            },
+                                            scaleLabel: {
+                                        display: false                                      
+                                            }
+                                        }]
+                                },
+                        title: {
+                            text: "Estimated flow through turbines (cubic metres/sec)",
+                                },
+                        legend: {
+                            display: true,
+                                }
+                            } 
+            });                 
+        // End of graphs
+        
         }
         // End of selectTimescale
 
@@ -711,6 +870,10 @@ function selectTimescale(mystart, myend, myparam1, myparam2, myparam3) {
     };
 
 // functions
+function myround(value, precision) {
+    var multiplier = Math.pow(10, precision || 0);
+    return Math.round(value * multiplier) / multiplier;
+}
 async function getData() {
 
     const response = await fetch(myurl) 
@@ -724,7 +887,6 @@ const response = await fetch('https://readinghydro.org:9445/api/setlevel/current
 const data = await response.json()
 return data           
 }
-
-    
+ 
 // DO NOT REMOVE the comment below, it stops Wordpress from escaping ampersands
 //--></script>  
