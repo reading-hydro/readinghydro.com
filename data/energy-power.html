@@ -40,6 +40,10 @@
         max-width: 500px;
         float: left;
      }
+     .col_lef_T0 {
+        max-width: 500px;
+        float: left;
+     }
      .col_lef_T1 {
         max-width: 500px;
         float: left;
@@ -307,6 +311,7 @@ var param3 = myreturn[3]
         const col_wrapper = document.createElement('div')
         const subtitle_TOT = document.createElement('div')
         const col_left = document.createElement('div')
+        const col_left_T0 = document.createElement('div')
         const col_left_T1 = document.createElement('div')
         const col_left_T2 = document.createElement('div')
         const col_right = document.createElement('div')
@@ -382,6 +387,7 @@ var param3 = myreturn[3]
         subtitle2.className = "sub2"
         col_wrapper.className = "wra"
         col_left.className = "col_lef"
+        col_left_T0.className = "col_lef_T0"
         col_left_T1.className = "col_lef_T1"
         col_left_T2.className = "col_lef_T2"
         col_right.className = "col_rig"
@@ -493,12 +499,12 @@ var param3 = myreturn[3]
         nowOpHours_G2.append(inner_nowOpHours_G2)
         nowEnergy_G2.append(inner_nowEnergy_G2)
 
-        col_left_T1.append(subtitle_TOT, now_total, clear)
+        col_left_T0.append(subtitle_TOT, now_total, clear)
         col_left_T1.append(subtitle1_T1)
         col_left_T1.append(nowPower_G1, nowScrewRPM_G1, nowDriveRPM_G1, nowOpHours_G1, nowEnergy_G1, clear) 
         col_left_T2.append(subtitle1_T2)
         col_left_T2.append(nowPower_G2, nowScrewRPM_G2, nowDriveRPM_G2, nowOpHours_G2, nowEnergy_G2, clear) 
-        col_left.append(col_left_T1, col_left_T2)
+        col_left.append(col_left_T0, col_left_T1, col_left_T2)
 
         col_right.append(subtitle2)
         buttonwrap.append(button1, button2, button3, button4, clear)
@@ -535,6 +541,9 @@ var param3 = myreturn[3]
     lastweek = luxon.DateTime.fromJSDate(lastweek).startOf('day').toJSDate()
     lastmonth = luxon.DateTime.fromJSDate(lastmonth).startOf('day').toJSDate()
     lastyear = luxon.DateTime.fromJSDate(lastyear).startOf('day').toJSDate()
+
+    console.log(today)
+    console.log(today_end)
 
     // convert params to dates
     var param1_date = luxon.DateTime.fromFormat(param1, 'yyyyLLdd').startOf('day').toJSDate()
