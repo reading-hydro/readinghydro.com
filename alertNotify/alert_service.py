@@ -86,7 +86,7 @@ def on_message(client, userdata, message):
         alert_age = datetime.timedelta(seconds=1)
     else:
         alert_time_string = datetime.datetime.strftime(alert_time_data, '%Y-%m-%dT%H:%M:%S')
-        compare_now = datetime.datetime.strptime(datetime.datetime.now(tz_london).strftime('%d/%m/%Y %H:%M:%S'), '%d/%m/%Y %H:%M:%S')
+        compare_now = datetime.datetime.strptime(datetime.datetime.utcnow().strftime('%d/%m/%Y %H:%M:%S'), '%d/%m/%Y %H:%M:%S')
         alert_age = compare_now - alert_time_data
     if alert_age < IGNORE_ALERTS_OLDER_THAN:
         log_alert_message(alert_time_string, alertMessage)
