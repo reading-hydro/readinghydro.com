@@ -189,7 +189,7 @@
          .wra {
          max-width: 580px;                
          }
-         .col_lef, .col_lef_T1, .col_lef_T2 {
+         .col_lef, .col_lef_T0, .col_lef_T1, .col_lef_T2 {
          max-width: 580px;
          float: none;                
          }
@@ -219,7 +219,7 @@
           #dtw {
          width: 300px;
           }                 
-          .col_lef, .col_lef_T1, .col_lef_T2 {
+          .col_lef, .col_lef_T0, .col_lef_T1, .col_lef_T2 {
          max-width: 350px;
          float: none;  
           }
@@ -277,7 +277,8 @@ var ds2 = luxon.DateTime.fromJSDate(today_q).toFormat('yyyyLLdd')
 const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
 if (urlParams.has('var1')) {
-        //request an extra day of data to avoid gap at beginning of time period for BST
+
+//request an extra day of data to avoid gap at beginning of time period for BST
     var myBST1 = urlParams.get('var1')
         var myBST1_date = luxon.DateTime.fromFormat(myBST1, 'yyyyLLdd').startOf('day').toJSDate()//testing
         let myBSTvar1 = new Date(myBST1_date)
@@ -287,10 +288,10 @@ if (urlParams.has('var1')) {
         var myds1_BST = urlParams.get('var1')//set var1 to the actual requested date
         var myds2 = urlParams.get('var2')
         var myhighlight = urlParams.get('var3')
+        
 
         var myurl = 'https://readinghydro.org:9445/api/plc/between/' + myds1 + '/' + myds2   
-        // set param1 to the actual earlier date requested
-        var param1 = myds1_BST
+		var param1 = myBST1// set param1 to the actual requested date
 //////////////////////////////
         var param2 = myds2
         var param3 = myhighlight
@@ -552,9 +553,6 @@ var param3 = myreturn[3]
     lastmonth = luxon.DateTime.fromJSDate(lastmonth).startOf('day').toJSDate()
     lastyear = luxon.DateTime.fromJSDate(lastyear).startOf('day').toJSDate()
 
-    console.log(today)
-    console.log(today_end)
-
     // convert params to dates
     var param1_date = luxon.DateTime.fromFormat(param1, 'yyyyLLdd').startOf('day').toJSDate()
     var param2_date = luxon.DateTime.fromFormat(param2, 'yyyyLLdd').endOf('day').toJSDate()
@@ -599,7 +597,7 @@ function selectTimescale(mystart, myend, myparam1, myparam2, myparam3) {
             if (picked == true) {
                 myparam3 = 4
             } 
-
+            
             var newstart = luxon.DateTime.fromJSDate(mystart).toFormat('yyyyLLdd')
             var newend = luxon.DateTime.fromJSDate(myend).toFormat('yyyyLLdd')
             var path = window.location.href.split(/[?#]/)[0] // Remove parameters and/or anchor
