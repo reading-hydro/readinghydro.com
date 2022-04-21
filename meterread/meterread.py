@@ -77,7 +77,7 @@ def main():
                 readingimport = ele[1].lstrip('0')
             elif ele[0] == '2.8.0':
                 readingexport = ele[1].lstrip('0')
-        isodate = '2' + readingdate[:3] + '-' + readingdate[3:5] + '-' + readingdate[5:7]
+        isodate = '20' + readingdate[1:3] + '-' + readingdate[3:5] + '-' + readingdate[5:7]
         isodate += 'T' + readingtime[:2] + ':' + readingtime[2:4] + ':' + readingtime[4:6] + 'Z'
         print('{' + jsonstring.format(isodate=isodate, rimport=readingimport, rexport=readingexport) + '}')
     else:
