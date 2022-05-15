@@ -406,7 +406,7 @@ var EA_data = await getData4()
         nowOpHours_G1.innerHTML = 'Total Operating (Hours)'
         nowEnergy_G1.innerHTML = 'Total Electricity (MWh)'
 
-        inner_now_total.textContent = global_data2.gen1_energy_mwh + global_data2.gen2_energy_mwh
+        inner_now_total.textContent = (global_data2.gen1_energy_mwh + global_data2.gen2_energy_mwh).toFixed(1)
 
         inner_nowPower_G1.textContent = global_data2.gen1_power_kw
         inner_nowScrewRPM_G1.textContent = global_data2.gen1_screw_rpm
