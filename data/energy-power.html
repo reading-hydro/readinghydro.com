@@ -487,11 +487,17 @@ var param3 = myreturn[3]
         label2.innerHTML = "End date"
         inner_now_total.textContent = (global_data[0].gen1_energy_mwh + global_data[0].gen2_energy_mwh).toFixed(1)
         inner_nowPower_G1.textContent = global_data[0].gen1_power_kw
+        if (inner_nowPower_G1.textContent < 0){
+            inner_nowPower_G1.textContent = 0
+                }
         inner_nowScrewRPM_G1.textContent = global_data[0].gen1_screw_rpm
         inner_nowDriveRPM_G1.textContent = global_data[0].gen1_drive_rpm
         inner_nowOpHours_G1.textContent = global_data[0].gen1_operating_hours
         inner_nowEnergy_G1.textContent = global_data[0].gen1_energy_mwh
         inner_nowPower_G2.textContent = global_data[0].gen2_power_kw
+        if (inner_nowPower_G2.textContent < 0){
+            inner_nowPower_G2.textContent = 0
+                }
         inner_nowScrewRPM_G2.textContent = global_data[0].gen2_screw_rpm
         inner_nowDriveRPM_G2.textContent = global_data[0].gen2_drive_rpm
         inner_nowOpHours_G2.textContent = global_data[0].gen2_operating_hours
@@ -638,9 +644,15 @@ function selectTimescale(mystart, myend, myparam1, myparam2, myparam3) {
                 const mydate1 = new Date(item.received_at)
                 const mydate = mydate1.getTime()
                 xs.push(mydate);
-                const mypower1 = item.gen1_power_kw.toFixed(2);
+                var mypower1 = item.gen1_power_kw.toFixed(2);
+                if (mypower1 < 0){
+                    mypower1 = 0
+                }
                 ys_tony.push(mypower1);
-                const mypower2 = item.gen2_power_kw.toFixed(2);
+                var mypower2 = item.gen2_power_kw.toFixed(2);
+                if (mypower2 < 0){
+                    mypower2 = 0
+                }
                 ys_sophie.push(mypower2)
             }
 
