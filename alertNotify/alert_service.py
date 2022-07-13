@@ -1,5 +1,4 @@
 #! /usr/bin/python3
-import sys
 import syslog
 import json
 import cgi
@@ -71,7 +70,7 @@ def calendar_read(api_key):
                 entry = event['summary'].lower().split()
                 if entry[0] in contacts:
                     oncall.append({'name': entry[0], 'role': entry[1], 'time': now})
-                    syslog.syslog('oncall active' + event['summary'])
+                    syslog.syslog('oncall active ' + event['summary'])
     return oncall
 
 
@@ -175,7 +174,7 @@ _oncall_resp = '''\
 
 def whoisoncall(environ, start_response):
     start_response('200 OK', [('Content-type', 'text/html')])
-    syslog.syslog('who is oncall')
+    syslog.syslog('who is oncall ')
     resp = _oncall_resp.format(name1=who_is_oncall.get('primary'), name2=who_is_oncall.get('second'))
     yield resp.encode('utf-8')
 
@@ -276,7 +275,9 @@ def restServer():
 
 # System startup
 # get the contacts data from the config file /etc/hydro/oncall-contacts.cfg
-f = open('/etc/hydro/oncall-contacts.cfg','r')
+
+
+f = open('/etc/hydro/oncall-contacts.cfg', 'r')
 contactsJSON = f.read(1024)
 contacts = json.loads(contactsJSON)
 f.close()
@@ -316,7 +317,7 @@ google_api_key = get_secret('GOOGLE_API_KEY')
 
 try:
     client.connect(mqtt_broker, mqtt_broker_port)
-    syslog.syslog("connecting to mqtt broker" + mqtt_broker)
+    syslog.syslog("connecting to mqtt broker " + mqtt_broker)
     client.loop_start()
 
 except:
@@ -398,7 +399,7 @@ try:
 
 # check the REST server is running, restart it if not
         if not(restThread.is_alive()):
-            syslog.syslog('Restarting rest Server')
+            syslog.syslog('Restarting rest Server ')
             log_alert_message(now_string, 'Restarting REST server')
             restThread.start()
 
@@ -406,7 +407,7 @@ try:
         pass
 
 except KeyboardInterrupt:
-    syslog.syslog("interrrupted by keyboard")
+    syslog.syslog("interrrupted by keyboard ")
 
 log_alert_message(now_string, 'Alert Service shutdown')
 
