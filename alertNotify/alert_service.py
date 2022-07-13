@@ -1,5 +1,6 @@
 #! /usr/bin/python3
 import sys
+import syslog
 import json
 import cgi
 import paho.mqtt.client as mqtt
@@ -26,6 +27,7 @@ alert_log_list = []
 
 
 def log_alert_message(time: str, message: str) -> None:
+    syslog.syslog('alert: ' + time + message)
     alert_log_list.append({'time': time, 'message': message})
     while len(alert_log_list) > 60:
         alert_log_list.remove(alert_log_list[0])
@@ -60,7 +62,7 @@ def calendar_read(api_key):
     oncall = []
 
     if not len(events['items']):
-        print('No upcoming events found.', file=sys.stderr)
+        syslog.syslog('No upcoming events found.')
     else:
         for event in events['items']:
             start = event['start'].get('dateTime', event['start'].get('date'))
@@ -69,12 +71,12 @@ def calendar_read(api_key):
                 entry = event['summary'].lower().split()
                 if entry[0] in contacts:
                     oncall.append({'name': entry[0], 'role': entry[1], 'time': now})
-                    print('oncall active', event['summary'], file=sys.stderr)
+                    syslog.syslog('oncall active' + event['summary'])
     return oncall
 
 
 def on_message(client, userdata, message):
-    print('mqtt message: ', message.payload, file=sys.stderr)
+    syslog.syslog('mqtt message: ' + message.payload)
     decoded_message = json.loads(message.payload)
     email1 = contacts.get(who_is_oncall.get('primary')).get('email')
     email2 = contacts.get(who_is_oncall.get('second')).get('email')
@@ -105,15 +107,15 @@ def on_message(client, userdata, message):
 def on_connect(client, userdata, flags, rc):
     if rc == 0:
         client.subscribe(topic, qos)
-        print("Connected and subscribed to ", topic, file=sys.stderr)
+        syslog.syslog("Connected and subscribed to " + topic)
 
     else:
-        print("Connection fail", file=sys.stderr)
+        syslog.syslog("Connection fail")
     return
 
 
 def on_log(client, userdata, level, buf):
-    #   print("log: ",buf, file=sys.stderr)
+    #   syslog.syslog("log: " + buf)
     return
 
 
@@ -173,7 +175,7 @@ _oncall_resp = '''\
 
 def whoisoncall(environ, start_response):
     start_response('200 OK', [('Content-type', 'text/html')])
-    print(who_is_oncall, file=sys.stderr)
+    syslog.syslog('who is oncall')
     resp = _oncall_resp.format(name1=who_is_oncall.get('primary'), name2=who_is_oncall.get('second'))
     yield resp.encode('utf-8')
 
@@ -314,11 +316,11 @@ google_api_key = get_secret('GOOGLE_API_KEY')
 
 try:
     client.connect(mqtt_broker, mqtt_broker_port)
-    print("connecting to mqtt broker", mqtt_broker, file=sys.stderr)
+    syslog.syslog("connecting to mqtt broker" + mqtt_broker)
     client.loop_start()
 
 except:
-    print("mqtt broker connection failed", file=sys.stderr)
+    syslog.syslog("mqtt broker connection failed")
     log_alert_message(now_string, "mqtt broker connection failed")
 
 # Start the restServer in another thread
@@ -396,7 +398,7 @@ try:
 
 # check the REST server is running, restart it if not
         if not(restThread.is_alive()):
-            print('Restarting rest Server', file=sys.stderr)
+            syslog.syslog('Restarting rest Server')
             log_alert_message(now_string, 'Restarting REST server')
             restThread.start()
 
@@ -404,7 +406,7 @@ try:
         pass
 
 except KeyboardInterrupt:
-    print("interrrupted by keyboard", file=sys.stderr)
+    syslog.syslog("interrrupted by keyboard")
 
 log_alert_message(now_string, 'Alert Service shutdown')
 
