@@ -75,12 +75,12 @@ def calendar_read(api_key):
 
 
 def on_message(client, userdata, message):
-    syslog.syslog('mqtt message: ' + message.payload)
     decoded_message = json.loads(message.payload)
     email1 = contacts.get(who_is_oncall.get('primary')).get('email')
     email2 = contacts.get(who_is_oncall.get('second')).get('email')
     alertMessage = decoded_message.get('MsgText')
     alertTime = decoded_message.get('TimeString')
+    syslog.syslog('mqtt message: ' + alertTime + alertMessage)
     try:
         alert_time_data = datetime.datetime.strptime(alertTime, '%d/%m/%Y %H:%M:%S')
     except ValueError:
