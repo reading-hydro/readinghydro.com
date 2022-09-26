@@ -2,6 +2,7 @@
 import syslog
 import json
 import cgi
+from urllib.error import HTTPError, URLError
 import paho.mqtt.client as mqtt
 import time
 import datetime
@@ -374,9 +375,13 @@ try:
 
         try:
             latest_request = request.urlopen('https://readinghydro.org:9445/api/plc/current', timeout=3)
-        except:
+        except URLError:
             if got_api_data:
                 log_alert_message(now_string, 'Failed to get API data, Latest data at: '+latest_data)
+                got_api_data = False
+        except HTTPError:
+            if got_api_data:
+                log_alert_message(now_string, 'API Data not responding, Latest Data at: '+latest_data)
                 got_api_data = False
         else:
             got_api_data = True
