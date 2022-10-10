@@ -27,7 +27,7 @@ alert_log_list = []
 
 
 def log_alert_message(time: str, message: str) -> None:
-    syslog.syslog('alert: ' + time + message)
+    syslog.syslog('alert: ' + time + ' ' + message)
     alert_log_list.append({'time': time, 'message': message})
     while len(alert_log_list) > 60:
         alert_log_list.remove(alert_log_list[0])
