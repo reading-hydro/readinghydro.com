@@ -4,20 +4,16 @@
 <script src="https://cdn.jsdelivr.net/npm/luxon@2.0.1/build/global/luxon.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.0.0/dist/chartjs-adapter-luxon.min.js"></script>
 <!-- For luxon formatting see https://github.com/moment/luxon/blob/master/docs/formatting.md -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/0.5.7/chartjs-plugin-annotation.min.js"></script>
 <script src="https://unpkg.com/js-datepicker@5.18.1/dist/datepicker.min.js"></script>
 <link rel="stylesheet" href="https://unpkg.com/js-datepicker@5.18.1/dist/datepicker.min.css">
-<style> 
+<style>
 
     .tt {
          font-family: Arial, Helvetica, sans-serif;
          font-size: 20px;
          text-align: center;
          margin-bottom: 30px;
-    }
-    .notes {
-        text-align: center;
-     }
+                    }
      .sub1 {
          font-family: Arial, Helvetica, sans-serif;
          font-size: 18px;
@@ -35,23 +31,11 @@
         max-width: 1280px;
         margin: auto;
      }
+
      .col_lef {
         max-width: 500px;
-        float: left;
-     }
-     .col_lef_T0 {
-        max-width: 500px;
-        float: left;
-     }
-     .col_lef_T1 {
-        max-width: 500px;
-        float: left;
-        padding-bottom: 30px;
-     }
-     .col_lef_T2 {
-        max-width: 500px;
-        float: left;
         padding-bottom: 40px;
+        float: left;
      }
      .col_rig {
         max-width: 780px;
@@ -77,7 +61,6 @@
      background-color: #1a73e8;
      color: white;
      }
-
      .box {
          width: 420px;
          height: 70px;
@@ -116,13 +99,12 @@
          white-space: nowrap;
      }
     #con {
-         max-width: 1280px;
+        max-width: 1280px;
          margin: auto;
          /* override WP theme */
         line-height: 1.0;
     }
-
-    #pan {
+     #pan {
          max-width: 760px;
          border: lightgrey solid 2px;
          background-color: #e7e7e7;
@@ -137,50 +119,44 @@
          border: 1px solid black;
      }
      #btw {
-         max-width: 1160px;
+         max-width: 780px;
          margin: auto;
          text-align:center;
      }
      #dtw {
-         max-width: 1160px;
+         max-width: 780px;
          margin: auto;
          text-align:center;
      }
-     #tot {
-        background-color: #AA10FF;
-        margin-bottom: 30px;
-    }
-    #pow1 {
-        background-color: #7A65CF;
+     #tem {
+        background-color: #ff6d56;
      }
-    #srpm1 {
-        background-color: #7A65CF;
+    #hum {
+        background-color: #57b7dd;
      }
-    #drpm1 {
-        background-color: #7A65CF;
+    #lig {
+        background-color: #ffbe0a;
      }
-    #opho1 {
-        background-color: #7A65CF;
+    #mot {
+        background-color: #8ac539;
      }
-     #ener1 {
-        background-color: #7A65CF;
+    #smo {
+        background-color: #a98cbc;
      }
-     #pow2 {
-        background-color: #DE2F55;
+    #doo {
+        background-color: #fa9233;
      }
-    #srpm2 {
-        background-color: #DE2F55;
+
+     #ca_tem {
+         height: 100%;                          
      }
-     #drpm2 {
-        background-color: #DE2F55;
+     #ca_hum {
+         height: 100%;                          
      }
-    #opho2 {
-        background-color: #DE2F55;
+     #ca_lig {
+         height: 100%;                          
      }
-     #ener2 {
-        background-color: #DE2F55;
-     }
-     #ca_pow {
+     #ca_mot {
          height: 100%;                          
      }
 
@@ -188,7 +164,7 @@
          .wra {
          max-width: 580px;                
          }
-         .col_lef, .col_lef_T0, .col_lef_T1, .col_lef_T2 {
+         .col_lef {
          max-width: 580px;
          float: none;                
          }
@@ -218,7 +194,7 @@
           #dtw {
          width: 300px;
           }                 
-          .col_lef, .col_lef_T0, .col_lef_T1, .col_lef_T2 {
+          .col_lef {
          max-width: 350px;
          float: none;  
           }
@@ -256,74 +232,70 @@
          margin: 5px auto;
         }
      }
+     
  
 </style>
 
 <script type="text/javascript">
 //<!--
 // DO NOT REMOVE the comment above, it stops Wordpress from escaping ampersands
-
-// set default API query date to last day
-var today_q = new Date()
-var today_y = new Date()
-today_q.setDate(today_q.getDate())
-today_y.setDate(today_q.getDate() -1) //yesterday is to request extra day for gap in BST
-
-var ds1 = luxon.DateTime.fromJSDate(today_y).toFormat('yyyyLLdd')
-var ds2 = luxon.DateTime.fromJSDate(today_q).toFormat('yyyyLLdd')
-
-//check for query string and set new dates
-const queryString = window.location.search;
-const urlParams = new URLSearchParams(queryString);
-if (urlParams.has('var1')) {
-
-//request an extra day of data to avoid gap at beginning of time period for BST
-    var myBST1 = urlParams.get('var1')
-        var myBST1_date = luxon.DateTime.fromFormat(myBST1, 'yyyyLLdd').startOf('day').toJSDate()//testing
-        let myBSTvar1 = new Date(myBST1_date)
-        myBSTvar1.setDate(myBSTvar1.getDate() - 1)
-        var myds1 = luxon.DateTime.fromJSDate(myBSTvar1).toFormat('yyyyLLdd')        
-
-        var myds1_BST = urlParams.get('var1')//set var1 to the actual requested date
-        var myds2 = urlParams.get('var2')
-        var myhighlight = urlParams.get('var3')
         
+        // set default API query date to last day
+        var today_q = new Date()
+        today_q.setDate(today_q.getDate())
 
-        var myurl = 'https://readinghydro.org:9445/api/plc/between/' + myds1 + '/' + myds2   
-		var param1 = myBST1// set param1 to the actual requested date
-//////////////////////////////
-        var param2 = myds2
-        var param3 = myhighlight
-} else {
-        var myurl = 'https://readinghydro.org:9445/api/plc/between/' + ds1 + '/' + ds2
-        var param1 = ds1
-        var param2 = ds2
-        var param3 = 0
-}
+        var ds1 = luxon.DateTime.fromJSDate(today_q).toFormat('yyyyLLdd')
+        var ds2 = luxon.DateTime.fromJSDate(today_q).toFormat('yyyyLLdd')
+        
+        //check for query string and set new dates
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        if (urlParams.has('var1')) {
+                var myds1 = urlParams.get('var1')
+                var myds2 = urlParams.get('var2')
+                var myhighlight = urlParams.get('var3')
+        
+                var myurl = 'https://readinghydro.org:9445/api/ttn/between/' + myds1 + '/' + myds2   
+                // set param1 to the earlier date requested
+                var param1 = myds1
+                var param2 = myds2
+                var param3 = myhighlight
+        } else {
+                var myurl = 'https://readinghydro.org:9445/api/ttn/between/' + ds1 + '/' + ds2
+                var param1 = ds1
+                var param2 = ds2
+                var param3 = 0
+        }
+        
+        GoDoIt(myurl, param1, param2, param3)
+        
+        async function GoDoIt (){
+        var myreturn = await getData(myurl, param1, param2, param3);
+        var global_data_0 = myreturn[0]
+        var global_data = global_data_0.filter(function(item){
+                        return item.device_id == 'rdghydro-ers001'
+                    })
+        var smoke_data = global_data_0.filter(function(item){
+                        return item.device_id == 'dilu-smoke-002'
+                    })
+        var door_data = global_data_0.filter(function(item){
+                        return item.device_id == 'dilu-door-005'
+                    })
+        var param1 = myreturn[1]
+        var param2 = myreturn[2]
+        var param3 = myreturn[3]
 
-GoDoIt(myurl, param1, param2, param3)
-
-async function GoDoIt (){
-var myreturn = await getData(myurl, param1, param2, param3);
-var global_data = myreturn[0]
-var param1 = myreturn[1]
-var param2 = myreturn[2]
-var param3 = myreturn[3]
-
-        var myChart_power
+        var myChart_temp
+        var myChart_humid
+        var myChart_light
+        var myChart_motion
 
         const container = document.createElement('div')
         const title = document.createElement('h1')
-        const notes = document.createElement('p')
-        const subtitle1_T1 = document.createElement('div')
-        const subtitle1_T2 = document.createElement('div')
+        const subtitle1 = document.createElement('div')
         const subtitle2 = document.createElement('div')
         const col_wrapper = document.createElement('div')
-        const subtitle_TOT = document.createElement('div')
         const col_left = document.createElement('div')
-        const col_left_T0 = document.createElement('div')
-        const col_left_T1 = document.createElement('div')
-        const col_left_T2 = document.createElement('div')
         const col_right = document.createElement('div')
         const panel = document.createElement('div')
         const buttonwrap = document.createElement('div')
@@ -336,38 +308,29 @@ var param3 = myreturn[3]
         const datepick2 = document.createElement('input')
         const label1 = document.createElement('label')
         const label2 = document.createElement('label')
-
-        const now_total = document.createElement('div')
-
-        const nowPower_G1 = document.createElement('div')
-        const nowScrewRPM_G1 = document.createElement('div')
-        const nowDriveRPM_G1 = document.createElement('div')
-        const nowOpHours_G1 = document.createElement('div')
-        const nowEnergy_G1 = document.createElement('div')
-
-        const inner_now_total = document.createElement('div')
-
-        const inner_nowPower_G1 = document.createElement('div')
-        const inner_nowScrewRPM_G1 = document.createElement('div')
-        const inner_nowDriveRPM_G1 = document.createElement('div')
-        const inner_nowOpHours_G1 = document.createElement('div')
-        const inner_nowEnergy_G1 = document.createElement('div')
-        const nowPower_G2 = document.createElement('div')
-        const nowScrewRPM_G2 = document.createElement('div')
-        const nowDriveRPM_G2 = document.createElement('div')
-        const nowOpHours_G2 = document.createElement('div')
-        const nowEnergy_G2 = document.createElement('div')
-        const inner_nowPower_G2 = document.createElement('div')
-        const inner_nowScrewRPM_G2 = document.createElement('div')
-        const inner_nowDriveRPM_G2 = document.createElement('div')
-        const inner_nowOpHours_G2 = document.createElement('div')
-        const inner_nowEnergy_G2 = document.createElement('div')
-        const canvwrap_power = document.createElement('div')
+        const nowtemp = document.createElement('div')
+        const nowhumid = document.createElement('div')
+        const nowlight = document.createElement('div')
+        const nowmotion = document.createElement('div')
+        const nowsmoke = document.createElement('div')
+        const nowdoor = document.createElement('div')
+        const inner_nowtemp = document.createElement('div')
+        const inner_nowhumid = document.createElement('div')
+        const inner_nowlight = document.createElement('div')
+        const inner_nowmotion = document.createElement('div')
+        const inner_nowsmoke = document.createElement('div')
+        const inner_nowdoor = document.createElement('div')
+        const canvwrap_temp = document.createElement('div')
+        const canvwrap_humid = document.createElement('div')
+        const canvwrap_light = document.createElement('div')
+        const canvwrap_motion = document.createElement('div')
         const clear = document.createElement('p')
-        const canv_power = document.createElement('canvas')
+        const canv_temp = document.createElement('canvas')
+        const canv_humid = document.createElement('canvas')
+        const canv_light = document.createElement('canvas')
+        const canv_motion = document.createElement('canvas')
         
-        container.id = "con"
-        now_total.id = "tot"
+        container.id = "con"							 
         panel.id = "pan"
         buttonwrap.id = "btw"
         datewrap.id = "dtw"
@@ -377,52 +340,35 @@ var param3 = myreturn[3]
         datepick2.id = "dpk2"
         label1.for = "dpk1"
         label2.for = "dpk2"
-        nowPower_G1.id = "pow1"
-        nowScrewRPM_G1.id = "srpm1"
-        nowDriveRPM_G1.id = "drpm1"
-        nowOpHours_G1.id = "opho1"
-        nowEnergy_G1.id = "ener1"
-        nowPower_G2.id = "pow2"
-        nowScrewRPM_G2.id = "srpm2"
-        nowDriveRPM_G2.id = "drpm2"
-        nowOpHours_G2.id = "opho2"
-        nowEnergy_G2.id = "ener2"
-        canv_power.id = "ca_pow"
+        nowtemp.id = "tem"
+        nowhumid.id = "hum"
+        nowlight.id = "lig"
+        nowmotion.id = "mot"
+        nowsmoke.id = "smo"
+        nowdoor.id = "doo"
+        canv_temp.id = "ca_tem"
+        canv_humid.id = "ca_hum"
+        canv_light.id = "ca_lig"
+        canv_motion.id = "ca_mot"
 
         title.className = "tt"
-        notes.className = "notes"
-        subtitle_TOT.className = "sub1"
-        subtitle1_T1.className = "sub1"
-        subtitle1_T2.className = "sub1"
+        subtitle1.className = "sub1"
         subtitle2.className = "sub2"
         col_wrapper.className = "wra"
         col_left.className = "col_lef"
-        col_left_T0.className = "col_lef_T0"
-        col_left_T1.className = "col_lef_T1"
-        col_left_T2.className = "col_lef_T2"
         col_right.className = "col_rig"
-        now_total.className = "box"
-        nowPower_G1.className = "box"
-        nowScrewRPM_G1.className = "box"
-        nowDriveRPM_G1.className = "box"
-        nowOpHours_G1.className = "box"
-        nowEnergy_G1.className = "box"
-        inner_now_total.className = "inner fontbig"
-        inner_nowPower_G1.className = "inner fontbig"
-        inner_nowScrewRPM_G1.className = "inner fontbig"
-        inner_nowDriveRPM_G1.className = "inner fontbig"
-        inner_nowOpHours_G1.className = "inner fontbig"
-        inner_nowEnergy_G1.className = "inner fontbig"
-        nowPower_G2.className = "box"
-        nowScrewRPM_G2.className = "box"
-        nowDriveRPM_G2.className = "box"
-        nowOpHours_G2.className = "box"
-        nowEnergy_G2.className = "box"
-        inner_nowPower_G2.className = "inner fontbig"
-        inner_nowScrewRPM_G2.className = "inner fontbig"
-        inner_nowDriveRPM_G2.className = "inner fontbig"
-        inner_nowOpHours_G2.className = "inner fontbig"
-        inner_nowEnergy_G2.className = "inner fontbig"
+        nowtemp.className = "box"
+        nowhumid.className = "box"
+        nowlight.className = "box"
+        nowmotion.className = "box"
+        nowsmoke.className = "box"
+        nowdoor.className = "box"
+        inner_nowtemp.className = "inner fontbig"
+        inner_nowhumid.className = "inner fontbig"
+        inner_nowlight.className = "inner fontbig"
+        inner_nowmotion.className = "inner fontbig"
+        inner_nowsmoke.className = "inner fontsmall"
+        inner_nowdoor.className = "inner fontsmall"
         clear.className = "cle"
         button1.className = "btn active"
         button2.className = "btn"
@@ -451,17 +397,17 @@ var param3 = myreturn[3]
             button2.className = "btn"
             button3.className = "btn"
             button4.className = "btn"
-        }       
+        } 
         label1.className = "lab"
         label2.className = "lab"
-        canvwrap_power.className = "cwra"
+        canvwrap_temp.className = "cwra"
+        canvwrap_humid.className = "cwra"
+        canvwrap_light.className = "cwra"
+        canvwrap_motion.className = "cwra"
 
-        title.innerHTML = "Electrical Power Output"
-        notes.innerHTML = "<a href='#notes'>See below for explanatory notes</a>"
-        subtitle_TOT.innerHTML = "Total electricity generated to date<br />(both turbines)"
-        subtitle1_T1.innerHTML = `Turbine 1 (Tony)<br />Current conditions: <span id="ts">${luxon.DateTime.fromISO(global_data[0].received_at).toFormat('ff')} </span>`
-        subtitle1_T2.innerHTML = `Turbine 2 (Sophie)<br />Current conditions: <span id="ts">${luxon.DateTime.fromISO(global_data[0].received_at).toFormat('ff')} </span>`
-        subtitle2.innerHTML = "<span>Power generation by both turbines<br />over selected period</span>"
+        title.innerHTML = "Turbine House"
+        subtitle1.innerHTML = `Current conditions: <span id="ts">${luxon.DateTime.fromISO(global_data[0].received_at).toFormat('ff')} </span>`
+        subtitle2.innerHTML = "<span>Conditions over selected period</span>"
         button1.innerHTML = "Last day"
         button1.onclick = function(){picker2.setDate(today_end, true); picker1.setDate(today, true); selectTimescale(today, today_end, param1, param2, param3)}
         button2.innerHTML = "Last week"
@@ -471,65 +417,46 @@ var param3 = myreturn[3]
         button4.innerHTML = "Last year"
         button4.onclick = function(){picker2.setDate(today_end, true); picker1.setDate(lastyear, true); param3 = 3; selectTimescale(lastyear, today_end, param1, param2, param3)}
 
-        now_total.innerHTML = 'Total Electricity (MWh)'
-        nowPower_G1.innerHTML = 'Power Generation (kW)'
-        nowScrewRPM_G1.innerHTML = 'Screw Speed (RPM)'
-        nowDriveRPM_G1.innerHTML = 'Drive Speed (RPM)'
-        nowOpHours_G1.innerHTML = 'Total Operating (Hours)'
-        nowEnergy_G1.innerHTML = 'Total Electricity (MWh)'
-        nowPower_G2.innerHTML = 'Power Generation (kW)'
-        nowScrewRPM_G2.innerHTML = 'Screw Speed (RPM)'
-        nowDriveRPM_G2.innerHTML = 'Drive Speed (RPM)'
-        nowOpHours_G2.innerHTML = 'Total Operating (Hours)'
-        nowEnergy_G2.innerHTML = 'Total Electricity (MWh)'
+        nowtemp.innerHTML = "Temperature (&deg;C)"
+        nowhumid.innerHTML = "Humidity (&percnt;)"
+        nowlight.innerHTML = "Light (Lux)" 
+        nowmotion.innerHTML = "Motion counts"
+        nowsmoke.innerHTML = "Smoke alarm status"
+        nowdoor.innerHTML = "Door status"
         label1.innerHTML = "Start date"
         label2.innerHTML = "End date"
-        inner_now_total.textContent = (global_data[0].gen1_energy_mwh + global_data[0].gen2_energy_mwh).toFixed(1)
-        inner_nowPower_G1.textContent = global_data[0].gen1_power_kw
-        if (inner_nowPower_G1.textContent < 0){
-            inner_nowPower_G1.textContent = 0
-                }
-        inner_nowScrewRPM_G1.textContent = global_data[0].gen1_screw_rpm
-        inner_nowDriveRPM_G1.textContent = global_data[0].gen1_drive_rpm
-        inner_nowOpHours_G1.textContent = global_data[0].gen1_operating_hours
-        inner_nowEnergy_G1.textContent = global_data[0].gen1_energy_mwh
-        inner_nowPower_G2.textContent = global_data[0].gen2_power_kw
-        if (inner_nowPower_G2.textContent < 0){
-            inner_nowPower_G2.textContent = 0
-                }
-        inner_nowScrewRPM_G2.textContent = global_data[0].gen2_screw_rpm
-        inner_nowDriveRPM_G2.textContent = global_data[0].gen2_drive_rpm
-        inner_nowOpHours_G2.textContent = global_data[0].gen2_operating_hours
-        inner_nowEnergy_G2.textContent = global_data[0].gen2_energy_mwh
+        inner_nowtemp.textContent = global_data[0].temperature
+        inner_nowhumid.textContent = global_data[0].humidity
+        inner_nowlight.textContent = global_data[0].light
+        inner_nowmotion.textContent = global_data[0].motion 
+        if (typeof smoke_data[0] !== 'undefined'){ 
+        smoketext = smoke_data[0].smokeStatus
+        } 
+        inner_nowsmoke.textContent = smoketext.replace(/surrounding/i, "") 
+        if (typeof door_data[0] !== 'undefined'){
+        inner_nowdoor.textContent = door_data[0].doorStatus 
+        }
+        nowtemp.append(inner_nowtemp)
+        nowhumid.append(inner_nowhumid)
+        nowlight.append(inner_nowlight)
+        nowmotion.append(inner_nowmotion)
+        nowsmoke.append(inner_nowsmoke)
+        nowdoor.append(inner_nowdoor)
 
-        now_total.append(inner_now_total)
-        nowPower_G1.append(inner_nowPower_G1)
-        nowScrewRPM_G1.append(inner_nowScrewRPM_G1)
-        nowDriveRPM_G1.append(inner_nowDriveRPM_G1)
-        nowOpHours_G1.append(inner_nowOpHours_G1)
-        nowEnergy_G1.append(inner_nowEnergy_G1)
-
-        nowPower_G2.append(inner_nowPower_G2)
-        nowScrewRPM_G2.append(inner_nowScrewRPM_G2)
-        nowDriveRPM_G2.append(inner_nowDriveRPM_G2)
-        nowOpHours_G2.append(inner_nowOpHours_G2)
-        nowEnergy_G2.append(inner_nowEnergy_G2)
-
-        col_left_T0.append(subtitle_TOT, now_total, clear)
-        col_left_T1.append(subtitle1_T1)
-        col_left_T1.append(nowPower_G1, nowScrewRPM_G1, nowDriveRPM_G1, nowOpHours_G1, nowEnergy_G1, clear) 
-        col_left_T2.append(subtitle1_T2)
-        col_left_T2.append(nowPower_G2, nowScrewRPM_G2, nowDriveRPM_G2, nowOpHours_G2, nowEnergy_G2, clear) 
-        col_left.append(col_left_T0, col_left_T1, col_left_T2)
-
+        col_left.append(subtitle1)
+        col_left.append(nowtemp, nowhumid, nowlight, nowmotion, nowsmoke, nowdoor, clear)
+        
         col_right.append(subtitle2)
         buttonwrap.append(button1, button2, button3, button4, clear)
         datewrap.append(label1, datepick1, label2, datepick2, clear)
         panel.append(buttonwrap, datewrap)
         col_right.append(panel)
-        canvwrap_power.append(canv_power)
-        col_right.append(canvwrap_power)
-        container.append(notes)
+        canvwrap_temp.append(canv_temp)
+        canvwrap_humid.append(canv_humid)  
+        canvwrap_light.append(canv_light)
+        canvwrap_motion.append(canv_motion)
+        col_right.append(canvwrap_temp, canvwrap_humid, canvwrap_light, canvwrap_motion)
+
         //col_wrapper.append(title) //Hide title for Wordpress
         col_wrapper.append(col_left, col_right)
         container.append(col_wrapper)
@@ -543,6 +470,7 @@ var param3 = myreturn[3]
     //filter by date
     let today = new Date()
     let today_end = new Date()
+							  
     let lastweek = new Date()
     let lastmonth = new Date()
     let lastyear = new Date()
@@ -562,7 +490,6 @@ var param3 = myreturn[3]
     var param1_date = luxon.DateTime.fromFormat(param1, 'yyyyLLdd').startOf('day').toJSDate()
     var param2_date = luxon.DateTime.fromFormat(param2, 'yyyyLLdd').endOf('day').toJSDate()
 
-
     var picked = false
     // datepicker
     const picker1 = datepicker('#dpk1', { id: 1, dateSelected: param1_date, onSelect: instance => {picked = true; selectTimescale(picker1.getRange().start, dayEnd(picker1.getRange().end), param1, param2, param3 ) }})
@@ -579,7 +506,7 @@ if (param2_date.getDate() == today.getDate()) {
    picker2.setDate(today_end, true)
 }
 
-//default timescale for first page load = last day
+//default timescale for first page load = last week
 if (!urlParams.has('var1')) {
     selectTimescale(today, today_end, param1, param2, param3)
     picker2.setDate(today_end, true)
@@ -602,16 +529,16 @@ function selectTimescale(mystart, myend, myparam1, myparam2, myparam3) {
             if (picked == true) {
                 myparam3 = 4
             } 
-            
+
             var newstart = luxon.DateTime.fromJSDate(mystart).toFormat('yyyyLLdd')
             var newend = luxon.DateTime.fromJSDate(myend).toFormat('yyyyLLdd')
-            var path = window.location.href.split(/[?#]/)[0] // Remove parameters and/or anchor
+            var path = window.location.href.split('?')[0]
             location.href = path + '?var1=' + newstart + '&var2=' + newend + '&var3=' + myparam3
             return
         } 
 
     var selection = global_data.filter(function(item){
-        return new Date(item.received_at) >= mystart
+                return new Date(item.received_at) >= mystart
             })
             var mystarttime = mystart
             var myendtime = myend
@@ -636,23 +563,24 @@ function selectTimescale(mystart, myend, myparam1, myparam2, myparam3) {
                 }
 
             const xs = []
-            const ys_tony = []
-            const ys_sophie = []
+            const ys1 = []
+            const ys2 = []
+            const ys3 = []
+            const ys4 = []
             for(item of selection) {                
+
                 //convert the timestamp to milliseconds (faster)                
                 const mydate1 = new Date(item.received_at)
                 const mydate = mydate1.getTime()
                 xs.push(mydate);
-                var mypower1 = item.gen1_power_kw.toFixed(2);
-                if (mypower1 < 0){
-                    mypower1 = 0
-                }
-                ys_tony.push(mypower1);
-                var mypower2 = item.gen2_power_kw.toFixed(2);
-                if (mypower2 < 0){
-                    mypower2 = 0
-                }
-                ys_sophie.push(mypower2)
+                const mytemp = item.temperature;
+                ys1.push(mytemp);
+                const myhum = item.humidity;
+                ys2.push(myhum);
+                const mylig = item.light;
+                ys3.push(mylig);
+                const mymot = item.motion;
+                ys4.push(mymot);
             }
 
             // Add active class to the current button on click
@@ -669,61 +597,219 @@ function selectTimescale(mystart, myend, myparam1, myparam2, myparam3) {
              if (picked == true) {
                 for (var i = 0; i < btns.length; i++) {
                     btns[i].classList.remove("active")
-                }
+                } 
                 picked = false
             }
-            
 
-            //Set global defaults for charts
-            //More settings can be global if we use Chartjs v3
-            Chart.defaults.global.tooltips.callbacks.title = function(t, d) {
-                                    return luxon.DateTime.fromMillis(d.labels[t[0].index]).toFormat('ff');
-                                            }
-            //Chart.defaults.global.animation.duration = 0 
-            Chart.defaults.global.maintainAspectRatio = false
-            Chart.defaults.global.title.display = true
-            Chart.defaults.global.title.fontSize = 20
-            Chart.defaults.global.title.fontStyle = 'bold'
-            Chart.defaults.global.legend.labels.fontSize = 15
-            Chart.defaults.global.legend.labels.fontStyle = 'bold'
-           
-            
-        //Graph 7 - power generated
-        if (myChart_power) {
-            myChart_power.destroy();
+        //Set global defaults for charts
+        //More settings can be global if we use Chartjs v3
+        Chart.defaults.global.tooltips.callbacks.title = function(t, d) {
+                                return luxon.DateTime.fromMillis(d.labels[t[0].index]).toFormat('ff');
+                                        }
+        //Chart.defaults.global.animation.duration = 0
+        Chart.defaults.global.maintainAspectRatio = false
+        Chart.defaults.global.title.display = true
+        Chart.defaults.global.title.fontSize = 20
+        Chart.defaults.global.title.fontStyle = 'bold'
+        Chart.defaults.global.legend.display = false
+
+
+        //Graph 1 - temperature            
+        if (myChart_temp) {
+            myChart_temp.destroy();
             }
 
-        var ctx_pow = document.getElementById('ca_pow').getContext('2d');
-        myChart_power = new Chart(ctx_pow, {
+        var ctx_tem = document.getElementById('ca_tem').getContext('2d');
+        myChart_temp = new Chart(ctx_tem, {
                 type: 'line',
                 data: {
                     labels: xs,
                     datasets: [
-                        {           
-                        label: 'Tony (turbine 1)  ',             
-                        data: ys_tony,
+                        {                                
+                        data: ys1,
                         fill: true,
-                        backgroundColor: 'rgba(143, 118, 242, 1)',
-                        borderColor: 'rgba(143, 118, 242, 1)',
+                        backgroundColor: 'rgb(255, 109, 86, 0.7)',
+                        borderColor: 'rgb(255, 109, 86, 0.7)',
                         borderWidth: 1,
-                        radius: 0,
-                        },
-                        {           
-                        label: 'Sophie (turbine 2)',             
-                        data: ys_sophie,
-                        fill: true,
-                        backgroundColor: 'rgba(230, 48, 86, 0.8)',
-                        borderColor: 'rgba(230, 48, 86, 0.9)',
-                        borderWidth: 1,
-                        radius: 0,
+                        radius: 0
                         },                        
                     ]
                     },
-                    options: {                                
+                    options: {
+                        scales: {
+                            xAxes: [{
+                                type: 'time',
+                                time: {
+                                    minUnit: myunit,
+                                }, 
+                                distribution: 'linear',
+                                ticks: {
+                                    fontStyle: "bold",
+                                    min: mystarttime,
+                                    max: myendtime,
+                                        },
+                                scaleLabel: {
+                                    display: false,                                                                  
+                                        }
+                                    }
+                            ],
+                            yAxes: [{
+                                ticks: {
+                                    fontSize: 15,
+                                    fontStyle: "bold",
+                                        },
+                                        scaleLabel: {
+                                    display: false                                      
+                                        }
+                                    }]
+                            },
+                        title: {
+                            text: "Temperature (°C)"
+                                },
+                            } 
+            });
+        // End of graph 1
+
+        //Graph 2 - humidity
+        if (myChart_humid) {
+            myChart_humid.destroy();
+            }
+
+        var ctx_hum = document.getElementById('ca_hum').getContext('2d');
+        myChart_humid = new Chart(ctx_hum, {
+                type: 'line',
+                data: {
+                    labels: xs,
+                    datasets: [
+                        {
+                        
+                        data: ys2,
+                        fill: true,
+                        backgroundColor: 'rgb(87, 183, 221, 0.7)',
+                        borderColor: 'rgb(87, 183, 221)',
+                        borderWidth: 1,
+                        radius: 0
+                        },                        
+                    ]
+                    },
+                    options: {
                         scales: {
 
                                 xAxes: [{
-                                    type: 'time', 
+                                    type: 'time',
+                                    time: {
+                                        minUnit: myunit,
+                                    }, 
+                                    distribution: 'linear',
+                                    ticks: {
+                                        fontStyle: "bold",
+                                        min: mystarttime,
+                                        max: myendtime,
+                                            },
+                                    scaleLabel: {
+                                        display: false,                                                                  
+                                            }
+                                        }
+                                ],
+                                yAxes: [{
+                                    ticks: {
+                                        fontSize: 15,
+                                        fontStyle: "bold",
+                                            },
+                                            scaleLabel: {
+                                        display: false                                      
+                                            }
+                                        }]
+                                },
+                        title: {
+                            text: "Humidity (%)",
+                                }
+                            } 
+            });
+        // End of graph 2
+
+        //Graph 3 - light
+        if (myChart_light) {
+            myChart_light.destroy();
+            }
+
+        var ctx_lig = document.getElementById('ca_lig').getContext('2d'); 
+        myChart_light = new Chart(ctx_lig, {
+                type: 'line',
+                data: {
+                    labels: xs,
+                    datasets: [
+                        {                               
+                        data: ys3,
+                        fill: true,
+                        backgroundColor: 'rgb(255, 190, 10, 0.7)',
+                        borderColor: 'rgb(255, 190, 10)',
+                        borderWidth: 1,
+                        radius: 0
+                        },                        
+                    ]
+                    },
+                    options: {
+                        scales: {
+                                xAxes: [{
+                                    type: 'time',
+                                    time: {
+                                        minUnit: myunit,
+                                    }, 
+                                    distribution: 'linear',
+                                    ticks: {
+                                        fontStyle: "bold",
+                                        min: mystarttime,
+                                        max: myendtime,
+                                            },
+                                    scaleLabel: {
+                                        display: false,                                                                  
+                                            }
+                                        }
+                                ],
+                                yAxes: [{
+                                    ticks: {
+                                        fontSize: 15,
+                                        fontStyle: "bold",
+                                            },
+                                            scaleLabel: {
+                                        display: false                                      
+                                            }
+                                        }]
+                                },
+                        title: {
+                            text: "Light (Lux)",
+                                }
+                            } 
+            });
+        // End of graph 3
+
+        //Graph 4 - motion
+        if (myChart_motion) {
+            myChart_motion.destroy();
+            }
+
+        var ctx_mot = document.getElementById('ca_mot').getContext('2d'); 
+        myChart_motion = new Chart(ctx_mot, {
+                type: 'line',
+                data: {
+                    labels: xs,
+                    datasets: [
+                        {                              
+                        data: ys4,
+                        fill: true,
+                        backgroundColor: 'rgb(138, 197, 57, 0.7)',
+                        borderColor: 'rgb(138, 197, 57)',
+                        borderWidth: 1,
+                        radius: 0
+                        },                        
+                    ]
+                    },
+                    options: {
+                        scales: {
+
+                                xAxes: [{
+                                    type: 'time',
                                     time: {
                                         minUnit: myunit,
                                     },
@@ -737,10 +823,8 @@ function selectTimescale(mystart, myend, myparam1, myparam2, myparam3) {
                                         display: false,                                                                  
                                             }
                                         }
-
                                 ],
                                 yAxes: [{
-                                    stacked: true,
                                     ticks: {
                                         fontSize: 15,
                                         fontStyle: "bold",
@@ -751,21 +835,17 @@ function selectTimescale(mystart, myend, myparam1, myparam2, myparam3) {
                                         }]
                                 },
                         title: {
-                            text: "Power (kW)",
-                                },
-                        legend: {
-                            display: true,
+                            text: "Motion counts",
                                 }
                             } 
-            });                
-        // End of graphs
+            });
+        // End of graph 4
 
         }
         // End of selectTimescale
 
 // closing of GoDoIt function
 };
-
 
 // functions
 async function getData() {
@@ -777,4 +857,4 @@ async function getData() {
 }
     
 // DO NOT REMOVE the comment below, it stops Wordpress from escaping ampersands
-//--></script>  
+//--></script>
