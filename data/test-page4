@@ -429,6 +429,7 @@
         inner_nowhumid.textContent = global_data[0].humidity
         inner_nowlight.textContent = global_data[0].light
         inner_nowmotion.textContent = global_data[0].motion 
+        smoketext = 'Undefined'
         if (typeof smoke_data[0] !== 'undefined'){ 
         smoketext = smoke_data[0].smokeStatus
         } 
