@@ -6,6 +6,8 @@
 <!-- For luxon formatting see https://github.com/moment/luxon/blob/master/docs/formatting.md -->
 <script src="https://unpkg.com/js-datepicker@5.18.1/dist/datepicker.min.js"></script>
 <link rel="stylesheet" href="https://unpkg.com/js-datepicker@5.18.1/dist/datepicker.min.css">
+
+ 
 <style>
 
     .tt {
@@ -146,6 +148,12 @@
     #doo {
         background-color: #fa9233;
      }
+    #ga1 {
+        background-color: #e053de;
+     }
+    #ga2 {
+        background-color: #e053de;
+     }
 
      #ca_tem {
          height: 100%;                          
@@ -158,6 +166,12 @@
      }
      #ca_mot {
          height: 100%;                          
+     }
+     #ca_ga1 {
+        height: 100%;
+     }
+     #ca_ga2 {
+        height: 100%;
      }
 
      @media only screen and (max-width: 1420px) {
@@ -242,35 +256,46 @@
         
         // set default API query date to last day
         var today_q = new Date()
+		var today_y = new Date()						
         today_q.setDate(today_q.getDate())
+        today_y.setDate(today_q.getDate() -1) //yesterday is to request extra day for gap in BST																								
 
-        var ds1 = luxon.DateTime.fromJSDate(today_q).toFormat('yyyyLLdd')
+        var ds1 = luxon.DateTime.fromJSDate(today_y).toFormat('yyyyLLdd')
         var ds2 = luxon.DateTime.fromJSDate(today_q).toFormat('yyyyLLdd')
         
         //check for query string and set new dates
         const queryString = window.location.search;
         const urlParams = new URLSearchParams(queryString);
         if (urlParams.has('var1')) {
+                //request an extra day of data to avoid gap at beginning of time period for BST
+                var myBST1 = urlParams.get('var1')
+                var myBST1_date = luxon.DateTime.fromFormat(myBST1, 'yyyyLLdd').startOf('day').toJSDate()//testing
+                let myBSTvar1 = new Date(myBST1_date)
+                myBSTvar1.setDate(myBSTvar1.getDate() - 1)
+                var myds1 = luxon.DateTime.fromJSDate(myBSTvar1).toFormat('yyyyLLdd')																							   
                 var myds1 = urlParams.get('var1')
                 var myds2 = urlParams.get('var2')
                 var myhighlight = urlParams.get('var3')
         
-                var myurl = 'https://readinghydro.org:9445/api/ttn/between/' + myds1 + '/' + myds2   
-                // set param1 to the earlier date requested
-                var param1 = myds1
+                var myurl = 'https://readinghydro.org:9445/api/ttn/between/' + myds1 + '/' + myds2
+                var myurl_gate = 'https://readinghydro.org:9445/api/sluice/between/' + myds1 + '/' + myds2   
+                var param1 = myBST1// set param1 to the actual requested date
+								 
                 var param2 = myds2
                 var param3 = myhighlight
         } else {
                 var myurl = 'https://readinghydro.org:9445/api/ttn/between/' + ds1 + '/' + ds2
+                var myurl_gate = 'https://readinghydro.org:9445/api/sluice/between/' + ds1 + '/' + ds2
                 var param1 = ds1
                 var param2 = ds2
                 var param3 = 0
         }
         
-        GoDoIt(myurl, param1, param2, param3)
+        GoDoIt(myurl, myurl_gate, param1, param2, param3)
         
         async function GoDoIt (){
         var myreturn = await getData(myurl, param1, param2, param3);
+        var myreturn_gate = await getData_gate();
         var global_data_0 = myreturn[0]
         var global_data = global_data_0.filter(function(item){
                         return item.device_id == 'rdghydro-ers001'
@@ -281,6 +306,11 @@
         var door_data = global_data_0.filter(function(item){
                         return item.device_id == 'dilu-door-005'
                     })
+        var gate_data_0 = myreturn_gate[0]
+        var gate2_data = gate_data_0.filter(function(item){
+                        return item.sensor == 'sluice_2'
+                    })
+                    //console.log(gate2_data)
         var param1 = myreturn[1]
         var param2 = myreturn[2]
         var param3 = myreturn[3]
@@ -289,6 +319,7 @@
         var myChart_humid
         var myChart_light
         var myChart_motion
+        var myChart_gate2
 
         const container = document.createElement('div')
         const title = document.createElement('h1')
@@ -314,21 +345,29 @@
         const nowmotion = document.createElement('div')
         const nowsmoke = document.createElement('div')
         const nowdoor = document.createElement('div')
+        const nowgate1 = document.createElement('div')
+        const nowgate2 = document.createElement('div')
         const inner_nowtemp = document.createElement('div')
         const inner_nowhumid = document.createElement('div')
         const inner_nowlight = document.createElement('div')
         const inner_nowmotion = document.createElement('div')
         const inner_nowsmoke = document.createElement('div')
         const inner_nowdoor = document.createElement('div')
+        const inner_nowgate1 = document.createElement('div')
+        const inner_nowgate2 = document.createElement('div')
         const canvwrap_temp = document.createElement('div')
         const canvwrap_humid = document.createElement('div')
         const canvwrap_light = document.createElement('div')
         const canvwrap_motion = document.createElement('div')
+        const canvwrap_gate1 = document.createElement('div')
+        const canvwrap_gate2 = document.createElement('div')
         const clear = document.createElement('p')
         const canv_temp = document.createElement('canvas')
         const canv_humid = document.createElement('canvas')
         const canv_light = document.createElement('canvas')
         const canv_motion = document.createElement('canvas')
+        const canv_gate1 = document.createElement('canvas')
+        const canv_gate2 = document.createElement('canvas')
         
         container.id = "con"							 
         panel.id = "pan"
@@ -346,10 +385,14 @@
         nowmotion.id = "mot"
         nowsmoke.id = "smo"
         nowdoor.id = "doo"
+        nowgate1.id = "ga1"
+        nowgate2.id = "ga2"
         canv_temp.id = "ca_tem"
         canv_humid.id = "ca_hum"
         canv_light.id = "ca_lig"
         canv_motion.id = "ca_mot"
+        canv_gate1.id = "ca_ga1"
+        canv_gate2.id = "ca_ga2"
 
         title.className = "tt"
         subtitle1.className = "sub1"
@@ -363,12 +406,16 @@
         nowmotion.className = "box"
         nowsmoke.className = "box"
         nowdoor.className = "box"
+        nowgate1.className = "box"
+        nowgate2.className = "box"
         inner_nowtemp.className = "inner fontbig"
         inner_nowhumid.className = "inner fontbig"
         inner_nowlight.className = "inner fontbig"
         inner_nowmotion.className = "inner fontbig"
         inner_nowsmoke.className = "inner fontsmall"
         inner_nowdoor.className = "inner fontsmall"
+        inner_nowgate1.className = "inner fontbig"
+        inner_nowgate2.className = "inner fontbig"
         clear.className = "cle"
         button1.className = "btn active"
         button2.className = "btn"
@@ -404,6 +451,8 @@
         canvwrap_humid.className = "cwra"
         canvwrap_light.className = "cwra"
         canvwrap_motion.className = "cwra"
+        canvwrap_gate1.className = "cwra"
+        canvwrap_gate2.className = "cwra"
 
         title.innerHTML = "Turbine House"
         subtitle1.innerHTML = `Current conditions: <span id="ts">${luxon.DateTime.fromISO(global_data[0].received_at).toFormat('ff')} </span>`
@@ -423,13 +472,15 @@
         nowmotion.innerHTML = "Motion counts"
         nowsmoke.innerHTML = "Smoke alarm status"
         nowdoor.innerHTML = "Door status"
+        nowgate1.innerHTML = "Sluice gate 1 raised (mm)"
+        nowgate2.innerHTML = "Sluice gate 2 raised (mm)"
         label1.innerHTML = "Start date"
         label2.innerHTML = "End date"
         inner_nowtemp.textContent = global_data[0].temperature
         inner_nowhumid.textContent = global_data[0].humidity
         inner_nowlight.textContent = global_data[0].light
         inner_nowmotion.textContent = global_data[0].motion 
-        smoketext = 'Undefined'
+		smoketext = 'Undefined'
         if (typeof smoke_data[0] !== 'undefined'){ 
         smoketext = smoke_data[0].smokeStatus
         } 
@@ -437,15 +488,19 @@
         if (typeof door_data[0] !== 'undefined'){
         inner_nowdoor.textContent = door_data[0].doorStatus 
         }
+        inner_nowgate1.textContent = '-' 
+        inner_nowgate2.textContent = gate2_data[0].gate_raised_mm
         nowtemp.append(inner_nowtemp)
         nowhumid.append(inner_nowhumid)
         nowlight.append(inner_nowlight)
         nowmotion.append(inner_nowmotion)
         nowsmoke.append(inner_nowsmoke)
         nowdoor.append(inner_nowdoor)
+        nowgate1.append(inner_nowgate1)
+        nowgate2.append(inner_nowgate2)
 
         col_left.append(subtitle1)
-        col_left.append(nowtemp, nowhumid, nowlight, nowmotion, nowsmoke, nowdoor, clear)
+        col_left.append(nowtemp, nowhumid, nowlight, nowmotion, nowsmoke, nowdoor, nowgate1, nowgate2, clear)
         
         col_right.append(subtitle2)
         buttonwrap.append(button1, button2, button3, button4, clear)
@@ -456,7 +511,10 @@
         canvwrap_humid.append(canv_humid)  
         canvwrap_light.append(canv_light)
         canvwrap_motion.append(canv_motion)
-        col_right.append(canvwrap_temp, canvwrap_humid, canvwrap_light, canvwrap_motion)
+        //canvwrap_gate1.append(canv_gate1)
+        canvwrap_gate2.append(canv_gate2)
+        //col_right.append(canvwrap_temp, canvwrap_humid, canvwrap_light, canvwrap_motion, canvwrap_gate1, canvwrap_gate2)
+        col_right.append(canvwrap_temp, canvwrap_humid, canvwrap_light, canvwrap_motion, canvwrap_gate2)
 
         //col_wrapper.append(title) //Hide title for Wordpress
         col_wrapper.append(col_left, col_right)
@@ -507,7 +565,7 @@ if (param2_date.getDate() == today.getDate()) {
    picker2.setDate(today_end, true)
 }
 
-//default timescale for first page load = last week
+//default timescale for first page load = last day
 if (!urlParams.has('var1')) {
     selectTimescale(today, today_end, param1, param2, param3)
     picker2.setDate(today_end, true)
@@ -564,10 +622,12 @@ function selectTimescale(mystart, myend, myparam1, myparam2, myparam3) {
                 }
 
             const xs = []
+            const xs6 = []
             const ys1 = []
             const ys2 = []
             const ys3 = []
             const ys4 = []
+            const ys6 = []
             for(item of selection) {                
 
                 //convert the timestamp to milliseconds (faster)                
@@ -582,6 +642,18 @@ function selectTimescale(mystart, myend, myparam1, myparam2, myparam3) {
                 ys3.push(mylig);
                 const mymot = item.motion;
                 ys4.push(mymot);
+            }
+
+            //add sluice data
+            if (typeof gate2_data !== 'undefined'){
+            for(item of gate2_data){
+                //convert the timestamp to milliseconds (faster)                
+                const mygate2date1 = new Date(item.date)
+                const mygate2date = mygate2date1.getTime()
+                xs6.push(mygate2date);
+                const mygate2status = item.gate_raised_mm.toFixed(2)
+                ys6.push(mygate2status)
+            }
             }
 
             // Add active class to the current button on click
@@ -842,6 +914,62 @@ function selectTimescale(mystart, myend, myparam1, myparam2, myparam3) {
             });
         // End of graph 4
 
+        //Graph 6 - sluice gate 2            
+        if (myChart_gate2) {
+            myChart_gate2.destroy();
+            }
+
+        var ctx_ga2 = document.getElementById('ca_ga2').getContext('2d');
+        myChart_gate2 = new Chart(ctx_ga2, {
+                type: 'line',
+                data: {
+                    labels: xs6,
+                    datasets: [
+                        {                                
+                        data: ys6,
+                        fill: true,
+                        backgroundColor: 'rgb(224, 83, 222, 0.7)',
+                        borderColor: 'rgb(224, 83, 222, 0.7)',
+                        borderWidth: 1,
+                        radius: 0
+                        },                        
+                    ]
+                    },
+                    options: {
+                        scales: {
+                            xAxes: [{
+                                type: 'time',
+                                time: {
+                                    minUnit: myunit,
+                                }, 
+                                distribution: 'linear',
+                                ticks: {
+                                    fontStyle: "bold",
+                                    min: mystarttime,
+                                    max: myendtime,
+                                        },
+                                scaleLabel: {
+                                    display: false,                                                                  
+                                        }
+                                    }
+                            ],
+                            yAxes: [{
+                                ticks: {
+                                    fontSize: 15,
+                                    fontStyle: "bold",
+                                        },
+                                        scaleLabel: {
+                                    display: false                                      
+                                        }
+                                    }]
+                            },
+                        title: {
+                            text: "Sluice gate 2 (mm raised)"
+                                },
+                            } 
+            });
+        // End of graph 6
+
         }
         // End of selectTimescale
 
@@ -856,6 +984,15 @@ async function getData() {
     var arr = [data, param1, param2, param3] 
     return arr           
 }
+
+async function getData_gate() {
+
+const response = await fetch(myurl_gate) 
+const data = await response.json()
+var arr = [data, param1, param2, param3] 
+return arr           
+}
     
 // DO NOT REMOVE the comment below, it stops Wordpress from escaping ampersands
-//--></script>
+//--></script>  
+
