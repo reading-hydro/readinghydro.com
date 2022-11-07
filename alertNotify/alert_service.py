@@ -306,8 +306,8 @@ client.tls_set("/etc/ssl/certs/ca-certificates.crt")
 
 # set the time and oncall initial values
 
-who_is_oncall = {'primary': '', 'second': ''}
-got_api_data = True
+who_is_oncall = {'primary': 'Unknown', 'second': 'Unknown'}
+got_api_data = False
 latest_data_time = datetime.datetime.utcnow()
 latest_data = latest_data_time.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
 next_data_report_time = datetime.datetime.utcnow()
@@ -333,86 +333,76 @@ restThread.start()
 # read the calendar once an hour, if there is an entry for each of the roles update the current role person
 # if there is no new entry for a role the old entry will be kept
 
-try:
-    while True:
-        now_utc = datetime.datetime.utcnow()
-        now = datetime.datetime.now(tz_london)
-        now_utc_string = now.strftime('%Y-%m-%dT%H:%M:%SZ')
-        now_string = now.strftime('%Y-%m-%dT%H:%M:%S')
-        if last_hour != now.hour:
-            last_hour = now.hour
-            new_who_is_oncall = calendar_read(google_api_key)
-            for role in ('primary', 'second'):
-                for person in new_who_is_oncall:
-                    if person['role'] == role:
-                        if person.get('name') != who_is_oncall.get(role):
-                            who_is_oncall.update({role: person.get('name')})
-                            log_alert_message(now_string, "On-Call for {role} is now {name}".format(role=role, name=person.get('name')))
-                if last_hour == 9:
-                    email = contacts.get(who_is_oncall.get(role)).get('email')
-                    message = 'Sending oncall reminder to ' + who_is_oncall.get(role) + ' at ' + email + ' for role ' + role
-                    sendMail_shift(email, role, generate_token(email, message, ONCALL_ESCALATION_TIME))
-                    log_alert_message(now_string, message)
+while True:
+    now_utc = datetime.datetime.utcnow()
+    now = datetime.datetime.now(tz_london)
+    now_utc_string = now.strftime('%Y-%m-%dT%H:%M:%SZ')
+    now_string = now.strftime('%Y-%m-%dT%H:%M:%S')
+    if last_hour != now.hour:
+        last_hour = now.hour
+        new_who_is_oncall = calendar_read(google_api_key)
+        for role in ('primary', 'second'):
+            for person in new_who_is_oncall:
+                if person['role'] == role:
+                    if person.get('name') != who_is_oncall.get(role):
+                        who_is_oncall.update({role: person.get('name')})
+                        log_alert_message(now_string, "On-Call for {role} is now {name}".format(role=role, name=person.get('name')))
+            if last_hour == 9:
+                email = contacts.get(who_is_oncall.get(role)).get('email')
+                message = 'Sending oncall reminder to ' + who_is_oncall.get(role) + ' at ' + email + ' for role ' + role
+                sendMail_shift(email, role, generate_token(email, message, ONCALL_ESCALATION_TIME))
+                log_alert_message(now_string, message)
 
 # look through the alert list for any expired alerts that have not been acknowleged.
 # or entries that record repeated events even if acknowleged
 
-        tokenlist = expired_token()
-        for entry in tokenlist:
-            if entry.get('count') == 0:
-                sendMail_escalate('alerts@readinghydro.org', 'Escalate: '+entry.get('message'))
-            else:
-                email1 = contacts.get(who_is_oncall.get('primary')).get('email')
-                email2 = contacts.get(who_is_oncall.get('second')).get('email')
-                dup_count = entry.get('count')
-                alertMessage = 'Repeated: {count:d} message: {message}'.format(count=dup_count, message=entry.get('message'))
-                token = generate_token(email1, alertMessage, ALERT_ESCALATION_TIME)
-                sendMail_alert(email1, alertMessage, now_utc_string, token)
-                sendMail_alert(email2, alertMessage, now_utc_string, token)
-                log_alert_message(now_string, alertMessage)
+    tokenlist = expired_token()
+    for entry in tokenlist:
+        if entry.get('count') == 0:
+            sendMail_escalate('alerts@readinghydro.org', 'Escalate: '+entry.get('message'))
+        else:
+            email1 = contacts.get(who_is_oncall.get('primary')).get('email')
+            email2 = contacts.get(who_is_oncall.get('second')).get('email')
+            dup_count = entry.get('count')
+            alertMessage = 'Repeated: {count:d} message: {message}'.format(count=dup_count, message=entry.get('message'))
+            token = generate_token(email1, alertMessage, ALERT_ESCALATION_TIME)
+            sendMail_alert(email1, alertMessage, now_utc_string, token)
+            sendMail_alert(email2, alertMessage, now_utc_string, token)
+            log_alert_message(now_string, alertMessage)
 
 # check the data feeds to see if we have current data, if not raise an alert
 
-        try:
-            latest_request = request.urlopen('https://readinghydro.org:9445/api/plc/current', timeout=6)
-        except URLError:
-            if got_api_data:
-                log_alert_message(now_string, 'Failed to get API data, Latest data at: '+latest_data)
-                got_api_data = False
-        except HTTPError:
-            if got_api_data:
-                log_alert_message(now_string, 'API Data not responding, Latest Data at: '+latest_data)
-                got_api_data = False
-        else:
-            got_api_data = True
-            latest_data = json.loads(latest_request.read())
-            latest_data_time = datetime.datetime.strptime(latest_data.get('received_at'), '%Y-%m-%dT%H:%M:%S.%fZ')
+    try:
+        latest_request = request.urlopen('https://readinghydro.org:9445/api/plc/current', timeout=3)
+    except URLError:
+        got_api_data = False
+    else:
+        got_api_data = True
+        latest_data = json.loads(latest_request.read())
+        latest_data_time = datetime.datetime.strptime(latest_data.get('received_at'), '%Y-%m-%dT%H:%M:%S.%fZ')
 
-        if got_api_data:
-            if latest_data_time < now_utc - NO_DATA_REPORT_EVENT:
-                if now_utc > next_data_report_time:
-                    next_data_report_time = now_utc + NO_DATA_RE_REPORT_TIME
-                    email1 = contacts.get(who_is_oncall.get('primary')).get('email')
-                    email2 = contacts.get(who_is_oncall.get('second')).get('email')
-                    alertMessage = 'No data received since '+latest_data_time.strftime('%Y-%m-%dT%H:%M:%SZ')
-                    alertMessage += ' That is {minutes:5.2f} Minutes ago'.format(minutes=(now_utc-latest_data_time).seconds/60)
-                    token = generate_token(email1, 'At: {time} message: {message}'.format(time=now_string, message=alertMessage),
-                                           datetime.timedelta(seconds=15*60))
-                    sendMail_alert(email1, alertMessage, now_string, token)
-                    sendMail_alert(email2, alertMessage, now_string, token)
-                    log_alert_message(now_string, alertMessage)
+    if latest_data_time < now_utc - NO_DATA_REPORT_EVENT:
+        if now_utc > next_data_report_time:
+            next_data_report_time = now_utc + NO_DATA_RE_REPORT_TIME
+            email1 = contacts.get(who_is_oncall.get('primary')).get('email')
+            email2 = contacts.get(who_is_oncall.get('second')).get('email')
+            alertMessage = 'No data received since '+latest_data_time.strftime('%Y-%m-%dT%H:%M:%SZ')
+            alertMessage += ' That is {minutes:5.2f} Minutes ago'.format(minutes=(now_utc-latest_data_time).seconds/60)
+            token = generate_token(email1, 'At: {time} message: {message}'.format(time=now_string, message=alertMessage),
+                                    datetime.timedelta(seconds=15*60))
+            sendMail_alert(email1, alertMessage, now_string, token)
+            sendMail_alert(email2, alertMessage, now_string, token)
+            log_alert_message(now_string, alertMessage)
 
 # check the REST server is running, restart it if not
-        if not(restThread.is_alive()):
-            syslog.syslog('Restarting rest Server ')
-            log_alert_message(now_string, 'Restarting REST server')
-            restThread.start()
+    if not(restThread.is_alive()):
+        syslog.syslog('Restarting rest Server ')
+        log_alert_message(now_string, 'Restarting REST server')
+        restThread.start()
 
-        time.sleep(10)
-        pass
+    time.sleep(10)
+    pass
 
-except KeyboardInterrupt:
-    syslog.syslog("interrrupted by keyboard ")
 
 log_alert_message(now_string, 'Alert Service shutdown')
 
