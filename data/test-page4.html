@@ -306,11 +306,12 @@
         var door_data = global_data_0.filter(function(item){
                         return item.device_id == 'dilu-door-005'
                     })
-        var gate_data_0 = myreturn_gate[0]
+        var gate1_data = gate_data_0.filter(function(item){
+                        return item.sensor == 'sluice_1'
+                    })
         var gate2_data = gate_data_0.filter(function(item){
                         return item.sensor == 'sluice_2'
                     })
-                    //console.log(gate2_data)
         var param1 = myreturn[1]
         var param2 = myreturn[2]
         var param3 = myreturn[3]
@@ -488,7 +489,7 @@
         if (typeof door_data[0] !== 'undefined'){
         inner_nowdoor.textContent = door_data[0].doorStatus 
         }
-        inner_nowgate1.textContent = '-' 
+        inner_nowgate1.textContent = gate1_data[0].gate_raised_mm
         inner_nowgate2.textContent = gate2_data[0].gate_raised_mm
         nowtemp.append(inner_nowtemp)
         nowhumid.append(inner_nowhumid)
@@ -511,10 +512,10 @@
         canvwrap_humid.append(canv_humid)  
         canvwrap_light.append(canv_light)
         canvwrap_motion.append(canv_motion)
-        //canvwrap_gate1.append(canv_gate1)
+        canvwrap_gate1.append(canv_gate1)
         canvwrap_gate2.append(canv_gate2)
-        //col_right.append(canvwrap_temp, canvwrap_humid, canvwrap_light, canvwrap_motion, canvwrap_gate1, canvwrap_gate2)
-        col_right.append(canvwrap_temp, canvwrap_humid, canvwrap_light, canvwrap_motion, canvwrap_gate2)
+        col_right.append(canvwrap_temp, canvwrap_humid, canvwrap_light, canvwrap_motion, canvwrap_gate1, canvwrap_gate2)
+        //col_right.append(canvwrap_temp, canvwrap_humid, canvwrap_light, canvwrap_motion, canvwrap_gate2)
 
         //col_wrapper.append(title) //Hide title for Wordpress
         col_wrapper.append(col_left, col_right)
@@ -645,6 +646,17 @@ function selectTimescale(mystart, myend, myparam1, myparam2, myparam3) {
             }
 
             //add sluice data
+            if (typeof gate1_data !== 'undefined'){
+            for(item of gate1_data){
+                //convert the timestamp to milliseconds (faster)                
+                const mygate1date1 = new Date(item.date)
+                const mygate1date = mygate2date1.getTime()
+                xs5.push(mygate1date);
+                const mygate1status = item.gate_raised_mm.toFixed(2)
+                ys5.push(mygate1status)
+                }
+            }
+
             if (typeof gate2_data !== 'undefined'){
             for(item of gate2_data){
                 //convert the timestamp to milliseconds (faster)                
@@ -914,6 +926,62 @@ function selectTimescale(mystart, myend, myparam1, myparam2, myparam3) {
             });
         // End of graph 4
 
+        //Graph 5 - sluice gate 1            
+        if (myChart_gate1) {
+            myChart_gate1.destroy();
+            }
+
+        var ctx_ga1 = document.getElementById('ca_ga1').getContext('2d');
+        myChart_gate1 = new Chart(ctx_ga1, {
+                type: 'line',
+                data: {
+                    labels: xs5,
+                    datasets: [
+                        {                                
+                        data: ys5,
+                        fill: true,
+                        backgroundColor: 'rgb(224, 83, 222, 0.7)',
+                        borderColor: 'rgb(224, 83, 222, 0.7)',
+                        borderWidth: 1,
+                        radius: 0
+                        },                        
+                    ]
+                    },
+                    options: {
+                        scales: {
+                            xAxes: [{
+                                type: 'time',
+                                time: {
+                                    minUnit: myunit,
+                                }, 
+                                distribution: 'linear',
+                                ticks: {
+                                    fontStyle: "bold",
+                                    min: mystarttime,
+                                    max: myendtime,
+                                        },
+                                scaleLabel: {
+                                    display: false,                                                                  
+                                        }
+                                    }
+                            ],
+                            yAxes: [{
+                                ticks: {
+                                    fontSize: 15,
+                                    fontStyle: "bold", min:0, max:1400,
+                                        },
+                                        scaleLabel: {
+                                    display: false                                      
+                                        }
+                                    }]
+                            },
+                        title: {
+                            text: "Sluice gate 1 (mm raised)"
+                                },
+                            } 
+            });
+        // End of graph 5
+
         //Graph 6 - sluice gate 2            
         if (myChart_gate2) {
             myChart_gate2.destroy();
@@ -956,7 +1024,7 @@ function selectTimescale(mystart, myend, myparam1, myparam2, myparam3) {
                             yAxes: [{
                                 ticks: {
                                     fontSize: 15,
-                                    fontStyle: "bold",
+                                    fontStyle: "bold", min:0, max:1400,
                                         },
                                         scaleLabel: {
                                     display: false                                      
