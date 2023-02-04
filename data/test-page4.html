@@ -306,6 +306,7 @@
         var door_data = global_data_0.filter(function(item){
                         return item.device_id == 'dilu-door-005'
                     })
+        var gate_data_0 = myreturn_gate[0]
         var gate1_data = gate_data_0.filter(function(item){
                         return item.sensor == 'sluice_1'
                     })
@@ -320,6 +321,7 @@
         var myChart_humid
         var myChart_light
         var myChart_motion
+        var myChart_gate1
         var myChart_gate2
 
         const container = document.createElement('div')
@@ -623,11 +625,13 @@ function selectTimescale(mystart, myend, myparam1, myparam2, myparam3) {
                 }
 
             const xs = []
+            const xs5 = []
             const xs6 = []
             const ys1 = []
             const ys2 = []
             const ys3 = []
             const ys4 = []
+            const ys5 = []
             const ys6 = []
             for(item of selection) {                
 
@@ -650,7 +654,7 @@ function selectTimescale(mystart, myend, myparam1, myparam2, myparam3) {
             for(item of gate1_data){
                 //convert the timestamp to milliseconds (faster)                
                 const mygate1date1 = new Date(item.date)
-                const mygate1date = mygate2date1.getTime()
+                const mygate1date = mygate1date1.getTime()
                 xs5.push(mygate1date);
                 const mygate1status = item.gate_raised_mm.toFixed(2)
                 ys5.push(mygate1status)
