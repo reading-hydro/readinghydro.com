@@ -19,7 +19,8 @@ def generate_token(emailAddr: str, message: str, lifetime: datetime) -> str:
     hash.update(bytes(timekey.isoformat(), "ascii"))
     hash.update(b'Readinghydro token service')
     token = (base64.urlsafe_b64encode(hash.digest())).decode()
-    token_table.append({'token': token, 'email': emailAddr, 'time': timekey, 'ack': False, 'message': message, 'count': 0})
+    token_table.append({'token': token, 'email': emailAddr, 'time': timekey,
+                 'ack': False, 'message': message, 'count': 0, 'sent': False})
     return token
 
 
@@ -47,6 +48,11 @@ def check_token(token: str) -> bool:
                 entry.update({'ack': True})
     return token_state
 
+def token_mark_sent(token: str):
+    for entry in token_table:
+        if entry.get('token') == token:
+            entry.update({'sent': True})
+    return
 
 def active_token() -> list:
     tokens = []
@@ -81,6 +87,7 @@ def main():
     time.sleep(5)
     print(active_token())
     print(check_token(t))
+    token_mark_sent(t)
     print(token_table)
     return
 

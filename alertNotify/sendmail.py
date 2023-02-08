@@ -21,6 +21,31 @@ You can see all the active alert messages here: https://readinghydro.org/alertli
     command = 'echo "{msg}" | /usr/sbin/sendmail {to_addr}'.format(msg=msg, to_addr=to_addr)
     os.system(command)
 
+def sendMail_multialert(to_addr, alerts, time, token):
+
+    text1 = '''\
+From: turbine.house@readinghydro.org
+To: {to_addr}
+Subject: Hydro ALERTS
+Hello this is an automated alert from the Reading Hydro turbine room:
+Alerts Recieved at: {time}
+'''
+    text2 = '''\
+Alert Message: {alert}
+'''
+    text3 = '''\
+Please confirm receipt of this alert https://readinghydro.org/ackresp?token={token}
+You can see all the active alert messages here: https://readinghydro.org/alertlist
+'''
+
+    msg = text1.format(to_addr=to_addr, time=time)
+    for alert in alerts:
+        msg = msg + text2.format(alert=alert)
+    msg = msg + text3.format(token=token)
+
+    command = 'echo "{msg}" | /usr/sbin/sendmail {to_addr}'.format(msg=msg, to_addr=to_addr)
+    os.system(command)
+
 
 def sendMail_shift(to_addr, role, token):
 
@@ -59,6 +84,28 @@ You can see all the alert messages here: https://readinghydro.org/alertlist
     command = 'echo "{msg}" | /usr/sbin/sendmail {to_addr}'.format(msg=msg, to_addr=to_addr)
     os.system(command)
 
+def sendMail_multiescalate(to_addr, messages):
+
+    text1 = '''\
+From: turbine.house@readinghydro.org
+To: {to_addr}
+Subject: Hydro ALERT ESCALATION
+Hello this is an automated message from the Reading Hydro turbine room:
+'''
+    text3 = '''\
+The alert messages have not been acknowledged
+Current on-call roles are listed here: https://readinghydro.org/whoisoncall
+You can see all the alert messages here: https://readinghydro.org/alertlist
+'''
+
+    msg = text1.format(to_addr=to_addr)
+    for message in messages:
+        msg = msg + message + '\n'
+    msg = msg + text3
+
+    command = 'echo "{msg}" | /usr/sbin/sendmail {to_addr}'.format(msg=msg, to_addr=to_addr)
+    os.system(command)
+
 
 if __name__ == '__main__':
     # Example:
@@ -67,3 +114,9 @@ if __name__ == '__main__':
     sendMail_alert('stuart.ward.uk@gmail.com', 'test alert', datetime.datetime.now(), 'ABCD1234')
     sendMail_shift('stuart.ward.uk@gmail.com', 'primary', 'EFGH1234')
     sendMail_escalate('stuart.ward.uk@gmail.com', 'Orignal message is here')
+    alerts = ('Alert Message 1', 'Alert Message 2', 'Alert Message 3')
+    time = (datetime.datetime.now())
+    times = (time,time,time)
+    tokens = ('abcdef1234', 'ghijkl1234', 'mnopqrs1234')
+    sendMail_multialert('stuart.ward.uk@gmail.com', alerts, time, 'abcdef12345')
+    sendMail_multiescalate('stuart.ward.uk@gmail.com', alerts)

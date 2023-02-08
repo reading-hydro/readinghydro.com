@@ -10,7 +10,7 @@ import pytz
 import threading
 import boto3
 from tokenHandeler import generate_token, expired_token, check_dup, active_token, check_token
-from sendmail import sendMail_alert, sendMail_shift, sendMail_escalate
+from sendmail import sendMail_alert, sendMail_shift, sendMail_escalate, sendMail_multialert, sendMail_multiescalate
 from urllib import request, parse
 
 # timing parameters
@@ -334,6 +334,9 @@ restThread.start()
 # if there is no new entry for a role the old entry will be kept
 
 while True:
+    alertMessages = []
+    escalateMessages = []
+
     now_utc = datetime.datetime.utcnow()
     now = datetime.datetime.now(tz_london)
     now_utc_string = now.strftime('%Y-%m-%dT%H:%M:%SZ')
@@ -356,24 +359,24 @@ while True:
 # look through the alert list for any expired alerts that have not been acknowleged.
 # or entries that record repeated events even if acknowleged
 
+    email1 = contacts.get(who_is_oncall.get('primary')).get('email')
+    email2 = contacts.get(who_is_oncall.get('second')).get('email')
+
     tokenlist = expired_token()
     for entry in tokenlist:
         if entry.get('count') == 0:
-            sendMail_escalate('alerts@readinghydro.org', 'Escalate: '+entry.get('message'))
+            escalateMessages.append('Escalate: '+entry.get('message'))
         else:
-            email1 = contacts.get(who_is_oncall.get('primary')).get('email')
-            email2 = contacts.get(who_is_oncall.get('second')).get('email')
             dup_count = entry.get('count')
             alertMessage = 'Repeated: {count:d} message: {message}'.format(count=dup_count, message=entry.get('message'))
             token = generate_token(email1, alertMessage, ALERT_ESCALATION_TIME)
-            sendMail_alert(email1, alertMessage, now_utc_string, token)
-            sendMail_alert(email2, alertMessage, now_utc_string, token)
+            alertMessages.append(alertMessage)
             log_alert_message(now_string, alertMessage)
 
 # check the data feeds to see if we have current data, if not raise an alert
 
     try:
-        latest_request = request.urlopen('https://readinghydro.org:9445/api/plc/current', timeout=6)
+        latest_request = request.urlopen('https://readinghydro.org:9445/api/plc/current', timeout=10)
     except URLError:
         got_api_data = False
     else:
@@ -384,15 +387,19 @@ while True:
     if latest_data_time < now_utc - NO_DATA_REPORT_EVENT:
         if now_utc > next_data_report_time:
             next_data_report_time = now_utc + NO_DATA_RE_REPORT_TIME
-            email1 = contacts.get(who_is_oncall.get('primary')).get('email')
-            email2 = contacts.get(who_is_oncall.get('second')).get('email')
             alertMessage = 'No data received since '+latest_data_time.strftime('%Y-%m-%dT%H:%M:%SZ')
             alertMessage += ' That is {minutes:5.2f} Minutes ago'.format(minutes=(now_utc-latest_data_time).seconds/60)
             token = generate_token(email1, 'At: {time} message: {message}'.format(time=now_string, message=alertMessage),
                                     datetime.timedelta(seconds=15*60))
-            sendMail_alert(email1, alertMessage, now_string, token)
-            sendMail_alert(email2, alertMessage, now_string, token)
+            alertMessages.append(alertMessage)
             log_alert_message(now_string, alertMessage)
+
+# Send all the messages and esclations
+    if alertMessages:
+        sendMail_multialert(email1, alertMessages, now_utc, token)
+        sendMail_multialert(email2, alertMessages, now_utc, token)
+    if escalateMessages:
+        sendMail_multiescalate('alert@readinghydro.org', escalateMessages)
 
 # check the REST server is running, restart it if not
     if not(restThread.is_alive()):
@@ -400,7 +407,7 @@ while True:
         log_alert_message(now_string, 'Restarting REST server')
         restThread.start()
 
-    time.sleep(10)
+    time.sleep(30)
     pass
 
 
