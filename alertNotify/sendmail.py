@@ -119,5 +119,6 @@ if __name__ == '__main__':
     time = (datetime.datetime.now())
     times = (time,time,time)
     tokens = ('abcdef1234', 'ghijkl1234', 'mnopqrs1234')
+    print('Sending', len(alerts))
     sendMail_multialert('stuart.ward.uk@gmail.com', alerts, time, 'abcdef12345')
     sendMail_multiescalate('stuart.ward.uk@gmail.com', alerts)

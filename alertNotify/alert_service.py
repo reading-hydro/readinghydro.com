@@ -9,8 +9,8 @@ import datetime
 import pytz
 import threading
 import boto3
-from tokenHandeler import generate_token, expired_token, check_dup, active_token, check_token
-from sendmail import sendMail_alert, sendMail_shift, sendMail_escalate, sendMail_multialert, sendMail_multiescalate
+from tokenHandeler import generate_token, expired_token, check_dup, active_token, check_token, token_mark_sent
+from sendmail import sendMail_shift, sendMail_multialert, sendMail_multiescalate
 from urllib import request, parse
 
 # timing parameters
@@ -29,7 +29,7 @@ alert_log_list = []
 def log_alert_message(time: str, message: str) -> None:
     syslog.syslog('alert: ' + time + ' ' + message)
     alert_log_list.append({'time': time, 'message': message})
-    while len(alert_log_list) > 60:
+    while len(alert_log_list) > 40:
         alert_log_list.remove(alert_log_list[0])
     return
 
@@ -78,7 +78,6 @@ def calendar_read(api_key):
 def on_message(client, userdata, message):
     decoded_message = json.loads(message.payload)
     email1 = contacts.get(who_is_oncall.get('primary')).get('email')
-    email2 = contacts.get(who_is_oncall.get('second')).get('email')
     alertMessage = decoded_message.get('MsgText')
     alertTime = decoded_message.get('TimeString')
     syslog.syslog('mqtt message: ' + alertTime + alertMessage)
@@ -95,8 +94,8 @@ def on_message(client, userdata, message):
         log_alert_message(alert_time_string, alertMessage)
         if not(check_dup(alertMessage)):
             token = generate_token(email1, alertMessage, ALERT_ESCALATION_TIME)
-            sendMail_alert(email1, alertMessage, alertTime, token)
-            sendMail_alert(email2, alertMessage, alertTime, token)
+            #sendMail_alert(email1, alertMessage, alertTime, token)
+            #sendMail_alert(email2, alertMessage, alertTime, token)
     else:
         if not(check_dup('Ignoring old alerts')):
             token = generate_token(email1, 'Ignoring old alerts', ALERT_ESCALATION_TIME)
@@ -373,6 +372,12 @@ while True:
             alertMessages.append(alertMessage)
             log_alert_message(now_string, alertMessage)
 
+    tokenlist = active_token()
+    for entry in tokenlist:
+        if not(entry.get('sent')):
+            alertMessages.append(entry.get('message'))
+            token_mark_sent(entry.get('token'))
+    
 # check the data feeds to see if we have current data, if not raise an alert
 
     try:
@@ -395,10 +400,12 @@ while True:
             log_alert_message(now_string, alertMessage)
 
 # Send all the messages and esclations
-    if alertMessages:
+    if len(alertMessages):
+        syslog.syslog('Sending {num} alert messages'.format(num=len(alertMessages)))
         sendMail_multialert(email1, alertMessages, now_utc, token)
         sendMail_multialert(email2, alertMessages, now_utc, token)
-    if escalateMessages:
+    if len(escalateMessages):
+        syslog.syslog('Sending {num} escalations'.format(num=len(escalateMessages)))
         sendMail_multiescalate('alert@readinghydro.org', escalateMessages)
 
 # check the REST server is running, restart it if not
