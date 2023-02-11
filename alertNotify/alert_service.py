@@ -376,7 +376,8 @@ while True:
     for entry in tokenlist:
         if not(entry.get('sent')):
             alertMessages.append(entry.get('message'))
-            token_mark_sent(entry.get('token'))
+            token = entry.get('token')
+            token_mark_sent(token)
     
 # check the data feeds to see if we have current data, if not raise an alert
 
