@@ -1,9 +1,10 @@
 #! /usr/bin/python3
 
 import os
+import datetime
 
 
-def sendMail_alert(to_addr, alert, time, token):
+def sendMail_alert(to_addr: str, alert: str, time: datetime, token: str):
 
     text = '''\
 From: turbine.house@readinghydro.org
@@ -21,7 +22,7 @@ You can see all the active alert messages here: https://readinghydro.org/alertli
     command = 'echo "{msg}" | /usr/sbin/sendmail {to_addr}'.format(msg=msg, to_addr=to_addr)
     os.system(command)
 
-def sendMail_multialert(to_addr, alerts, time, token):
+def sendMail_multialert(to_addr: str, alerts: list, time: datetime, token: str):
 
     text1 = '''\
 From: turbine.house@readinghydro.org
@@ -47,7 +48,7 @@ You can see all the active alert messages here: https://readinghydro.org/alertli
     os.system(command)
 
 
-def sendMail_shift(to_addr, role, token):
+def sendMail_shift(to_addr: str, role: str, token: str):
 
     text = '''\
 From: turbine.house@readinghydro.org
@@ -66,7 +67,7 @@ You can see all the alert messages here: https://readinghydro.org/alertlist
     os.system(command)
 
 
-def sendMail_escalate(to_addr, message):
+def sendMail_escalate(to_addr: str, message: str):
 
     text = '''\
 From: turbine.house@readinghydro.org
@@ -84,7 +85,7 @@ You can see all the alert messages here: https://readinghydro.org/alertlist
     command = 'echo "{msg}" | /usr/sbin/sendmail {to_addr}'.format(msg=msg, to_addr=to_addr)
     os.system(command)
 
-def sendMail_multiescalate(to_addr, messages):
+def sendMail_multiescalate(to_addr: str, messages: list):
 
     text1 = '''\
 From: turbine.house@readinghydro.org
