@@ -352,7 +352,9 @@ while True:
             if last_hour == 9:
                 email = contacts.get(who_is_oncall.get(role)).get('email')
                 message = 'Sending oncall reminder to ' + who_is_oncall.get(role) + ' at ' + email + ' for role ' + role
-                sendMail_shift(email, role, generate_token(email, message, ONCALL_ESCALATION_TIME))
+                token = generate_token(email, message, ONCALL_ESCALATION_TIME)
+                sendMail_shift(email, role, token)
+                token_mark_sent(token)
                 log_alert_message(now_string, message)
 
 # look through the alert list for any expired alerts that have not been acknowleged.
