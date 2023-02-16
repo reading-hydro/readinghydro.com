@@ -42,7 +42,7 @@ def main():
         print('< unable to open serial port ttyUSB0', file=sys.stderr)
         return 404
     while maxtries > 0:
-        portcon.write(b'/?' + meter + b'!\r\n')
+        portcon.write(b'/?' + str.encode(meter) + b'!\r\n')
         maxtries -= 1
         try:
             message = portcon.read(size=1024)
@@ -71,7 +71,7 @@ def main():
     readingexport = '0'
     if goodmessage:
         elements = messageelement.findall(me2.decode())
-        jsonstring = '"datetime":"{isodate}","meterID":{meter},"import":{rimport},"export":{rexport}'
+        jsonstring = '"datetime":"{isodate}","meter":"{meter}","import":{rimport},"export":{rexport}'
         for ele in elements:
             if ele[0] == '0.9.2':
                 readingdate = ele[1]
@@ -83,7 +83,7 @@ def main():
                 readingexport = ele[1].lstrip('0')
         isodate = '20' + readingdate[1:3] + '-' + readingdate[3:5] + '-' + readingdate[5:7]
         isodate += 'T' + readingtime[:2] + ':' + readingtime[2:4] + ':' + readingtime[4:6] + 'Z'
-        print('{' + jsonstring.format(isodate=isodate, meterID=meter, rimport=readingimport, rexport=readingexport) + '}')
+        print('{' + jsonstring.format(isodate=isodate, meter=meter, rimport=readingimport, rexport=readingexport) + '}')
     else:
         print('< Failed to read {meter} after 3 attempts'.format(meter=meter), file=sys.stderr)
         return 404
