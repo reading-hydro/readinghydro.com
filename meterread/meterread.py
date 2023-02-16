@@ -27,6 +27,7 @@ def main():
     messageelement = re.compile('1-0:([\d.]+)\\*255\\(([\d.]+)')
     goodmessage = False
     maxtries = 3
+    meter = sys.argv[1]
 
 # Connect to the meter via the serial interface and wait till we recieve a valid message
 # message starts with a STX and ends with ETX and check character
@@ -67,7 +68,7 @@ def main():
     readingexport = '0'
     if goodmessage:
         elements = messageelement.findall(me2.decode())
-        jsonstring = '"datetime":"{isodate}","import":{rimport},"export":{rexport}'
+        jsonstring = '"datetime":"{isodate}","meterID":{meter},"import":{rimport},"export":{rexport}'
         for ele in elements:
             if ele[0] == '0.9.2':
                 readingdate = ele[1]
@@ -79,9 +80,9 @@ def main():
                 readingexport = ele[1].lstrip('0')
         isodate = '20' + readingdate[1:3] + '-' + readingdate[3:5] + '-' + readingdate[5:7]
         isodate += 'T' + readingtime[:2] + ':' + readingtime[2:4] + ':' + readingtime[4:6] + 'Z'
-        print('{' + jsonstring.format(isodate=isodate, rimport=readingimport, rexport=readingexport) + '}')
+        print('{' + jsonstring.format(isodate=isodate, meterID=meter, rimport=readingimport, rexport=readingexport) + '}')
     else:
-        print('< Failed to read meter after 3 attempts')
+        print('< Failed to read meter after 3 attempts', file=sys.stderr)
     return
 
 #  b'/ISk5MT174-0002\r\n\x021-0:0.9.2*255(0220127)\r\n1-0:0.9.1*255(105644)\r\n1-0:1.8.0*255(0000502.853*kWh)\r\n1-0:2.8.0*255(0098697.318*kWh)\r\n!\r\n\x03\x19'
