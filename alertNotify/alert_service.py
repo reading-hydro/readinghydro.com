@@ -409,7 +409,7 @@ while True:
         sendMail_multialert(email2, alertMessages, now_utc, token)
     if len(escalateMessages):
         syslog.syslog('Sending {num} escalations'.format(num=len(escalateMessages)))
-        sendMail_multiescalate('alert@readinghydro.org', escalateMessages)
+        sendMail_multiescalate('alerts@readinghydro.org', escalateMessages)
 
 # check the REST server is running, restart it if not
     if not(restThread.is_alive()):
