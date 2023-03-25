@@ -1,4 +1,4 @@
-<title>Levels Flow Test</title>
+<title>Levels Flow</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
@@ -313,6 +313,17 @@ var global_data = myreturn[0]
 var param1 = myreturn[1]
 var param2 = myreturn[2]
 var param3 = myreturn[3]
+
+//Filter data to remove zero values in river levels
+if (typeof global_data !== 'undefined'){
+            
+            var global_data = global_data.filter(function(item){
+                return new Date(item.downstream) > 0
+            }) 
+            var global_data = global_data.filter(function(item){
+                return new Date(item.upstream) > 0
+            })             
+        }    
 
 var setdata = await getData2()
 var HOL = setdata.level
