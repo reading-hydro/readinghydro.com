@@ -27,7 +27,10 @@ def main():
     messageelement = re.compile('1-0:([\d.]+)\\*255\\(([\d.]+)')
     goodmessage = False
     maxtries = 3
-    if len(sys.argv) > 1: 
+
+ # If we have an argument this will be the serial number of the meter to read
+
+    if len(sys.argv) > 1:
         meter = sys.argv[1]
     else:
         meter = ""
