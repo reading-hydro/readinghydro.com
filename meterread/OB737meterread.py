@@ -50,7 +50,7 @@ def main():
                 tries = 0
                 print('< import ', mtrimport, file=sys.stderr)
 
-        print('{' + jsonstring.format(isodate=datetime.datetime.utcnow().isoformat() + 'Z',
+        print('{' + jsonstring.format(isodate=datetime.datetime.utcnow().isoformat(timespec='seconds') + 'Z',
                                  meter=MTR, rimport=mtrimport, rexport=mtrexport) + '}')
         
     # Closes the underlying socket connection
