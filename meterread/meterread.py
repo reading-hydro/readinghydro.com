@@ -3,6 +3,7 @@
 import serial
 import re
 import sys
+import datetime
 
 SOH = b"\x01"  # Start of header
 STX = b"\x02"  # Frame start char
@@ -84,8 +85,9 @@ def main():
                 readingimport = ele[1].lstrip('0')
             elif ele[0] == '2.8.0':
                 readingexport = ele[1].lstrip('0')
-        isodate = '20' + readingdate[1:3] + '-' + readingdate[3:5] + '-' + readingdate[5:7]
-        isodate += 'T' + readingtime[:2] + ':' + readingtime[2:4] + ':' + readingtime[4:6] + 'Z'
+#        isodate = '20' + readingdate[1:3] + '-' + readingdate[3:5] + '-' + readingdate[5:7]
+#        isodate += 'T' + readingtime[:2] + ':' + readingtime[2:4] + ':' + readingtime[4:6] + 'Z'
+        isodate = datetime.datetime.utcnow().isoformat(timespec='seconds') + 'Z'
         print('{' + jsonstring.format(isodate=isodate, meter=meter, rimport=readingimport, rexport=readingexport) + '}')
     else:
         print('< Failed to read {meter} after 3 attempts'.format(meter=meter), file=sys.stderr)
