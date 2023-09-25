@@ -183,6 +183,7 @@ _ack_resp_ok = '''\
 <html>
   <head>
      <title>Reading Hydro Alert Acknowledgement</title>
+     <meta http-equiv="refresh" content="600">
    </head>
    <body>
      <h1>Acknowledgement of alert Sucessful</h1>
@@ -195,6 +196,7 @@ _ack_resp_fail = '''\
 <html>
   <head>
      <title>Reading Hydro Alert Acknowledgement</title>
+     <meta http-equiv="refresh" content="600">
    </head>
    <body>
      <h1>Acknowledgement of alert Failed</h1>
@@ -235,6 +237,7 @@ _alert_list_head = '''\
 <html>
   <head>
      <title>Reading Hydro Alert Activity</title>
+     <meta http-equiv="refresh" content="600">
    </head>
    <body>
      <h1>Alert history at {time}</h1>
