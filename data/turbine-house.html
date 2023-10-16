@@ -4,8 +4,10 @@
 <script src="https://cdn.jsdelivr.net/npm/luxon@2.0.1/build/global/luxon.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.0.0/dist/chartjs-adapter-luxon.min.js"></script>
 <!-- For luxon formatting see https://github.com/moment/luxon/blob/master/docs/formatting.md -->
-<script src="https://unpkg.com/js-datepicker@5.18.1/dist/datepicker.min.js"></script>
-<link rel="stylesheet" href="https://unpkg.com/js-datepicker@5.18.1/dist/datepicker.min.css">
+<script src="https://unpkg.com/js-datepicker"></script>
+<link rel="stylesheet" href="https://unpkg.com/js-datepicker/dist/datepicker.min.css">
+
+
 <style>
 
     .tt {
@@ -15,7 +17,7 @@
          margin-bottom: 30px;
                     }
     .notes {
-        text-align: center;
+        text-align: inherit;
      }
      .sub1 {
          font-family: Arial, Helvetica, sans-serif;
@@ -405,7 +407,7 @@
         //local
         //document.body.append(container)
         //Wordpress
-        var target = document.getElementsByClassName("entry-content");
+        var target = document.getElementsByClassName("entry-header");
         target[0].append(container)
     
     //filter by date
@@ -695,6 +697,4 @@ async function getData() {
 }
     
 // DO NOT REMOVE the comment below, it stops Wordpress from escaping ampersands
-//--></script>  
-
-
+//--></script>

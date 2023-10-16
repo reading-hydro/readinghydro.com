@@ -394,7 +394,7 @@
                 clear.className = "cle"
 
                 title_PO.innerHTML = '<a href="/power-output-data/">Power Generation<br />click for data history</a>'
-                subtitle_T1.innerHTML = `Turbine 1 (Tony): <span class="ts">${luxon.DateTime.fromISO(global_data2.received_at).toFormat('ff')} </span><br />Current performance of turbine and generator`
+                subtitle_T1.innerHTML = `Turbine 1 (Tony): <span class="ts">${luxon.DateTime.fromISO(global_data2[0].received_at).toFormat('ff')} </span><br />Current performance of turbine and generator`
                 subtitle_TOT.innerHTML = 'Total electricity generated to date (both turbines)'
 
                 now_total.innerHTML = 'Total Electricity (MWh)'
@@ -405,16 +405,16 @@
                 nowOpHours_G1.innerHTML = 'Total Operating (Hours)'
                 nowEnergy_G1.innerHTML = 'Total Electricity (MWh)'
 
-                inner_now_total.textContent = (global_data2.gen1_energy_mwh + global_data2.gen2_energy_mwh).toFixed(1)
+                inner_now_total.textContent = (global_data2[0].gen1_energy_mwh + global_data2[0].gen2_energy_mwh).toFixed(1)
 
-                inner_nowPower_G1.textContent = global_data2.gen1_power_kw
+                inner_nowPower_G1.textContent = global_data2[0].gen1_power_kw
                 if (inner_nowPower_G1.textContent < 0){
                     inner_nowPower_G1.textContent = 0
                 }
-                inner_nowScrewRPM_G1.textContent = global_data2.gen1_screw_rpm
-                inner_nowDriveRPM_G1.textContent = global_data2.gen1_drive_rpm
-                inner_nowOpHours_G1.textContent = global_data2.gen1_operating_hours
-                inner_nowEnergy_G1.textContent = global_data2.gen1_energy_mwh
+                inner_nowScrewRPM_G1.textContent = global_data2[0].gen1_screw_rpm
+                inner_nowDriveRPM_G1.textContent = global_data2[0].gen1_drive_rpm
+                inner_nowOpHours_G1.textContent = global_data2[0].gen1_operating_hours
+                inner_nowEnergy_G1.textContent = global_data2[0].gen1_energy_mwh
 
                 now_total.append(inner_now_total)
 
@@ -431,7 +431,7 @@
                 wrap_T1.append(nowPower_G1, nowScrewRPM_G1, nowDriveRPM_G1, nowOpHours_G1, nowEnergy_G1, clear)
                 wrap_PO.append(wrap_T1)
 
-                subtitle_T2.innerHTML = `Turbine 2 (Sophie): <span class="ts">${luxon.DateTime.fromISO(global_data2.received_at).toFormat('ff')} </span><br />Current performance of turbine and generator`
+                subtitle_T2.innerHTML = `Turbine 2 (Sophie): <span class="ts">${luxon.DateTime.fromISO(global_data2[0].received_at).toFormat('ff')} </span><br />Current performance of turbine and generator`
 
                 nowPower_G2.innerHTML = 'Power Generation (kW)'
                 nowScrewRPM_G2.innerHTML = 'Screw Speed (RPM)'
@@ -439,14 +439,14 @@
                 nowOpHours_G2.innerHTML = 'Total Operating (Hours)'
                 nowEnergy_G2.innerHTML = 'Total Electricity (MWh)'
 
-                inner_nowPower_G2.textContent = global_data2.gen2_power_kw
+                inner_nowPower_G2.textContent = global_data2[0].gen2_power_kw
                 if (inner_nowPower_G2.textContent < 0){
                     inner_nowPower_G2.textContent = 0
                 }
-                inner_nowScrewRPM_G2.textContent = global_data2.gen2_screw_rpm
-                inner_nowDriveRPM_G2.textContent = global_data2.gen2_drive_rpm
-                inner_nowOpHours_G2.textContent = global_data2.gen2_operating_hours
-                inner_nowEnergy_G2.textContent = global_data2.gen2_energy_mwh
+                inner_nowScrewRPM_G2.textContent = global_data2[0].gen2_screw_rpm
+                inner_nowDriveRPM_G2.textContent = global_data2[0].gen2_drive_rpm
+                inner_nowOpHours_G2.textContent = global_data2[0].gen2_operating_hours
+                inner_nowEnergy_G2.textContent = global_data2[0].gen2_energy_mwh
 
                 nowPower_G2.append(inner_nowPower_G2)
                 nowScrewRPM_G2.append(inner_nowScrewRPM_G2)
@@ -461,7 +461,7 @@
                 container.append(wrap_PO)
 
                 title_RC.innerHTML = '<a href="/water-level-data/">River Conditions<br />click for data history</a>'
-                subtitle_RC.innerHTML = `Current conditions: <span class="ts">${luxon.DateTime.fromISO(global_data2.received_at).toFormat('ff')} </span>`
+                subtitle_RC.innerHTML = `Current conditions: <span class="ts">${luxon.DateTime.fromISO(global_data2[0].received_at).toFormat('ff')} </span>`
 
                 now_upst.innerHTML = "Upstream (metres AOD)"
                 now_down.innerHTML = "Downstream (metres AOD)"
@@ -471,13 +471,13 @@
                 now_flow1.innerHTML = "Water flow turbine 1 (m<sup>3</sup>/s)"
                 now_flow2.innerHTML = "Water flow turbine 2 (m<sup>3</sup>/s)"
                 now_EAflow.innerHTML = "Flow at Reading Bridge (m<sup>3</sup>/s)"
-                inner_now_upst.textContent = global_data2.upstream.toFixed(3)
-                inner_now_down.textContent = global_data2.downstream.toFixed(3)
-                inner_now_head.textContent = (global_data2.upstream - global_data2.downstream).toFixed(3)
-                inner_now_aboveHOL.textContent = (global_data2.upstream - HOL).toFixed(3)
+                inner_now_upst.textContent = global_data2[0].upstream.toFixed(3)
+                inner_now_down.textContent = global_data2[0].downstream.toFixed(3)
+                inner_now_head.textContent = (global_data2[0].upstream - global_data2[0].downstream).toFixed(3)
+                inner_now_aboveHOL.textContent = (global_data2[0].upstream - HOL).toFixed(3)
                 inner_now_HOL.textContent = HOL.toFixed(3)
-                inner_now_flow1.textContent = (global_data2.gen1_flow_ls/1000).toFixed(2)
-                inner_now_flow2.textContent = (global_data2.gen2_flow_ls/1000).toFixed(2)
+                inner_now_flow1.textContent = (global_data2[0].gen1_flow_ls/1000).toFixed(2)
+                inner_now_flow2.textContent = (global_data2[0].gen2_flow_ls/1000).toFixed(2)
                 if (typeof EA_data !== 'undefined'){
                     inner_now_EAflow.textContent = (EA_data.items[0].value).toFixed(2)
                     }
@@ -522,7 +522,7 @@
                 //local
                 //document.body.append(container)
                 //Wordpress
-                var target = document.getElementsByClassName("entry-content");
+                var target = document.getElementsByClassName("entry-header");
                 target[0].append(container)
 
         //closing of IIFE function
@@ -537,7 +537,7 @@
         }
  
         async function getData2() {
-            const response = await fetch('https://readinghydro.org:9445/api/plc/current') 
+            const response = await fetch('https://readinghydro.org:9445/api/plc/today') 
             const data = await response.json() 
             return data           
         }
@@ -555,4 +555,3 @@
             }
         
         </script>
-

@@ -17,7 +17,7 @@
  margin-bottom: 30px;
             }
 .notes {
-text-align: center;
+text-align: inherit;
 }
 .sub1 {
  font-family: Arial, Helvetica, sans-serif;
@@ -530,7 +530,7 @@ container.append(col_wrapper)
 //local
 //document.body.append(container)
 //Wordpress
-var target = document.getElementsByClassName("entry-content");
+var target = document.getElementsByClassName("entry-header");
 target[0].append(container)
 
 //filter by date
@@ -1044,4 +1044,4 @@ return data
 }
 
 // DO NOT REMOVE the comment below, it stops Wordpress from escaping ampersands
-//--></script>  
+//--></script>
