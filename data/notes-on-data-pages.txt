@@ -1,0 +1,59 @@
+Reading Hydro notes
+#################################
+
+Data boxes on home page
+
+2 custom html blocks inside 2-column block
+
+Left box
+<iframe src="https://readinghydro.org/front-page-data-left/" scrolling="no" height="255px" width=100%></iframe>
+
+Right box
+<iframe src="https://readinghydro.org/front-page-data-right/" scrolling="no" height="255px" width=100%></iframe>
+
+
+Pages front-page-data-left and front-page-data-right
+
+Edits to page layout
+- hide page title
+- hide header
+- hide footer
+- hide banner area
+- hide likes and sharing in Jetpack
+
+custom html block containing code
+
+WPCode snippet to disable admin bars on these two pages
+
+#################################
+
+All other data pages
+
+WPCode snippet to increase container width from 1240px to 1440px (this allows charts to sit beside data boxes on wider screens)
+
+
+#################################
+
+Code to add to make pages work as html for testing elsewhere
+
+<!DOCTYPE html>
+<html>
+    <head>
+
+//css
+
+</head>
+<body>
+
+//javascript
+
+        //local
+        document.body.append(xxx)
+        //Wordpress
+        //var target = document.getElementsByClassName("entry-header");
+        //target[0].append(xxx)
+
+//more javascript
+
+</body>
+</html>
