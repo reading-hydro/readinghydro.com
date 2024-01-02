@@ -80,6 +80,10 @@ def on_message(client, userdata, message):
     email1 = contacts.get(who_is_oncall.get('primary')).get('email')
     alertMessage = decoded_message.get('MsgText')
     alertTime = decoded_message.get('TimeString')
+    if decoded_message.get('StateAfter'):
+        alertMessage = 'Active: ' + alertMessage
+    else:
+        alertMessage = 'Cleared: ' + alertMessage
     syslog.syslog('mqtt message: ' + alertTime + alertMessage)
     try:
         alert_time_data = datetime.datetime.strptime(alertTime, '%d/%m/%Y %H:%M:%S')
