@@ -81,9 +81,9 @@ def on_message(client, userdata, message):
     alertMessage = decoded_message.get('MsgText')
     alertTime = decoded_message.get('TimeString')
     if decoded_message.get('StateAfter'):
-        alertMessage = 'Active: ' + alertMessage
-    else:
         alertMessage = 'Cleared: ' + alertMessage
+    else:
+        alertMessage = 'Active: ' + alertMessage
     syslog.syslog('mqtt message: ' + alertTime + alertMessage)
     try:
         alert_time_data = datetime.datetime.strptime(alertTime, '%d/%m/%Y %H:%M:%S')
