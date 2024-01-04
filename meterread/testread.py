@@ -8,9 +8,16 @@ from pymodbus.transaction import ModbusRtuFramer
 # unit= the slave unit this request is targeting
 # address= the starting address to read from
 address = [{'addr': 0x0618, 'text': 'Total Energy'},
+           {'addr': 0x0160, 'text': 'Export'},
+           {'addr': 0x0166, 'text': 'Import'},
            {'addr': 0x0800, 'text': 'Import Active Energy'},
-           {'addr': 0x0900, 'text': 'Export Active Energy'}]
-
+           {'addr': 0x0900, 'text': 'Export Active Energy'},
+           {'addr': 0x0010, 'text': 'Voltage P1'},
+           {'addr': 0x0012, 'text': 'Voltage P2'},
+           {'addr': 0x0014, 'text': 'Voltage P3'},
+           {'addr': 0x0050, 'text': 'Current P1'},
+           {'addr': 0x0052, 'text': 'Current P2'},
+           {'addr': 0x0054, 'text': 'Current P3'}]
 
 def main():
 
