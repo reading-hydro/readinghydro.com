@@ -28,27 +28,25 @@ def main():
     if connection:
         tries = 3
         while tries > 0:
-            try:
-                read = client.read_holding_registers(address=REG_EXPORT, count=2, unit=1)
-                mtrexport = read.registers[1]
-            except:
-                tries -=1
-                print('< read error', file=sys.stderr)
-            else: 
+            read = client.read_holding_registers(address=REG_EXPORT, count=2, unit=1)
+            if hasattr(read, 'registers'):
+                mtrexport = (read.registers[1] + (65536 * read.registers[0]))/10
                 tries = 0
                 print('< export', mtrexport, file=sys.stderr)
+            else:
+                tries -=1
+                print('< read error', read, file=sys.stderr)
 
         tries = 3
         while tries > 0:
-            try:
-                read = client.read_holding_registers(address=REG_IMPORT, count=2, unit=1)
-                mtrimport = read.registers[1]
-            except:
-                tries -= 1
-                print('< read error', file=sys.stderr)
-            else:
+            read = client.read_holding_registers(address=REG_IMPORT, count=2, unit=1)
+            if hasattr(read, 'registers'):
+                mtrimport = (read.registers[1] + (65536 * read.registers[0]))/10
                 tries = 0
                 print('< import ', mtrimport, file=sys.stderr)
+            else:
+                tries -= 1
+                print('< read error', read, file=sys.stderr)
 
         print('{' + jsonstring.format(isodate=datetime.datetime.utcnow().isoformat(timespec='seconds') + 'Z',
                                  meter=MTR, rimport=mtrimport, rexport=mtrexport) + '}')
