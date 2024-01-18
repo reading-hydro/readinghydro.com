@@ -18,7 +18,7 @@ from urllib import request, parse
 NO_DATA_REPORT_EVENT = datetime.timedelta(seconds=20*60)
 NO_DATA_RE_REPORT_TIME = datetime.timedelta(seconds=15*60)
 ALERT_ESCALATION_TIME = datetime.timedelta(seconds=15*60)
-ONCALL_ESCALATION_TIME = datetime.timedelta(seconds=30*60)
+ONCALL_ESCALATION_TIME = datetime.timedelta(seconds=150*60)
 IGNORE_ALERTS_OLDER_THAN = datetime.timedelta(seconds=10*60)
 
 # table to keep a list of recent alert messages
@@ -356,7 +356,7 @@ while True:
                     if person.get('name') != who_is_oncall.get(role):
                         who_is_oncall.update({role: person.get('name')})
                         log_alert_message(now_string, "On-Call for {role} is now {name}".format(role=role, name=person.get('name')))
-            if last_hour == 9:
+            if last_hour == 7:
                 email = contacts.get(who_is_oncall.get(role)).get('email')
                 message = 'Sending oncall reminder to ' + who_is_oncall.get(role) + ' at ' + email + ' for role ' + role
                 token = generate_token(email, message, ONCALL_ESCALATION_TIME)
