@@ -84,7 +84,7 @@ def on_message(client, userdata, message):
         alertMessage = 'Cleared: ' + alertMessage
     else:
         alertMessage = 'Active: ' + alertMessage
-    syslog.syslog('mqtt message: ' + decoded_message)
+    syslog.syslog('mqtt message: ' + message.payload.decode("utf-8"))
     try:
         alert_time_data = datetime.datetime.strptime(alertTime, '%d/%m/%Y %H:%M:%S')
     except ValueError:
