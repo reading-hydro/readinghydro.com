@@ -80,7 +80,7 @@ def on_message(client, userdata, message):
     email1 = contacts.get(who_is_oncall.get('primary')).get('email')
     alertMessage = decoded_message.get('MsgText')
     alertTime = decoded_message.get('TimeString')
-    if decoded_message.get('StateAfter'):
+    if decoded_message.get('StateAfter') == "0":
         alertMessage = 'Cleared: ' + alertMessage
     else:
         alertMessage = 'Active: ' + alertMessage
