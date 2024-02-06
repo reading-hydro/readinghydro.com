@@ -3,6 +3,7 @@ import syslog
 import json
 import cgi
 from urllib.error import HTTPError, URLError
+from socket import timeout as TimeoutError
 import paho.mqtt.client as mqtt
 import time
 import datetime
@@ -392,7 +393,7 @@ while True:
 
     try:
         latest_request = request.urlopen('https://readinghydro.org:9445/api/plc/current', timeout=10)
-    except URLError:
+    except (HTTPError, URLError, TimeoutError):
         got_api_data = False
     else:
         got_api_data = True
