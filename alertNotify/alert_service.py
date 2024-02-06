@@ -393,8 +393,9 @@ while True:
 
     try:
         latest_request = request.urlopen('https://readinghydro.org:9445/api/plc/current', timeout=10)
-    except (HTTPError, URLError, TimeoutError):
+    except (HTTPError, URLError, TimeoutError) as error:
         got_api_data = False
+        syslog.syslog('Data not retrieved because of {error}'.format(error=error))
     else:
         got_api_data = True
         latest_data = json.loads(latest_request.read())
