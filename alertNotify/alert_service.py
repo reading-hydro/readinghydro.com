@@ -392,7 +392,7 @@ while True:
 # check the data feeds to see if we have current data, if not raise an alert
 
     try:
-        latest_request = request.urlopen('https://readinghydro.org:9445/api/plc/current', timeout=10)
+        latest_request = request.urlopen('https://readinghydro.org:9445/api/plc/current', timeout=3)
     except (HTTPError, URLError, TimeoutError) as error:
         got_api_data = False
         syslog.syslog('Data not retrieved because of {error}'.format(error=error))
