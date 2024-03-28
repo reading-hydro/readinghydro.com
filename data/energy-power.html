@@ -486,7 +486,7 @@ var param3 = myreturn[3]
         label1.innerHTML = "Start date"
         label2.innerHTML = "End date"
         inner_now_total.textContent = (global_data[0].gen1_energy_mwh + global_data[0].gen2_energy_mwh).toFixed(1)
-        inner_nowPower_G1.textContent = global_data[0].gen1_power_kw
+        inner_nowPower_G1.textContent = Math.min(global_data[0].gen1_power_kw, 23)
         if (inner_nowPower_G1.textContent < 0){
             inner_nowPower_G1.textContent = 0
                 }
@@ -494,7 +494,7 @@ var param3 = myreturn[3]
         inner_nowDriveRPM_G1.textContent = global_data[0].gen1_drive_rpm
         inner_nowOpHours_G1.textContent = global_data[0].gen1_operating_hours
         inner_nowEnergy_G1.textContent = global_data[0].gen1_energy_mwh
-        inner_nowPower_G2.textContent = global_data[0].gen2_power_kw
+        inner_nowPower_G2.textContent = Math.min(global_data[0].gen2_power_kw, 23)
         if (inner_nowPower_G2.textContent < 0){
             inner_nowPower_G2.textContent = 0
                 }
