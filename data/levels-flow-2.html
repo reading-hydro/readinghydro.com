@@ -1,0 +1,1049 @@
+<title>Levels Flow</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/luxon@2.0.1/build/global/luxon.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.0.0/dist/chartjs-adapter-luxon.min.js"></script>
+<!-- For luxon formatting see https://github.com/moment/luxon/blob/master/docs/formatting.md -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/0.5.7/chartjs-plugin-annotation.min.js"></script>
+<script src="https://unpkg.com/js-datepicker@5.18.1/dist/datepicker.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/js-datepicker@5.18.1/dist/datepicker.min.css">
+<style> 
+
+.tt {
+ font-family: Arial, Helvetica, sans-serif;
+ font-size: 20px;
+ text-align: center;
+ margin-bottom: 30px;
+            }
+.notes {
+text-align: inherit;
+}
+.sub1 {
+ font-family: Arial, Helvetica, sans-serif;
+ font-size: 18px;
+ text-align: center;
+ padding-right: 60px;
+ margin-bottom: 20px;
+}
+.sub2 {
+ font-family: Arial, Helvetica, sans-serif;
+ font-size: 18px;
+ text-align: center;
+ padding-bottom: 20px;
+}
+.col_wra {
+max-width: 1280px;
+margin: auto;
+}
+
+.col_lef {
+max-width: 500px;
+padding-bottom: 40px;
+float: left;
+}
+.col_rig {
+max-width: 780px;
+padding-bottom: 40px;
+float: left;
+}   
+.btn {
+ font-size: 18px;
+ font-family: Arial, Helvetica, sans-serif;
+ padding: 10px 16px;
+ margin: 5px;
+ border-radius: 4px;
+ background-color: #d3d3d3;
+}
+.lab {
+ font-family: Arial, Helvetica, sans-serif;
+ font-style: normal;
+ white-space: nowrap;
+}
+
+/* Style the active class, and buttons on mouse-over */
+.active, .btn:hover {
+background-color: #1a73e8;
+color: white;
+}
+.box {
+ width: 420px;
+ height: 70px;
+ margin: 5px 0;
+ padding: 5px 20px 5px 10px;
+ font-family: Arial, Helvetica, sans-serif;
+ font-size: 22px;
+ color: white;
+ float: left;
+}
+.inner {
+ height: 70px; 
+ margin-top: -20px;
+ text-align: right;
+ display:flex;                
+ align-items: center;
+ justify-content: flex-end;
+ font-weight: bold;
+ color: white;               
+}
+.fontbig {
+ font-size: 38px;            
+}
+.fontsmall {
+ font-size: 25px;            
+}
+.cwra {
+ width: 780px;
+ height: 390px;
+ margin: auto;
+}
+.cwra_lev {
+ /* extra height for legend */
+ width: 780px;
+ height: 430px;
+ margin: auto;
+}
+.cle {
+ clear: left;
+}
+#ts {
+ white-space: nowrap;
+}
+#con {
+ max-width: 1280px;
+ margin: auto;
+ /* override WP theme */
+ line-height: 1.0;
+}
+#pan {
+ max-width: 760px;
+ border: lightgrey solid 2px;
+ background-color: #e7e7e7;
+ padding-top: 10px;
+ margin: 5px auto;
+}
+#dpk1, #dpk2 {
+ margin: 10px;
+ font-family: Arial, Helvetica, sans-serif;
+ /* override WP theme */
+ background: white;
+ border: 1px solid black;
+}
+#btw {
+ max-width: 780px;
+ margin: auto;
+ text-align:center;
+}
+#dtw {
+ max-width: 780px;
+ margin: auto;
+ text-align:center;
+}
+#up {
+background-color: #418AD9;
+}
+#do {
+background-color: #418AD9;
+}
+#he {
+background-color: #418AD9;
+}
+#ahol {
+background-color: #418AD9;
+}
+#hol {
+background-color: #418AD9;
+}
+#flo1 {
+background-color: #37A19D;
+}
+#flo2 {
+background-color: #37A19D;
+}
+#EAflo {
+background-color: #3ca650;
+}
+#ca_lev {
+ height: 100%;                          
+}
+#ca_flo {
+ height: 100%;                          
+}
+#ca_EAflo {
+ height: 100%;                          
+}
+
+@media only screen and (max-width: 1420px) {
+ .col_wra {
+ max-width: 580px;                
+ }
+ .col_lef {
+ max-width: 580px;
+ float: none;                
+ }
+ .sub1 {
+ padding-right: 0;
+  }
+ .box {
+ float: none;
+ margin: 5px auto;
+}
+ .col_rig {
+ max-width: 580px;                
+ }
+ .cwra {
+ width: 580px;
+ height: 290px; 
+ margin: auto;        
+}
+.cwra_lev {
+ /* extra height for legend */
+ width: 580px;
+ height: 320px; 
+ margin: auto;   
+}
+}
+@media only screen and (max-width: 610px) {
+ .col_wra {
+ max-width: 350px;
+  }
+  #btw {
+ max-width: 300px;
+  }
+  #dtw {
+ width: 300px;
+  }                 
+  .col_lef {
+ max-width: 350px;
+ float: none;  
+  }
+  .sub1, .sub2 {
+ padding-right: 0;
+ font-size: 17px;
+ margin-bottom: 10px;
+  }
+  .box {
+ width: 320px;
+ float: none;  
+ margin: 5px auto;
+}
+.fontbig {
+    font-size: 30px;
+}
+.fontsmall {
+    font-size: 20px;
+}
+  .col_rig {
+ max-width: 350px;
+  }
+  .cwra {
+      width: 350px;
+      height: 290px;
+      margin: auto;
+  }
+  .cwra_lev {
+      /* extra height for legend */
+      width: 350px;
+      height: 320px;
+      margin: auto;
+  }
+  
+}
+@media only screen and (max-width: 360px) {
+ /* this is for really tiny phones */
+.box {
+ width: 270px;
+ float: none;  
+ margin: 5px auto;
+}
+}
+
+</style>        
+
+<script type="text/javascript">
+//<!--
+// DO NOT REMOVE the comment above, it stops Wordpress from escaping ampersands
+
+// set default API query date to last day
+var today_q = new Date()
+var today_y = new Date()
+today_q.setDate(today_q.getDate())
+today_y.setDate(today_q.getDate() -1) //yesterday is to request extra day for gap in BST
+
+var ds1 = luxon.DateTime.fromJSDate(today_y).toFormat('yyyyLLdd')
+var ds2 = luxon.DateTime.fromJSDate(today_q).toFormat('yyyyLLdd')
+
+var ds3 = luxon.DateTime.fromJSDate(today_y).toFormat('yyyy-LL-dd')// for EA data
+var ds4 = luxon.DateTime.fromJSDate(today_q).toFormat('yyyy-LL-dd')// for EA data
+
+//check for query string and set new dates
+const queryString = window.location.search;
+const urlParams = new URLSearchParams(queryString);
+if (urlParams.has('var1')) {
+//request an extra day of data to avoid gap at beginning of time period for BST
+var myBST1 = urlParams.get('var1') //actual date requested
+var myBST1_date = luxon.DateTime.fromFormat(myBST1, 'yyyyLLdd').startOf('day').toJSDate()
+let myBSTvar1 = new Date(myBST1_date)
+myBSTvar1.setDate(myBSTvar1.getDate() - 1)
+var myds1 = luxon.DateTime.fromJSDate(myBSTvar1).toFormat('yyyyLLdd')
+var myds3 = myds1.substring(0, 4) + '-' + myds1.substring(4, 6)+ '-' + myds1.substring(6, 8)// format date for EA data
+var myds2 = urlParams.get('var2')
+var myds4 = myds2.substring(0, 4) + '-' + myds2.substring(4, 6)+ '-' + myds2.substring(6, 8)// format date for EA data
+var myhighlight = urlParams.get('var3')
+
+var myurl = 'https://readinghydro.org:9445/api/plc/between/' + myds1 + '/' + myds2
+var myurl_EA = 'https://environment.data.gov.uk/flood-monitoring/id/measures/2200TH-flow--Mean-15_min-m3_s/readings?startdate=' + myds3 + '&enddate=' + myds4 + '&_sorted&_limit=3000'   
+var param1 = myBST1// set param1 to the actual requested date
+//////////////////////////////
+var param2 = myds2
+var param3 = myhighlight
+} else {
+var myurl = 'https://readinghydro.org:9445/api/plc/between/' + ds1 + '/' + ds2
+// Edit by Stuart to resolve CORS problem 
+// https://readinghydro.org/eadata proxies to http://environment.data.gov.uk/
+var myurl_EA = 'https://readinghydro.org/eadata/flood-monitoring/id/measures/2200TH-flow--Mean-15_min-m3_s/readings?startdate=' + ds3 + '&enddate=' + ds4 + '&_sorted&_limit=3000'
+var param1 = ds1
+var param2 = ds2
+var param3 = 0
+}
+
+GoDoIt(myurl, param1, param2, param3)
+
+async function GoDoIt (){
+var myreturn = await getData1(myurl, param1, param2, param3);
+var global_data = myreturn[0]
+var param1 = myreturn[1]
+var param2 = myreturn[2]
+var param3 = myreturn[3]
+
+//Filter data to remove zero values in river levels
+if (typeof global_data !== 'undefined'){
+            
+            var global_data = global_data.filter(function(item){
+                return new Date(item.downstream) > 0
+            }) 
+            var global_data = global_data.filter(function(item){
+                return new Date(item.upstream) > 0
+            })             
+        }    
+
+var setdata = await getData2()
+var HOL = setdata.level
+//#############################
+// Comment out this line if EA API is giving errors
+var EA_data = await getData3()
+//#############################
+if (typeof EA_data !== 'undefined'){
+var myEA_data = EA_data.items
+    //Filter EA data to remove zero values
+        var selection2 = myEA_data.filter(function(item){
+        return new Date(item.value) > 0
+    }) 
+}     
+var myChart_levels
+var myChart_flow
+var myChart_EAflow
+
+const container = document.createElement('div')
+const title = document.createElement('h1')
+const notes = document.createElement('p')
+const subtitle1 = document.createElement('div')
+const subtitle2 = document.createElement('div')
+const col_wrapper = document.createElement('div')
+const col_left = document.createElement('div')
+const col_right = document.createElement('div')
+const panel = document.createElement('div')
+const buttonwrap = document.createElement('div')
+const button1 = document.createElement('button')
+const button2 = document.createElement('button')
+const button3 = document.createElement('button')
+const button4 = document.createElement('button')
+const datewrap = document.createElement('div')
+const datepick1 = document.createElement('input')
+const datepick2 = document.createElement('input')
+const label1 = document.createElement('label')
+const label2 = document.createElement('label')
+const now_upst = document.createElement('div')
+const now_down = document.createElement('div')
+const now_head = document.createElement('div')
+const now_aboveHOL = document.createElement('div')
+const now_HOL = document.createElement('div')
+const now_flow1 = document.createElement('div')
+const now_flow2 = document.createElement('div')
+const now_EAflow = document.createElement('div')
+const inner_now_upst = document.createElement('div')
+const inner_now_down = document.createElement('div')
+const inner_now_head = document.createElement('div')
+const inner_now_aboveHOL = document.createElement('div')
+const inner_now_HOL = document.createElement('div')
+const inner_now_flow1 = document.createElement('div')
+const inner_now_flow2 = document.createElement('div')
+const inner_now_EAflow = document.createElement('div')
+const canvwrap_levels = document.createElement('div')
+const canvwrap_flow = document.createElement('div')
+const canvwrap_EAflow = document.createElement('div')
+const clear = document.createElement('p')
+const canv_levels = document.createElement('canvas')
+const canv_flow = document.createElement('canvas')
+const canv_EAflow = document.createElement('canvas')
+
+container.id = "con"
+panel.id = "pan"
+buttonwrap.id = "btw"
+datewrap.id = "dtw"
+datepick1.type = "text"
+datepick1.id = "dpk1"
+datepick2.type = "text"
+datepick2.id = "dpk2"
+label1.for = "dpk1"
+label2.for = "dpk2"
+now_upst.id = "up"
+now_down.id = "do"
+now_head.id = "he"
+now_aboveHOL.id = "ahol"
+now_HOL.id = "hol"
+now_flow1.id = "flo1"
+now_flow2.id = "flo2"
+now_EAflow.id = "EAflo"
+canv_levels.id = "ca_lev"
+canv_flow.id = "ca_flo"
+canv_EAflow.id = "ca_EAflo"
+
+title.className = "tt"
+notes.className = "notes"
+subtitle1.className = "sub1"
+subtitle2.className = "sub2"
+col_wrapper.className = "col_wra"
+col_left.className = "col_lef"
+col_right.className = "col_rig"
+now_upst.className = "box"
+now_down.className = "box"
+now_head.className = "box"
+now_aboveHOL.className = "box"
+now_HOL.className = "box"
+now_flow1.className = "box"
+now_flow2.className = "box"
+now_EAflow.className = "box"
+inner_now_upst.className = "inner fontbig"
+inner_now_down.className = "inner fontbig"
+inner_now_head.className = "inner fontbig"
+inner_now_aboveHOL.className = "inner fontbig"
+inner_now_HOL.className = "inner fontbig"
+inner_now_flow1.className = "inner fontbig"
+inner_now_flow2.className = "inner fontbig"
+inner_now_EAflow.className = "inner fontbig"
+clear.className = "cle"
+button1.className = "btn active"
+button2.className = "btn"
+button3.className = "btn"
+button4.className = "btn"
+if (param3 == 1) {
+    button1.className = "btn"
+    button2.className = "btn active"
+    button3.className = "btn"
+    button4.className = "btn"
+}
+if (param3 == 2) {
+    button1.className = "btn"
+    button2.className = "btn"
+    button3.className = "btn active"
+    button4.className = "btn"
+}
+if (param3 == 3) {
+    button1.className = "btn"
+    button2.className = "btn"
+    button3.className = "btn"
+    button4.className = "btn active"
+}
+if (param3 == 4) {
+    button1.className = "btn"
+    button2.className = "btn"
+    button3.className = "btn"
+    button4.className = "btn"
+} 
+label1.className = "lab"
+label2.className = "lab"
+canvwrap_levels.className = "cwra_lev"
+canvwrap_flow.className = "cwra_lev"
+canvwrap_EAflow.className = "cwra"
+
+title.innerHTML = "River Conditions"
+notes.innerHTML = "<a href='#notes'>See below for explanatory notes</a>"
+subtitle1.innerHTML = `Current conditions: <span id="ts">${luxon.DateTime.fromISO(global_data[0].received_at).toFormat('ff')} </span>`
+subtitle2.innerHTML = "<span>Conditions over selected period</span>"
+button1.innerHTML = "Last day"
+button1.onclick = function(){picker2.setDate(today_end, true); picker1.setDate(today, true); selectTimescale(today, today_end, param1, param2, param3)}
+button2.innerHTML = "Last week"
+button2.onclick = function(){picker2.setDate(today_end, true); picker1.setDate(lastweek, true); param3 = 1; selectTimescale(lastweek, today_end, param1, param2, param3)}
+button3.innerHTML = "Last month"
+button3.onclick = function(){picker2.setDate(today_end, true); picker1.setDate(lastmonth, true); param3 = 2; selectTimescale(lastmonth, today_end, param1, param2, param3)}
+button4.innerHTML = "Last year"
+button4.onclick = function(){picker2.setDate(today_end, true); picker1.setDate(lastyear, true); param3 = 3; selectTimescale(lastyear, today_end, param1, param2, param3)}
+
+now_upst.innerHTML = "Upstream (metres AOD)"
+now_down.innerHTML = "Downstream (metres AOD)"
+now_head.innerHTML = "Head (metres)" 
+now_aboveHOL.innerHTML = "Above set level (metres)"
+now_HOL.innerHTML = "Present set level (metres)"
+now_flow1.innerHTML = "Water flow turbine 1 (m<sup>3</sup>/s)"
+now_flow2.innerHTML = "Water flow turbine 2 (m<sup>3</sup>/s)"
+now_EAflow.innerHTML = "Flow at Reading Bridge (m<sup>3</sup>/s)"
+label1.innerHTML = "Start date"
+label2.innerHTML = "End date"
+inner_now_upst.textContent = global_data[0].upstream.toFixed(3)
+inner_now_down.textContent = global_data[0].downstream.toFixed(3)
+inner_now_head.textContent = (global_data[0].upstream - global_data[0].downstream).toFixed(3)
+inner_now_aboveHOL.textContent = (global_data[0].upstream - HOL).toFixed(3)
+inner_now_HOL.textContent = HOL.toFixed(3)
+inner_now_flow1.textContent = (global_data[0].gen1_flow_ls/1000).toFixed(2)
+inner_now_flow2.textContent = (global_data[0].gen2_flow_ls/1000).toFixed(2)
+if (typeof EA_data !== 'undefined'){
+inner_now_EAflow.textContent = (selection2[0].value).toFixed(2)
+}
+now_upst.append(inner_now_upst)
+now_down.append(inner_now_down)
+now_head.append(inner_now_head)
+now_aboveHOL.append(inner_now_aboveHOL)
+now_HOL.append(inner_now_HOL)
+now_flow1.append(inner_now_flow1)
+now_flow2.append(inner_now_flow2)
+now_EAflow.append(inner_now_EAflow)
+
+col_left.append(subtitle1)
+col_left.append(now_upst, now_down, now_head, now_aboveHOL, now_HOL, now_flow1, now_flow2, now_EAflow, clear)
+
+col_right.append(subtitle2)
+buttonwrap.append(button1, button2, button3, button4, clear)
+datewrap.append(label1, datepick1, label2, datepick2, clear)
+panel.append(buttonwrap, datewrap)
+col_right.append(panel)
+canvwrap_levels.append(canv_levels)
+col_right.append(canvwrap_levels)
+canvwrap_flow.append(canv_flow)
+col_right.append(canvwrap_flow)
+canvwrap_EAflow.append(canv_EAflow)
+col_right.append(canvwrap_EAflow)
+
+container.append(notes)
+//col_wrapper.append(title) //Hide title for Wordpress
+col_wrapper.append(col_left, col_right)
+container.append(col_wrapper)
+
+//local
+//document.body.append(container)
+//Wordpress
+var target = document.getElementsByClassName("entry-header");
+target[0].append(container)
+
+//filter by date
+let today = new Date()
+let today_end = new Date()
+                      
+let lastweek = new Date()
+let lastmonth = new Date()
+let lastyear = new Date()
+today.setDate(today.getDate())
+today_end.setDate(today.getDate())
+lastweek.setDate(today.getDate() - 7)
+lastmonth.setDate(today.getDate() - 31)
+lastyear.setDate(today.getDate() - 365)
+
+today = luxon.DateTime.fromJSDate(today).startOf('day').toJSDate()
+today_end = luxon.DateTime.fromJSDate(today).endOf('day').toJSDate()
+lastweek = luxon.DateTime.fromJSDate(lastweek).startOf('day').toJSDate()
+lastmonth = luxon.DateTime.fromJSDate(lastmonth).startOf('day').toJSDate()
+lastyear = luxon.DateTime.fromJSDate(lastyear).startOf('day').toJSDate()
+
+// convert params to dates
+var param1_date = luxon.DateTime.fromFormat(param1, 'yyyyLLdd').startOf('day').toJSDate()
+var param2_date = luxon.DateTime.fromFormat(param2, 'yyyyLLdd').endOf('day').toJSDate()
+
+var picked = false
+// datepicker
+const picker1 = datepicker('#dpk1', { id: 1, dateSelected: param1_date, onSelect: instance => {picked = true; selectTimescale(picker1.getRange().start, dayEnd(picker1.getRange().end), param1, param2, param3 ) }})
+const picker2 = datepicker('#dpk2', { id: 1, dateSelected: param2_date, onSelect: instance => {picked = true; selectTimescale(picker2.getRange().start, dayEnd(picker2.getRange().end), param1, param2, param3 ) }})
+
+// push end date to end of day
+function dayEnd(pick){
+var dayend = luxon.DateTime.fromJSDate(pick).endOf('day').toJSDate()
+return dayend
+}
+
+// if reloaded with last week, month or year buttons
+if (param2_date.getDate() == today.getDate()) {
+picker2.setDate(today_end, true)
+}
+
+//default timescale for first page load = last day
+if (!urlParams.has('var1')) {
+selectTimescale(today, today_end, param1, param2, param3)
+picker2.setDate(today_end, true)
+} else {
+selectTimescale(param1_date, param2_date, param1, param2, param3)   
+}
+
+//else select timescale using parameters from buttons or datepicker
+function selectTimescale(mystart, myend, myparam1, myparam2, myparam3) {
+
+//reload page and fetch more data if needed
+if (myparam1) {
+    var myparam1_date = luxon.DateTime.fromFormat(myparam1, 'yyyyLLdd').startOf('day').toJSDate()
+    } else {
+        myparam1_date = today
+    }
+
+if (mystart < myparam1_date) {
+
+    if (picked == true) {
+        myparam3 = 4
+    } 
+
+    var newstart = luxon.DateTime.fromJSDate(mystart).toFormat('yyyyLLdd')
+    var newend = luxon.DateTime.fromJSDate(myend).toFormat('yyyyLLdd')
+    var path = window.location.href.split(/[?#]/)[0] // Remove parameters and/or anchor
+    var path2 = window.location.pathname
+    location.href = path + '?var1=' + newstart + '&var2=' + newend + '&var3=' + myparam3
+    return
+} 
+
+var selection = global_data.filter(function(item){
+return new Date(item.received_at) >= mystart
+    })
+    var mystarttime = mystart
+    var myendtime = myend
+    var mylength = myendtime - mystarttime
+    if (mylength >= 172800000){
+        myunit = 'day'
+    }else{
+        myunit = 'hour'
+    }
+
+    // Downsample if greater than 10512 data points (approx 2.5 months)
+    // No of points will vary between 5256 and 10512
+    if (selection.length > 10512){
+        var step = Math.ceil(selection.length/10512)
+        var reduced = []
+        for (i = 0; i < selection.length; i++) {
+            if(i % step === 0){
+                reduced.push(selection[i])
+            }
+        }
+        selection = reduced
+        }
+
+
+    const xs = []
+    const xs5 = []
+    const ys1 = []
+    const ys2 = []
+    const ys3 = []
+    const ys4 = []
+    const ys5 = []
+
+    for(item of selection) {                
+        //convert the timestamp to milliseconds (faster)                
+        const mydate1 = new Date(item.received_at)
+        const mydate = mydate1.getTime()
+        xs.push(mydate);
+        const myupstream = item.upstream;
+        ys1.push(myupstream);
+        const mydownstream = item.downstream;
+        ys2.push(mydownstream);
+        const myflow1_ls = item.gen1_flow_ls;
+        const myflow1 = (myflow1_ls/1000).toFixed(2);
+        ys3.push(myflow1);
+        const myflow2_ls = item.gen2_flow_ls;
+        const myflow2 = (myflow2_ls/1000).toFixed(2);
+        ys4.push(myflow2);
+    }
+    if (typeof EA_data !== 'undefined'){
+    for(item of selection2){
+        //convert the timestamp to milliseconds (faster)                
+        const myEAdate1 = new Date(item.dateTime)
+        const myEAdate = myEAdate1.getTime()
+        xs5.push(myEAdate);
+        const myEAflow = item.value.toFixed(2)
+        ys5.push(myEAflow)
+    }
+}
+    // tweak scales for y axes of graphs
+    // upstream/downstream levels
+    var ymax1 = myround((Math.max(...ys1) + 0.2), 1) // max level plus 0.2
+    var ymin2 = myround((Math.min(...ys2) - 0.2), 1) // min level minus 0.2
+    if (ymin2 > 35.0){ //don't go above 35 for base level of graph
+        ymin2 = 35.0
+    }
+    // Flow at Reading Bridge
+    var ymin3 = 0
+    var ymax3 = myround((Math.max(...ys5)), 0) // max level as integer
+    ymax3 = Math.ceil(ymax3/10)*10 // round up to the neaest 10
+    if (ymax3 < 100){ //keep top level of graph at least 100
+        ymax3 = 100
+    }
+
+    // Add active class to the current button on click
+    var btns = document.getElementsByClassName("btn");
+    for (var i = 0; i < btns.length; i++) {
+    btns[i].addEventListener("click", function() {
+        var current = document.getElementsByClassName("active");
+        if (typeof current[0] !== 'undefined'){
+        current[0].className = current[0].className.replace(" active", "");
+        }
+        this.className += " active";
+        });
+        }
+     if (picked == true) {
+        for (var i = 0; i < btns.length; i++) {
+            btns[i].classList.remove("active")
+        } 
+        picked = false
+    }
+
+    //Set global defaults for charts
+    //More settings can be global if we use Chartjs v3
+    Chart.defaults.global.tooltips.callbacks.title = function(t, d) {
+                            return luxon.DateTime.fromMillis(d.labels[t[0].index]).toFormat('ff');
+                                    }
+    //Chart.defaults.global.animation.duration = 0 
+    Chart.defaults.global.maintainAspectRatio = false
+    Chart.defaults.global.title.display = true
+    Chart.defaults.global.title.fontSize = 20
+    Chart.defaults.global.title.fontStyle = 'bold'
+    Chart.defaults.global.legend.labels.fontSize = 15
+    Chart.defaults.global.legend.labels.fontStyle = 'bold'
+
+    var anno_HOL = {
+                            type: 'line',
+                            id: 'line1',
+                            mode: 'horizontal',
+                            scaleID: 'y-axis-0',
+                            value: HOL,
+                            borderWidth: 1,
+                            borderDash: [2,2],
+                            borderColor: '#E4004D',
+                            label: {
+                                backgroundColor: 'rgba(255,255,255,0)',
+                                fontColor: '#E4004D',
+                                content: 'Present set level',
+                                position: 'right',
+                                yAdjust: 10,
+                                enabled: true,
+                            }
+                        }
+   
+    // Change legend click handler to accommodate annotations
+    // Store the original click handler for reuse
+    var defaultLegendClickHandler = Chart.defaults.global.legend.onClick;
+  
+    // New click handler is called from myChart_levels
+    var newLegendClickHandler = function (e, legendItem) {
+        var index = legendItem.datasetIndex;
+        var ci = myChart_levels;
+        var meta = ci.getDatasetMeta(index);
+        
+        defaultLegendClickHandler.call(this, e, legendItem);
+        var is_u = ci.isDatasetVisible(0)
+        var is_d = ci.isDatasetVisible(1)
+        // if downstream only is visible, hide HOL
+        // flag is used to avoid Boolean ampersand, which causes problems in Wordpress
+            var flag = 0
+            if(!is_u){ flag++ }
+            if(is_d){ flag++ }
+            if (flag == 2) { //downstream only visible. Don't show HOL. 
+                ci.config.options.annotation.annotations[0] = ''
+                ci.options.scales.yAxes[0] = {
+                    ticks: {
+                                min: ymin2,
+                                fontSize: 15,
+                                fontStyle: "bold",
+                                    },
+                            scaleLabel: {
+                                display: false                                      
+                                    }                                            
+                };
+                ci.update() 
+            } else if(flag == 0) { //upstream only visible. Reset min tick value.
+                ci.config.options.annotation.annotations[0] = anno_HOL;
+                ci.options.scales.yAxes[0] = {
+                    ticks: {
+                                min: HOL - 0.02,
+                                fontSize: 15,
+                                fontStyle: "bold",
+                                    },
+                            scaleLabel: {
+                                display: false                                      
+                                    }                                            
+                };
+                
+                ci.update();  
+            } else { //upstream and downstream are both visible. Reset min tick value.
+                ci.config.options.annotation.annotations[0] = anno_HOL
+                ci.options.scales.yAxes[0] = {
+                    ticks: {
+                                min: ymin2,
+                                max: ymax1,
+                                fontSize: 15,
+                                fontStyle: "bold",
+                                    },
+                            scaleLabel: {
+                                display: false                                      
+                                    }                                            
+                };
+                ci.update()
+            }
+    };
+
+
+//Graph 1 - Water levels            
+if (myChart_levels) {
+    myChart_levels.destroy();
+    }
+
+var ctx_lev = document.getElementById('ca_lev').getContext('2d');
+
+myChart_levels = new Chart(ctx_lev, {
+        type: 'line',
+        data: {
+            labels: xs,
+            datasets: [
+                {       
+                label: 'Upstream',                         
+                data: ys1,
+                fill: true,
+                backgroundColor: 'rgba(136, 209, 230, 0.6)',
+                borderColor: 'rgba(136, 209, 230, 0.6)',
+                borderWidth: 1,
+                radius: 0
+                },
+                {  
+                label: 'Downstream',                              
+                data: ys2,
+                fill: true,
+                backgroundColor: 'rgba(64, 154, 230, 0.9)',
+                borderColor: 'rgba(64, 154, 230, 0.9)',
+                borderWidth: 1,
+                radius: 0
+                },                        
+            ]
+            },
+        options: {
+                annotation: {
+                        drawTime: 'afterDraw',
+                        annotations: [anno_HOL]
+                },
+                scales: {
+                        xAxes: [{
+                            type: 'time',
+                            time: {
+                                minUnit: myunit,
+                            },                                             
+                            distribution: 'linear', 
+
+                            ticks: {
+                                fontStyle: "bold",
+                                min: mystarttime,
+                                max: myendtime,
+                                    },
+                            scaleLabel: {
+                                display: false,
+                                    }
+                                }
+                        ],
+                        yAxes: [{
+                            ticks: {
+                                min: ymin2,
+                                max: ymax1,
+                                fontSize: 15,
+                                fontStyle: "bold",
+                                    },
+                            scaleLabel: {
+                                display: false                                      
+                                    }
+                                }]
+                        },
+                title: {
+                    text: "Water levels (metres AOD)",
+                        },
+                legend: {
+                    display: true,
+                    onClick: newLegendClickHandler
+                        }
+                    } 
+                    
+    });
+    
+// End of graph 1
+
+//Graph 2 - Flow
+// To unhide, also need to append div above
+ if (myChart_flow) {
+    myChart_flow.destroy();
+    }
+
+var ctx_flo = document.getElementById('ca_flo').getContext('2d');
+myChart_flow = new Chart(ctx_flo, {
+        type: 'line',
+        data: {
+            labels: xs,
+            datasets: [
+            {   
+                label: 'Tony (turbine 1)',                     
+                data: ys3,
+                fill: true,
+                backgroundColor: 'rgba(58,170,166,1.0)',
+                borderColor: 'rgba(58,170,166,1.0)',
+                borderWidth: 1,
+                radius: 0
+                },
+            {   label: 'Sophie (turbine 2)',                       
+                data: ys4,
+                fill: true,
+                backgroundColor: 'rgba(128,226,222,1.0)',
+                borderColor: 'rgba(128,226,222,1.0)',
+                borderWidth: 1,
+                radius: 0
+                },                        
+            ]
+            },
+            options: {                                
+                scales: {
+
+                        xAxes: [{
+                            type: 'time', 
+                            time: {
+                                minUnit: myunit,
+                            },
+                            distribution: 'linear',
+                            ticks: {
+                                fontStyle: "bold",
+                                min: mystarttime,
+                                max: myendtime,
+                                    },
+                            scaleLabel: {
+                                display: false,                                                                  
+                                    }
+                                }
+
+                        ],
+                        yAxes: [{
+                            stacked: true,
+                            ticks: {
+                                fontSize: 15,
+                                fontStyle: "bold",
+                                    },
+                                    scaleLabel: {
+                                display: false                                      
+                                    }
+                                }]
+                        },
+                title: {
+                    text: "Flow through turbines (cubic metres/sec)",
+                        },
+                legend: {
+                    display: true,
+                        }
+                    } 
+    });                 
+// End of graph 2
+
+    //Graph 3 - EA Flow at Reading Bridge
+// To unhide, also need to append div above
+ if (myChart_EAflow) {
+    myChart_EAflow.destroy();
+    }
+
+var ctx_EAflo = document.getElementById('ca_EAflo').getContext('2d');
+myChart_EAflow = new Chart(ctx_EAflo, {
+        type: 'line',
+        data: {
+            labels: xs5,
+            datasets: [
+            {   
+                data: ys5,
+                fill: true,
+                backgroundColor: 'rgba(60,166,80,1.0)',
+                borderColor: 'rgba(60,166,80,1.0)',
+                borderWidth: 1,
+                radius: 0
+                },                        
+            ]
+            },
+            options: {                                
+                scales: {
+
+                        xAxes: [{
+                            type: 'time', 
+                            time: {
+                                minUnit: myunit,
+                            },
+                            distribution: 'linear',
+                            ticks: {
+                                fontStyle: "bold",
+                                min: mystarttime,
+                                max: myendtime,
+                                    },
+                            scaleLabel: {
+                                display: false,                                                                  
+                                    }
+                                }
+
+                        ],
+                        yAxes: [{
+                            ticks: {
+                                min: ymin3,
+                                max: ymax3,
+                                fontSize: 15,
+                                fontStyle: "bold",
+                                    },
+                                    scaleLabel: {
+                                display: false                                      
+                                    }
+                                }]
+                        },
+                title: {
+                    text: "Flow at Reading Bridge (cubic metres/sec)",
+                        },
+                legend: {
+                    display: false,
+                        }
+                    } 
+    });                 
+
+// End of graph 3
+// End of graphs
+
+}
+// End of selectTimescale
+
+//closing of GoDoIt function
+};
+
+// functions
+
+function myround(value, precision) {
+var multiplier = Math.pow(10, precision || 0);
+return Math.round(value * multiplier) / multiplier;
+}
+async function getData1() {
+
+const response = await fetch(myurl) 
+const data = await response.json()
+var arr = [data, param1, param2, param3] 
+return arr           
+}
+async function getData2() {
+
+const response = await fetch('https://readinghydro.org:9445/api/setlevel/current') 
+const data = await response.json()
+return data           
+}
+
+async function getData3() {
+    
+const response = await fetch(myurl_EA) 
+const data = await response.json() 
+return data           
+}
+
+// DO NOT REMOVE the comment below, it stops Wordpress from escaping ampersands
+//--></script>  

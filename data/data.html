@@ -549,7 +549,7 @@
             }
 
         async function getData4() {
-            const response = await fetch('https://environment.data.gov.uk/flood-monitoring/id/measures/2200TH-flow--Mean-15_min-m3_s/readings?latest') 
+            const response = await fetch('https://readinghydro.org/eadata/flood-monitoring/id/measures/2200TH-flow--Mean-15_min-m3_s/readings?latest') 
             const data = await response.json()
             return data           
             }
