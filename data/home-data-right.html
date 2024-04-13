@@ -1,136 +1,141 @@
 <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
- 
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <style>
 
-            .sub_data {
-                width: 100%;
-                margin: auto;
-                font-size: 18px;
-                text-align: center;
-            }
-            .box_data {
-                width: 100%;
-                height: 180px;
-                margin: auto;
-                margin-top: 28.5px;
-                padding: 35px 30px 10px 30px;
-                text-align: center;   
-                color: black;
-            }
-            .inner {
-                height: 70px; 
-                text-align: center;                
-                font-weight: bold;
-                color: black;             
-            }
-            .innercaption {
-                height: 30px; 
-                text-align: center;                
-                font-weight: normal;
-                color: black;             
-            }
-            .fontbig {
-                font-size: 48px;            
-            }
-            .fontsmall {
-                font-size: 22px;            
-            }
-            .ts {
-                white-space: nowrap;
-            }
-            #wra_TOT_MW {
-                max-width: 500px;
-                /* override WP theme */
-                line-height: 1.0;
-            }
+<style>
 
-            #wra_T2 {
-                max-width: 500px;
-                padding-bottom: 40px;
-            }
+    .sub_data {
+        width: 100%;
+        margin: auto;
+        font-size: 18px;
+        text-align: center;
+    }
+    .box_data {
+        width: 100%;
+        height: 180px;
+        margin: auto;
+        margin-top: 28.5px;
+        padding: 35px 30px 10px 30px;
+        text-align: center;   
+        color: black;
+    }
+    .inner {
+        height: 70px; 
+        text-align: center;                
+        font-weight: bold;
+        color: black;             
+    }
+    .innercaption {
+        height: 30px; 
+        text-align: center;                
+        font-weight: normal;
+        color: black;             
+    }
+    .fontbig {
+        font-size: 48px;            
+    }
+    .fontsmall {
+        font-size: 22px;            
+    }
+    .ts {
+        white-space: nowrap;
+    }
+    #wra_TOT_MW {
+        max-width: 500px;
+        /* override WP theme */
+        line-height: 1.0;
+    }
 
-           #tot_MW {
-                /* background-color: #B4C1CC; */
-                background-color: #96D4F1;
-                margin-bottom: 5px;
-            }
+    #wra_T2 {
+        max-width: 500px;
+        padding-bottom: 40px;
+    }
 
-            @media only screen and (max-width: 450px) {
-                .fontbig {
-                    font-size: 38px;
-                }
-                .fontsmall {
-                    font-size: 18px;
-                }
-                .sub_data {
-                    font-size: 17px;
-                }
-            }
+   #tot_MW {
+        /* background-color: #B4C1CC; */
+        background-color: #96D4F1;
+        margin-bottom: 5px;
+    }
+
+    @media only screen and (max-width: 450px) {
+        .fontbig {
+            font-size: 38px;
+        }
+        .fontsmall {
+            font-size: 18px;
+        }
+        .sub_data {
+            font-size: 17px;
+        }
+    }
+
+</style>        
+
+ <script>
+
+// Start an IIFE to use `await` at the top level
+(async function(){
+
+var myreturn = await getDataMeter();    
+
+
+var global_data_meter = myreturn.filter(function(item){
+                return item.meter == '70150046'
+            })   
+
+        const subtitle_TOT_MW = document.createElement('div')
+
+        const now_total_MW = document.createElement('div')
+
+        const inner_now_total_MW = document.createElement('div')
+
+        const inner_now_caption_MW = document.createElement('div')
         
-       </style>        
+        const wrap_TOT_MW = document.createElement('div')  
 
-         <script>
+        now_total_MW.id = "tot_MW"
+        
+        wrap_TOT_MW.id = "wra_TOT_MW"
 
-        // Start an IIFE to use `await` at the top level
-        (async function(){
+        subtitle_TOT_MW.className = "sub_data"
 
-        var global_data2 = await getData2();        
+        now_total_MW.className = "box_data"
 
-                const subtitle_TOT_MW = document.createElement('div')
+        inner_now_total_MW.className ="inner fontbig"
+        inner_now_caption_MW.className ="innercaption fontsmall" 
 
-                const now_total_MW = document.createElement('div')
+        var roundworld = ((global_data_meter[0].export/1000) * 0.16064).toFixed(0)
 
-                const inner_now_total_MW = document.createElement('div')
+        subtitle_TOT_MW.innerHTML = 'That\'s enough to drive ' + roundworld + ' times around the world in an electric car'
+        
+        inner_now_caption_MW.innerHTML = 'of electricty has been generated since the turbines started'
 
-                const inner_now_caption_MW = document.createElement('div')
-                
-                const wrap_TOT_MW = document.createElement('div')  
+        inner_now_total_MW.textContent = (global_data_meter[0].export/1000).toFixed(1) + ' MWh'
+        
+        now_total_MW.append(inner_now_total_MW, inner_now_caption_MW)
+        
 
-                now_total_MW.id = "tot_MW"
-                
-                wrap_TOT_MW.id = "wra_TOT_MW"
+        wrap_TOT_MW.append(now_total_MW, subtitle_TOT_MW)                             
+        
+       
+        //local
+        //document.body.append(wrap_TOT_MW)
+        //Wordpress
+        var target = document.getElementsByClassName("entry-content");
+        target[0].append(wrap_TOT_MW)
 
-                subtitle_TOT_MW.className = "sub_data"
-
-                now_total_MW.className = "box_data"
-
-                inner_now_total_MW.className ="inner fontbig"
-                inner_now_caption_MW.className ="innercaption fontsmall"
-
-                var roundworld = ((global_data2[0].gen1_energy_mwh + global_data2[0].gen2_energy_mwh) * 0.16064).toFixed(0)
-
-                subtitle_TOT_MW.innerHTML = 'That\'s enough to drive ' + roundworld + ' times around the world in an electric car'
-                
-                inner_now_caption_MW.innerHTML = 'of electricty has been generated since the turbines started'
-
-                inner_now_total_MW.textContent = (global_data2[0].gen1_energy_mwh + global_data2[0].gen2_energy_mwh).toFixed(1) + ' MWh'
-                
-                now_total_MW.append(inner_now_total_MW, inner_now_caption_MW)
-                
-
-                wrap_TOT_MW.append(now_total_MW, subtitle_TOT_MW)                             
-                
-               
-                //local
-                //document.body.append(wrap_TOT_MW)
-                //Wordpress
-                var target = document.getElementsByClassName("entry-content");
-                target[0].append(wrap_TOT_MW)
-
-        //closing of IIFE function
-        })();
+//closing of IIFE function
+})();
 
 
 // functions
- 
-        async function getData2() {
-            const response = await fetch('https://readinghydro.org:9445/api/plc/today') 
-            const data = await response.json() 
-            return data           
-        }
 
-        
-        </script>
+async function getDataMeter() {
+    const response = await fetch('https://readinghydro.org:9445/api/meter/today') 
+    const data = await response.json() 
+    return data           
+}
+
+
+</script>
 
