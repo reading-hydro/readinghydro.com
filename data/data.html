@@ -13,10 +13,13 @@
     .ttsmall {
         font-family: Arial, Helvetica, sans-serif;
         font-size: 20px;
-        font-weight: normal;
         text-align: center;
         margin-bottom: 30px;
                    }
+    .notes {
+        text-align: inherit;
+        color: #E5004D;
+     }
     .sub_data {
         font-family: Arial, Helvetica, sans-serif;
         font-size: 18px;
@@ -195,8 +198,10 @@
             font-size: 20px;
         }
         .tt {
-            font-size: 16px;
-            margin-bottom: 20px;
+            font-size: 18px;
+        }
+        .ttsmall {
+            font-size: 14px;
         }
         .sub_data {
             font-size: 15px;
@@ -240,6 +245,7 @@ var EA_data = await getData4()
         const under_title_TH = document.createElement('div')
         const under_title_RC = document.createElement('div')
         const under_title_PO = document.createElement('div')
+        const notes = document.createElement('p')
 
         const subtitle_TH = document.createElement('div')
         const subtitle_RC = document.createElement('div')
@@ -352,6 +358,7 @@ var EA_data = await getData4()
         under_title_TH.className = "ttsmall"
         under_title_RC.className = "ttsmall"
         under_title_PO.className = "ttsmall"
+        notes.className = "notes"
         subtitle_TOT.className = "sub_data"
         subtitle_TH.className = "sub_data"
         subtitle_RC.className = "sub_data"
@@ -411,6 +418,8 @@ var EA_data = await getData4()
         inner_nowhumid.className = "inner fontbig"
 
         clear.className = "cle"
+
+        notes.innerHTML = "See data history pages for explanatory notes"
 
         title_PO.innerHTML = '<a href="/power-output-data/">Electricity generation</a>'
         under_title_PO.innerHTML = '<a href="/power-output-data/">click for data history</a>'
@@ -478,6 +487,7 @@ var EA_data = await getData4()
         wrap_T2.append(nowPower_G2, nowScrewRPM_G2, nowDriveRPM_G2, nowOpHours_G2, nowEnergy_G2, clear)
         wrap_PO.append(wrap_T2)
 
+        container.append(notes)
         container.append(wrap_PO)
 
         title_RC.innerHTML = '<a href="/water-level-data/">River conditions</a>'
