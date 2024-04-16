@@ -5,7 +5,15 @@
 
    .tt {
         font-family: Arial, Helvetica, sans-serif;
+        font-size: 24px;
+        font-weight: bold;
+        text-align: center;
+        margin-bottom: 10px;
+                   }
+    .ttsmall {
+        font-family: Arial, Helvetica, sans-serif;
         font-size: 20px;
+        font-weight: normal;
         text-align: center;
         margin-bottom: 30px;
                    }
@@ -226,9 +234,12 @@ var EA_data = await getData4()
 
 // This is the LIVE DATA summary page
         const container = document.createElement('div')                
-        const title_TH = document.createElement('h1')
-        const title_RC = document.createElement('h1')
-        const title_PO = document.createElement('h1')
+        const title_TH = document.createElement('div')
+        const title_RC = document.createElement('div')
+        const title_PO = document.createElement('div')
+        const under_title_TH = document.createElement('div')
+        const under_title_RC = document.createElement('div')
+        const under_title_PO = document.createElement('div')
 
         const subtitle_TH = document.createElement('div')
         const subtitle_RC = document.createElement('div')
@@ -338,6 +349,9 @@ var EA_data = await getData4()
         title_TH.className = "tt"
         title_RC.className = "tt"
         title_PO.className = "tt"
+        under_title_TH.className = "ttsmall"
+        under_title_RC.className = "ttsmall"
+        under_title_PO.className = "ttsmall"
         subtitle_TOT.className = "sub_data"
         subtitle_TH.className = "sub_data"
         subtitle_RC.className = "sub_data"
@@ -398,17 +412,18 @@ var EA_data = await getData4()
 
         clear.className = "cle"
 
-        title_PO.innerHTML = '<a href="/power-output-data/">Power Generation<br />click for data history</a>'
+        title_PO.innerHTML = '<a href="/power-output-data/">Electricity generation</a>'
+        under_title_PO.innerHTML = '<a href="/power-output-data/">click for data history</a>'
         subtitle_T1.innerHTML = `Turbine 1 (Tony): <span class="ts">${luxon.DateTime.fromISO(global_data2[0].received_at).toFormat('ff')} </span><br />Current performance of turbine and generator`
-        subtitle_TOT.innerHTML = 'Total electricity generated to date (both turbines)'
+        subtitle_TOT.innerHTML = 'Total electricity exported to date (both turbines)'
 
-        now_total.innerHTML = 'Total Electricity (MWh)'
+        now_total.innerHTML = 'Total export (MWh)'
 
-        nowPower_G1.innerHTML = 'Power Generation (kW)'
-        nowScrewRPM_G1.innerHTML = 'Screw Speed (RPM)'
-        nowDriveRPM_G1.innerHTML = 'Drive Speed (RPM)'
-        nowOpHours_G1.innerHTML = 'Total Operating (Hours)'
-        nowEnergy_G1.innerHTML = 'Total Electricity (MWh)'
+        nowPower_G1.innerHTML = 'Power generation (kW)'
+        nowScrewRPM_G1.innerHTML = 'Screw speed (RPM)'
+        nowDriveRPM_G1.innerHTML = 'Drive speed (RPM)'
+        nowOpHours_G1.innerHTML = 'Total operating (hours)'
+        nowEnergy_G1.innerHTML = 'Total generation (MWh)'
 
         inner_now_total.textContent = (global_data_meter[0].export/1000).toFixed(1)
 
@@ -429,7 +444,7 @@ var EA_data = await getData4()
         nowOpHours_G1.append(inner_nowOpHours_G1)
         nowEnergy_G1.append(inner_nowEnergy_G1)
 
-        wrap_PO.append(title_PO)
+        wrap_PO.append(title_PO, under_title_PO)
         wrap_TOT.append(now_total)
         wrap_PO.append(subtitle_TOT, wrap_TOT)
         wrap_T1.append(subtitle_T1)
@@ -438,11 +453,11 @@ var EA_data = await getData4()
 
         subtitle_T2.innerHTML = `Turbine 2 (Sophie): <span class="ts">${luxon.DateTime.fromISO(global_data2[0].received_at).toFormat('ff')} </span><br />Current performance of turbine and generator`
 
-        nowPower_G2.innerHTML = 'Power Generation (kW)'
-        nowScrewRPM_G2.innerHTML = 'Screw Speed (RPM)'
-        nowDriveRPM_G2.innerHTML = 'Drive Speed (RPM)'
-        nowOpHours_G2.innerHTML = 'Total Operating (Hours)'
-        nowEnergy_G2.innerHTML = 'Total Electricity (MWh)'
+        nowPower_G2.innerHTML = 'Power generation (kW)'
+        nowScrewRPM_G2.innerHTML = 'Screw speed (RPM)'
+        nowDriveRPM_G2.innerHTML = 'Drive speed (RPM)'
+        nowOpHours_G2.innerHTML = 'Total operating (hours)'
+        nowEnergy_G2.innerHTML = 'Total generation (MWh)'
 
         inner_nowPower_G2.textContent = global_data2[0].gen2_power_kw
         if (inner_nowPower_G2.textContent < 0){
@@ -465,7 +480,8 @@ var EA_data = await getData4()
 
         container.append(wrap_PO)
 
-        title_RC.innerHTML = '<a href="/water-level-data/">River Conditions<br />click for data history</a>'
+        title_RC.innerHTML = '<a href="/water-level-data/">River conditions</a>'
+        under_title_RC.innerHTML = '<a href="/water-level-data/">click for data history</a>'
         subtitle_RC.innerHTML = `Current conditions: <span class="ts">${luxon.DateTime.fromISO(global_data2[0].received_at).toFormat('ff')} </span>`
 
         now_upst.innerHTML = "Upstream (metres AOD)"
@@ -496,12 +512,13 @@ var EA_data = await getData4()
         now_flow2.append(inner_now_flow2)
         now_EAflow.append(inner_now_EAflow)
 
-        wrap_RC.append(title_RC)
+        wrap_RC.append(title_RC, under_title_RC)
         wrap_RC.append(subtitle_RC)
         wrap_RC.append(now_upst, now_down, now_head, now_aboveHOL, now_HOL, now_flow1, now_flow2, now_EAflow, clear)
         wrap_TH_RC.append(wrap_RC)
 
-        title_TH.innerHTML = '<a href="/turbine-house-data/">Turbine House<br />click for data history</a>'
+        title_TH.innerHTML = '<a href="/turbine-house-data/">Turbine house</a>'
+        under_title_TH.innerHTML = '<a href="/turbine-house-data/">click for data history</a>'
         //Filter out other devices
         var selection1 = global_data1.filter(function(item){
                 return item.device_id == 'rdghydro-ers001'
@@ -510,7 +527,7 @@ var EA_data = await getData4()
         subtitle_TH.innerHTML = `Current conditions: <span class="ts">${luxon.DateTime.fromISO(selection1[0].received_at).toFormat('ff')} </span>`
 
         nowtemp.innerHTML = "Temperature (&deg;C)"
-        nowhumid.innerHTML = "Relative Humidity (&percnt;)"
+        nowhumid.innerHTML = "Relative humidity (&percnt;)"
 
         inner_nowtemp.textContent = selection1[0].temperature
         inner_nowhumid.textContent = selection1[0].humidity
@@ -518,7 +535,7 @@ var EA_data = await getData4()
         nowtemp.append(inner_nowtemp)
         nowhumid.append(inner_nowhumid)
         
-        wrap_TH.append(title_TH)
+        wrap_TH.append(title_TH, under_title_TH)
         wrap_TH.append(subtitle_TH)
         wrap_TH.append(nowtemp, nowhumid, clear)
         wrap_TH_RC.append(wrap_TH)
