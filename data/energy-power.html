@@ -463,9 +463,10 @@ var global_data_meter = myreturn2.filter(function(item){
         label2.className = "lab"
         canvwrap_power.className = "cwra"
 
-        title.innerHTML = "Electrical Power Output"
+        //Not used
+        //title.innerHTML = "Electrical Power Output"
         notes.innerHTML = "<a href='#notes'>See below for explanatory notes</a>"
-        subtitle_TOT.innerHTML = "Total electricity generated to date<br />(both turbines)"
+        subtitle_TOT.innerHTML = "Total electricity exported to date<br />(both turbines)"
         subtitle1_T1.innerHTML = `Turbine 1 (Tony)<br />Current conditions: <span id="ts">${luxon.DateTime.fromISO(global_data[0].received_at).toFormat('ff')} </span>`
         subtitle1_T2.innerHTML = `Turbine 2 (Sophie)<br />Current conditions: <span id="ts">${luxon.DateTime.fromISO(global_data[0].received_at).toFormat('ff')} </span>`
         subtitle2.innerHTML = "<span>Power generation by both turbines<br />over selected period</span>"
@@ -478,17 +479,17 @@ var global_data_meter = myreturn2.filter(function(item){
         button4.innerHTML = "Last year"
         button4.onclick = function(){picker2.setDate(today_end, true); picker1.setDate(lastyear, true); param3 = 3; selectTimescale(lastyear, today_end, param1, param2, param3)}
 
-        now_total.innerHTML = 'Total Electricity (MWh)'
-        nowPower_G1.innerHTML = 'Power Generation (kW)'
-        nowScrewRPM_G1.innerHTML = 'Screw Speed (RPM)'
-        nowDriveRPM_G1.innerHTML = 'Drive Speed (RPM)'
-        nowOpHours_G1.innerHTML = 'Total Operating (Hours)'
-        nowEnergy_G1.innerHTML = 'Total Electricity (MWh)'
-        nowPower_G2.innerHTML = 'Power Generation (kW)'
-        nowScrewRPM_G2.innerHTML = 'Screw Speed (RPM)'
-        nowDriveRPM_G2.innerHTML = 'Drive Speed (RPM)'
-        nowOpHours_G2.innerHTML = 'Total Operating (Hours)'
-        nowEnergy_G2.innerHTML = 'Total Electricity (MWh)'
+        now_total.innerHTML = 'Total export (MWh)'
+        nowPower_G1.innerHTML = 'Power generation (kW)'
+        nowScrewRPM_G1.innerHTML = 'Screw speed (RPM)'
+        nowDriveRPM_G1.innerHTML = 'Drive speed (RPM)'
+        nowOpHours_G1.innerHTML = 'Total operating (hours)'
+        nowEnergy_G1.innerHTML = 'Total generation (MWh)'
+        nowPower_G2.innerHTML = 'Power generation (kW)'
+        nowScrewRPM_G2.innerHTML = 'Screw speed (RPM)'
+        nowDriveRPM_G2.innerHTML = 'Drive speed (RPM)'
+        nowOpHours_G2.innerHTML = 'Total operating (hours)'
+        nowEnergy_G2.innerHTML = 'Total generation (MWh)'
         label1.innerHTML = "Start date"
         label2.innerHTML = "End date"
         inner_now_total.textContent = (global_data_meter[0].export/1000).toFixed(1)
