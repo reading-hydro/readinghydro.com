@@ -412,7 +412,7 @@ var EA_data = await getData4()
 
         inner_now_total.textContent = (global_data_meter[0].export/1000).toFixed(1)
 
-        inner_nowPower_G1.textContent = global_data2[0].gen1_power_kw
+        inner_nowPower_G1.textContent = Math.min(global_data2[0].gen1_power_kw, 23)
         if (inner_nowPower_G1.textContent < 0){
             inner_nowPower_G1.textContent = 0
         }
@@ -444,7 +444,7 @@ var EA_data = await getData4()
         nowOpHours_G2.innerHTML = 'Total Operating (Hours)'
         nowEnergy_G2.innerHTML = 'Total Electricity (MWh)'
 
-        inner_nowPower_G2.textContent = global_data2[0].gen2_power_kw
+        inner_nowPower_G2.textContent = Math.min(global_data2[0].gen2_power_kw, 23)
         if (inner_nowPower_G2.textContent < 0){
             inner_nowPower_G2.textContent = 0
         }
