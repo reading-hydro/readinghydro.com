@@ -13,6 +13,7 @@ import boto3
 from tokenHandeler import generate_token, expired_token, check_dup, active_token, check_token, token_mark_sent
 from sendmail import sendMail_shift, sendMail_multialert, sendMail_multiescalate
 from urllib import request, parse
+from sendntfy import sendntfy
 
 # timing parameters
 
@@ -42,8 +43,8 @@ def calendar_read(api_key):
     CALENDAR_ID = '6fue264k25k03v1ogsmkb2pk5g%40group.calendar.google.com'
 
 # Dictionary of query parameters
-    now = datetime.datetime.utcnow().isoformat() + 'Z'
-    now_end = (datetime.datetime.utcnow() + datetime.timedelta(days=1)).isoformat() + 'Z'
+    now = datetime.datetime.now(datetime.UTC).isoformat() + 'Z'
+    now_end = (datetime.datetime.now(datetime.UTC) + datetime.timedelta(days=1)).isoformat() + 'Z'
     parms = {
         'maxResults': '10',
         'singleEvents': 'true',
@@ -93,12 +94,13 @@ def on_message(client, userdata, message):
         alert_age = datetime.timedelta(seconds=1)
     else:
         alert_time_string = datetime.datetime.strftime(alert_time_data, '%Y-%m-%dT%H:%M:%S')
-        compare_now = datetime.datetime.strptime(datetime.datetime.utcnow().strftime('%d/%m/%Y %H:%M:%S'), '%d/%m/%Y %H:%M:%S')
+        compare_now = datetime.datetime.strptime(datetime.datetime.now(datetime.UTC).strftime('%d/%m/%Y %H:%M:%S'), '%d/%m/%Y %H:%M:%S')
         alert_age = compare_now - alert_time_data
     if alert_age < IGNORE_ALERTS_OLDER_THAN:
         log_alert_message(alert_time_string, alertMessage)
         if not(check_dup(alertMessage)):
             token = generate_token(email1, alertMessage, ALERT_ESCALATION_TIME)
+            sendntfy(alertMessage, alertTime, token)
             #sendMail_alert(email1, alertMessage, alertTime, token)
             #sendMail_alert(email2, alertMessage, alertTime, token)
     else:
@@ -231,9 +233,12 @@ def ackresp(environ, start_response):
         status = 'Live'
         if entry.get('ack'):
             status = 'Acknowledged'
-        resp = resp + _ack_list_body.format(token=entry.get('token'), email=entry.get('email'),
-                                            time=entry.get('time'), status=status,
-                                            count=entry.get('count'), message=entry.get('message'))
+        resp = resp + _ack_list_body.format(token=entry.get('token'),
+                                            email=entry.get('email'),
+                                            time=entry.get('time'), 
+                                            status=status,
+                                            count=entry.get('count'), 
+                                            message=entry.get('message'))
     resp = resp + _ack_list_tail
     yield resp.encode('utf-8')
 
@@ -260,7 +265,7 @@ _alert_list_tail = '''\
 def alertlist(environ, start_response):
     start_response('200 OK', [('Content-type', 'text/html')])
     tokenlist = active_token()
-    resp = _alert_list_head.format(time=datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ'))
+    resp = _alert_list_head.format(time=datetime.datetime.now(datetime.UTC).strftime('%Y-%m-%dT%H:%M:%SZ'))
     for entry in alert_log_list:
         resp = resp + _alert_list_body.format(time=entry.get('time'), message=entry.get('message'))
     resp = resp + _alert_list_tail
@@ -315,9 +320,9 @@ client.tls_set("/etc/ssl/certs/ca-certificates.crt")
 
 who_is_oncall = {'primary': 'Unknown', 'second': 'Unknown'}
 got_api_data = False
-latest_data_time = datetime.datetime.utcnow()
+latest_data_time = datetime.datetime.now(datetime.UTC)
 latest_data = latest_data_time.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
-next_data_report_time = datetime.datetime.utcnow()
+next_data_report_time = datetime.datetime.now(datetime.UTC)
 
 google_api_key = get_secret('GOOGLE_API_KEY')
 
@@ -344,7 +349,7 @@ while True:
     alertMessages = []
     escalateMessages = []
 
-    now_utc = datetime.datetime.utcnow()
+    now_utc = datetime.datetime.now(datetime.UTC)
     now = datetime.datetime.now(tz_london)
     now_utc_string = now.strftime('%Y-%m-%dT%H:%M:%SZ')
     now_string = now.strftime('%Y-%m-%dT%H:%M:%S')
@@ -362,6 +367,7 @@ while True:
                 message = 'Sending oncall reminder to ' + who_is_oncall.get(role) + ' at ' + email + ' for role ' + role
                 token = generate_token(email, message, ONCALL_ESCALATION_TIME)
                 sendMail_shift(email, role, token)
+                sendntfy(message, now, token)
                 token_mark_sent(token)
                 log_alert_message(now_string, message)
 
@@ -374,12 +380,14 @@ while True:
     tokenlist = expired_token()
     for entry in tokenlist:
         if entry.get('count') == 0:
-            escalateMessages.append('Escalate: '+entry.get('message'))
+            escalateMessages.append('Escalate: ' + entry.get('message'))
+            sendntfy('Escalate: ' + entry.get('message', now, ""))
         else:
             dup_count = entry.get('count')
             alertMessage = 'Repeated: {count:d} message: {message}'.format(count=dup_count, message=entry.get('message'))
             token = generate_token(email1, alertMessage, ALERT_ESCALATION_TIME)
             alertMessages.append(alertMessage)
+            sendntfy(alertMessage, now, "")
             log_alert_message(now_string, alertMessage)
 
     tokenlist = active_token()
@@ -409,6 +417,7 @@ while True:
             token = generate_token(email1, 'At: {time} message: {message}'.format(time=now_string, message=alertMessage),
                                     datetime.timedelta(seconds=15*60))
             alertMessages.append(alertMessage)
+            sendntfy("Active " + alertMessage, now, token)
             log_alert_message(now_string, alertMessage)
 
 # Send all the messages and esclations
