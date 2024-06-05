@@ -100,12 +100,13 @@ def on_message(client, userdata, message):
         log_alert_message(alert_time_string, alertMessage)
         if not(check_dup(alertMessage)):
             token = generate_token(email1, alertMessage, ALERT_ESCALATION_TIME)
-            sendntfy(alertMessage, alertTime, token)
+            sendntfy(alertMessage, alert_time_data, token)
             #sendMail_alert(email1, alertMessage, alertTime, token)
             #sendMail_alert(email2, alertMessage, alertTime, token)
     else:
         if not(check_dup('Ignoring old alerts')):
             token = generate_token(email1, 'Ignoring old alerts', ALERT_ESCALATION_TIME)
+            sendntfy('Ignoring old alerts', datetime.datetime.utcnow(), token)
             check_token(token)
     return
 
