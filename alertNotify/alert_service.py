@@ -92,6 +92,7 @@ def on_message(client, userdata, message):
     except ValueError:
         alert_time_string = alertTime
         alert_age = datetime.timedelta(seconds=1)
+        alert_time_data = datetime.datetime.utcnow()
     else:
         alert_time_string = datetime.datetime.strftime(alert_time_data, '%Y-%m-%dT%H:%M:%S')
         compare_now = datetime.datetime.strptime(datetime.datetime.utcnow().strftime('%d/%m/%Y %H:%M:%S'), '%d/%m/%Y %H:%M:%S')
