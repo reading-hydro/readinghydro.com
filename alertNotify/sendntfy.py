@@ -30,9 +30,9 @@ def sendntfy(alert: str, time: datetime, token: str):
     
 
 if __name__ == '__main__':
-    sendntfy("Active: Test alert message", datetime.datetime.now(datetime.UTC),
+    sendntfy("Active: Test alert message", datetime.datetime.utcnow(),
              "igUwV-l3fgId1sU_Dvgk2Eo8-ZTKUNARAfz4QeSagpw=")
-    sendntfy("Cleared: test alert message", datetime.datetime.now(datetime.UTC),
+    sendntfy("Cleared: test alert message", datetime.datetime.utcnow(),
              "igUwV-l3fgId1sU_Dvgk2Eo8-ZTKUNARAfz4QeSagpw=")
-    sendntfy("Escalate: Test Alert Message", datetime.datetime.now(datetime.UTC), "")
-    sendntfy("Repeated: Test Alert Message", datetime.datetime.now(datetime.UTC), "")
+    sendntfy("Escalate: Test Alert Message", datetime.datetime.utcnow(), "")
+    sendntfy("Repeated: Test Alert Message", datetime.datetime.utcnow(), "")
