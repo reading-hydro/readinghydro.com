@@ -298,6 +298,7 @@ f.close()
 tz_london = pytz.timezone('Europe/London')
 now = datetime.datetime.now(tz_london)
 now_string = now.strftime('%Y-%m-%dT%H:%M:%S')
+sendntfy("Alert Service Startup", datetime.datetime.utcnow(), "")
 log_alert_message(now_string, 'Alert Service startup')
 
 # This section starts the mqtt subscribe thread
@@ -361,7 +362,9 @@ while True:
                 if person['role'] == role:
                     if person.get('name') != who_is_oncall.get(role):
                         who_is_oncall.update({role: person.get('name')})
-                        log_alert_message(now_string, "On-Call for {role} is now {name}".format(role=role, name=person.get('name')))
+                        message = "On-Call for {role} is now {name}".format(role=role, name=person.get('name'))
+                        sendntfy(message, now, "")
+                        log_alert_message(now_string, message)
             if last_hour == 7:
                 email = contacts.get(who_is_oncall.get(role)).get('email')
                 message = 'Sending oncall reminder to ' + who_is_oncall.get(role) + ' at ' + email + ' for role ' + role
