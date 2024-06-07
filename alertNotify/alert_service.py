@@ -386,7 +386,7 @@ while True:
     for entry in tokenlist:
         if entry.get('count') == 0:
             escalateMessages.append('Escalate: ' + entry.get('message'))
-            sendntfy('Escalate: ' + entry.get('message', now, ""))
+            sendntfy('Escalate: ' + entry.get('message'), now, "")
         else:
             dup_count = entry.get('count')
             alertMessage = 'Repeated: {count:d} message: {message}'.format(count=dup_count, message=entry.get('message'))
