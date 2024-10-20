@@ -293,7 +293,7 @@ def restServer():
 
 
 f = open('/etc/hydro/oncall-contacts.cfg', 'r')
-contactsJSON = f.read(1024)
+contactsJSON = f.read(-1)
 contacts = json.loads(contactsJSON)
 f.close()
 
