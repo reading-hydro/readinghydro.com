@@ -11,7 +11,6 @@ import pytz
 import threading
 import boto3
 from tokenHandeler import generate_token, expired_token, check_dup, active_token, check_token, token_mark_sent
-from sendmail import sendMail_shift, sendMail_multialert, sendMail_multiescalate
 from urllib import request, parse
 from sendntfy import sendntfy
 
@@ -31,7 +30,7 @@ alert_log_list = []
 def log_alert_message(time: str, message: str) -> None:
     syslog.syslog('alert: ' + time + ' ' + message)
     alert_log_list.append({'time': time, 'message': message})
-    while len(alert_log_list) > 40:
+    while len(alert_log_list) > 30:
         alert_log_list.remove(alert_log_list[0])
     return
 
@@ -102,8 +101,6 @@ def on_message(client, userdata, message):
         if not(check_dup(alertMessage)):
             token = generate_token(email1, alertMessage, ALERT_ESCALATION_TIME)
             sendntfy(alertMessage, alert_time_data, token)
-            #sendMail_alert(email1, alertMessage, alertTime, token)
-            #sendMail_alert(email2, alertMessage, alertTime, token)
     else:
         if not(check_dup('Ignoring old alerts')):
             token = generate_token(email1, 'Ignoring old alerts', ALERT_ESCALATION_TIME)
@@ -371,7 +368,6 @@ while True:
                 email = contacts.get(who_is_oncall.get(role)).get('email')
                 message = 'Sending oncall reminder to ' + who_is_oncall.get(role) + ' at ' + email + ' for role ' + role
                 token = generate_token(email, message, ONCALL_ESCALATION_TIME)
-                sendMail_shift(email, role, token)
                 sendntfy(message, now, token)
                 token_mark_sent(token)
                 log_alert_message(now_string, message)
@@ -424,15 +420,6 @@ while True:
             alertMessages.append(alertMessage)
             sendntfy("Active " + alertMessage, now, token)
             log_alert_message(now_string, alertMessage)
-
-# Send all the messages and esclations
-    if len(alertMessages):
-        syslog.syslog('Sending {num} alert messages'.format(num=len(alertMessages)))
-        sendMail_multialert(email1, alertMessages, now_utc, token)
-        sendMail_multialert(email2, alertMessages, now_utc, token)
-    if len(escalateMessages):
-        syslog.syslog('Sending {num} escalations'.format(num=len(escalateMessages)))
-        sendMail_multiescalate('alerts@readinghydro.org', escalateMessages)
 
 # check the REST server is running, restart it if not
     if not(restThread.is_alive()):
