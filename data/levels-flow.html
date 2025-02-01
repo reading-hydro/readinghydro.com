@@ -333,13 +333,6 @@ var HOL = setdata.level
 // Comment out this line if EA API is giving errors
 var EA_data = await getData3()
 //#############################
-if (typeof EA_data !== 'undefined'){
-var myEA_data = EA_data.items
-    //Filter EA data to remove zero values
-        var selection2 = myEA_data.filter(function(item){
-        return new Date(item.flow) > 0
-    }) 
-}     
 var myChart_levels
 var myChart_flow
 var myChart_EAflow
@@ -498,7 +491,7 @@ inner_now_HOL.textContent = HOL.toFixed(3)
 inner_now_flow1.textContent = (global_data[0].gen1_flow_ls/1000).toFixed(2)
 inner_now_flow2.textContent = (global_data[0].gen2_flow_ls/1000).toFixed(2)
 if (typeof EA_data !== 'undefined'){
-inner_now_EAflow.textContent = (selection2[0].flow).toFixed(2)
+inner_now_EAflow.textContent = (EA_data[0].flow).toFixed(2)
 }
 now_upst.append(inner_now_upst)
 now_down.append(inner_now_down)
@@ -657,7 +650,7 @@ return new Date(item.received_at) >= mystart
         ys4.push(myflow2);
     }
     if (typeof EA_data !== 'undefined'){
-    for(item of selection2){
+    for(item of EA_data){
         //convert the timestamp to milliseconds (faster)                
         const myEAdate1 = new Date(item.entrytime)
         const myEAdate = myEAdate1.getTime()

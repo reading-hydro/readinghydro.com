@@ -71,7 +71,7 @@ def main():
     for row in items:
         rowtime = datetime.datetime.strptime(row.get('dateTime'),"%Y-%m-%dT%H:%M:%SZ")
         rowtime = rowtime.replace(tzinfo=datetime.timezone.utc)
-        if  rowtime > LastEntry:
+        if  rowtime > LastEntry and row.get('value') > 0:
             cursor.execute("INSERT INTO public.eadata (entrytime, flow) VALUES (%s, %s)", (row.get('dateTime'), row.get('value')))
             rowsadded += 1
 
