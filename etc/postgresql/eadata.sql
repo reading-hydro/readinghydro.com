@@ -15,11 +15,11 @@ AS SELECT
     date_trunc('hour', eadata.entrytime) AS entrytime,
     ROUND(avg(eadata.flow)::numeric,3) AS flow
 FROM public.eadata
-GROUP BY h_eadata.entrytime;
+GROUP BY date_trunc('hour', eadata.entrytime);
 
 CREATE MATERIALIZED VIEW d_eadata
 AS SELECT
     date_trunc('day', eadata.entrytime) AS entrytime,
     ROUND(avg(eadata.flow)::numeric,3) AS flow
 FROM public.eadata
-GROUP BY d_eadata.entrytime;
+GROUP BY date_trunc('day', eadata.entrytime);
