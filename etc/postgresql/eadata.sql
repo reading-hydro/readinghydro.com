@@ -23,3 +23,6 @@ AS SELECT
     ROUND(avg(eadata.flow)::numeric,3) AS flow
 FROM public.eadata
 GROUP BY date_trunc('day', eadata.entrytime);
+
+REFRESH MATERIALIZED VIEW h_eadata;
+REFRESH MATERIALIZED VIEW d_eadata;
