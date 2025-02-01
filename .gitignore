@@ -23,5 +23,4 @@ __pycache__/
 # ignore log files and databases
 *.pyc
 *.log
-*.sql
 *.sqlite
