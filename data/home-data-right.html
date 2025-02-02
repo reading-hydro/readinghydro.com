@@ -131,7 +131,7 @@ var global_data_meter = myreturn.filter(function(item){
 // functions
 
 async function getDataMeter() {
-    const response = await fetch('https://readinghydro.org:9445/api/meter/today') 
+    const response = await fetch('https://readinghydro.org:9445/api/meter/current') 
     const data = await response.json() 
     return data           
 }
