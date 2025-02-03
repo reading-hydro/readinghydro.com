@@ -291,17 +291,17 @@ var myds2 = urlParams.get('var2')
 var myds4 = myds2.substring(0, 4) + '-' + myds2.substring(4, 6)+ '-' + myds2.substring(6, 8)// format date for EA data
 var myhighlight = urlParams.get('var3')
 
-var myurl = 'https://readinghydro.org:9445/api/plc/between/' + myds1 + '/' + myds2
-var myurl_EA = 'https://readinghydro.org:9445/api/eadata/between/' + myds1 + '/' + myds2   
+var myurl = 'https://readinghydro.org/api/plc/between/' + myds1 + '/' + myds2
+var myurl_EA = 'https://readinghydro.org/api/eadata/between/' + myds1 + '/' + myds2   
 var param1 = myBST1// set param1 to the actual requested date
 //////////////////////////////
 var param2 = myds2
 var param3 = myhighlight
 } else {
-var myurl = 'https://readinghydro.org:9445/api/plc/between/' + ds1 + '/' + ds2
+var myurl = 'https://readinghydro.org/api/plc/between/' + ds1 + '/' + ds2
 // Edit by Stuart to resolve CORS problem 
 // https://readinghydro.org/eadata proxies to http://environment.data.gov.uk/
-var myurl_EA = 'https://readinghydro.org:9445/api/eadata/between/' + ds1 + '/' + ds2
+var myurl_EA = 'https://readinghydro.org/api/eadata/between/' + ds1 + '/' + ds2
 var param1 = ds1
 var param2 = ds2
 var param3 = 0
@@ -1026,7 +1026,7 @@ return arr
 }
 async function getData2() {
 
-const response = await fetch('https://readinghydro.org:9445/api/setlevel/current') 
+const response = await fetch('https://readinghydro.org/api/setlevel/current') 
 const data = await response.json()
 return data           
 }
