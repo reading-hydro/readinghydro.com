@@ -115,11 +115,12 @@
                 top_date_TOT_KW.innerHTML = `Last updated:  ${luxon.DateTime.fromISO(global_data2[0].received_at).toFormat('ff')}`
                 inner_now_caption_KW.innerHTML = 'of electricity is currently being generated'
 
-                inner_now_total_KW.textContent = (Math.min(global_data2[0].gen1_power_kw + global_data2[0].gen2_power_kw, 46)).toFixed(1) + ' kW'
+                inner_now_total_KW.textContent = (Math.min(global_data2[0].gen1_power_kw + global_data2[0].gen2_power_kw, 46)).toFixed(1)
                 if (inner_now_total_KW.textContent < 0){
                     inner_now_total_KW.textContent = 0
                 }   
-                
+                inner_now_total_KW.textContent = inner_now_total_KW.textContent + ' kW'
+
                 now_total_KW.append(inner_now_total_KW, inner_now_caption_KW)
 
                 wrap_TOT_KW.append(now_total_KW, subtitle_TOT_KW)                  
