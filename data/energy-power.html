@@ -291,13 +291,13 @@ if (urlParams.has('var1')) {
         var myhighlight = urlParams.get('var3')
         
 
-        var myurl = 'https://readinghydro.org:9445/api/plc/between/' + myds1 + '/' + myds2   
+        var myurl = 'https://readinghydro.org/api/plc/between/' + myds1 + '/' + myds2   
 		var param1 = myBST1// set param1 to the actual requested date
 //////////////////////////////
         var param2 = myds2
         var param3 = myhighlight
 } else {
-        var myurl = 'https://readinghydro.org:9445/api/plc/between/' + ds1 + '/' + ds2
+        var myurl = 'https://readinghydro.org/api/plc/between/' + ds1 + '/' + ds2
         var param1 = ds1
         var param2 = ds2
         var param3 = 0
@@ -785,7 +785,7 @@ async function getData() {
 }
 
 async function getDataMeter() {
-            const response = await fetch('https://readinghydro.org:9445/api/meter/today') 
+            const response = await fetch('https://readinghydro.org/api/meter/today') 
             const data = await response.json() 
             return data           
         }
