@@ -58,7 +58,7 @@ Sends the various alert and esclation emails
 
 # To Do #
 
-1. Create a databse for the contact information and methods for manageing contacts.
-2. Add TLS to the restServer.
-3. Add diferent alert messageing channels, text message is the first piriority
+1. Connect to the TTN network to revieve smoke alarm and door ststus
+2. Add TLS to the restServer. Not done proxy through apache to achieve this.
+
 
