@@ -1,0 +1,34 @@
+#!/bin/bash
+#
+# Create a hydro alert message with information when an UPS event happens.
+#
+# This script can be tested by running as follows:
+#     UPSNAME="nutdev1@localhost" ./notifycmd "Test Alert"
+#
+set -e
+
+# UPS Info
+STATUS=$(upsc "${UPSNAME}" ups.status)
+TIME=$(date +"%Y-%m-%d %H:%M:%S")
+
+# Check the online status first 2 characters are OL then we Cleared othewise Active
+if [[ "${STATUS:0:2}" == "OL" ]]; then
+    STATEAFTER="0"
+else
+    STATEAFTER="1"
+fi 
+
+# Prepare mqtt message
+BODY=$(cat <<EOF
+{"TimeString": "${TIME}", "StateAfter": ${STATEAFTER},
+"MsgText": "UPS Notification: ${*}"}
+EOF
+)
+
+echo "Prepairing to notify with the following message:"
+echo "${BODY}"
+echo -e "\n"
+
+# Publish the message to MQTT
+mosquitto_pub -h readinghydro.org -p 8883 -u austintest -P D2VK7jcy4DCA -t "hydro-alert" -m "${BODY}" --cafile /etc/ssl/certs/ca-certificates.crt --tls-version tlsv1.2
+
