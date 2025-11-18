@@ -8,7 +8,16 @@
 set -e
 
 # UPS Info
-STATUS=$(upsc "${UPSNAME}" ups.status)
+if [[ -z "${UPSNAME}" ]]; then
+    echo "UPSNAME is not set. Please set it to your UPS name."
+    exit 1
+fi
+if upsc "${UPSNAME}" >/dev/null 2>&1; then
+    STATUS=$(upsc "${UPSNAME}" ups.status)
+else
+    echo "UPS '${UPSNAME}' not found or not accessible."
+    STATUS="EE"
+fi
 TIME=$(date +"%Y-%m-%d %H:%M:%S")
 
 # Check the online status first 2 characters are OL then we Cleared othewise Active
@@ -20,7 +29,7 @@ fi
 
 # Prepare mqtt message
 BODY=$(cat <<EOF
-{"TimeString": "${TIME}", "StateAfter": ${STATEAFTER},
+{"TimeString": "${TIME}", "StateAfter": "${STATEAFTER}",
 "MsgText": "UPS Notification: ${*}"}
 EOF
 )
