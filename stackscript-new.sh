@@ -25,71 +25,10 @@ set -xo pipefail
 ## Import the Bash StackScript Library
 source <ssinclude StackScriptID=1>
 
-# Set hostname, run updates
-get_started \"$SUBDOMAIN\" \"$DOMAIN\" \"$IP\"
-
-# Get the Linode's IP address
-readonly IP=$(system_primary_ip)
-readonly IP6=$(system_primary_ipv6)
-
-# Generate passwords
-readonly WP_PASSWORD=randomString(16)
-readonly DBROOT_PASSWORD=randomString(16)
-readonly DB_PASSWORD=randomString(16)
-
-#set timezone and configure NTP
-system_set_timezone 'UTC'
-system_configure_ntp
-
-# Setup the sudo user, SSH keys, and disable root if needed
-if [ \"$USERNAME\" ]; then
-    # Create the user and add it to the 'sudo' group
-    user_add_sudo \"$USERNAME\" \"$PASSWORD\" && {
-        [ \"$DISABLE_ROOT\" == 'Yes' ] && ssh_disable_root
-        [ \"$PUBKEY\" ] && user_add_pubkey \"$USERNAME\" \"$PUBKEY\"
-
-        # Restart SSH to apply the changes
-        systemctl restart ssh
-    }
-fi
-
-# Configure the firewall and Security
-configure_ufw_firewall 22,80,443,8883,9445,9446
-enable_fail2ban
-automatic_security_updates
-
-### Domain and FQDN Configuration
-if [ \"$DOMAIN\" ]; then
-    # Determine the Linode's FQDN
-    if [ \"$SUBDOMAIN\" == \"\" ];
-        then readonly FQDN=\"$DOMAIN\"
-        else readonly FQDN=\"${SUBDOMAIN}.${DOMAIN}\"
-    fi
-fi
-
-lamp_stack \"$WORDPRESS_NAME\" \"$DBROOT_PASSWORD\" \"$FQDN\" \"$FQDN\"
-
-wordpress_install \"$DB_PASSWORD\" \"$FQDN\" \"$FQDN\" \
-                    \"$SITE_TITLE\" \"$WP_ADMIN\" \"$WP_PASSWORD\" \
-                    \"$SOA_EMAIL_ADDRESS\"
-## Security
-
-# Configure the firewall
-if [ \"${detected_distro[family]}\" == 'debian' ];
-    then ufw_install
-    else configure_basic_firewall
-fi
-
-# Automatic Security update and Fail2Ban
-automatic_security_updates
-enable_fail2ban
-
-
 ### Installations
 function wp_oca_lamp_stack {
     local -r dbroot_password="$1"
-    # take the left part of $fqdn ("$2") up to the first "."
-    local -r domain="${2%.*}"
+    local -r wordpress_name="$2"
     local -r fqdn="$3"
     local -r ip_address="$(system_primary_ip)"
 
@@ -113,12 +52,12 @@ function wp_oca_lamp_stack {
 
     # Apache
     rm /var/www/html/index.html
-    mkdir -p /var/www/$domain
+    mkdir -p /var/www/$wordpress_name
 
     # Configuration of virtualhost file, disables xmlrpc
     # Sets up a virtualhost for either the domain or the IP address
-        cat <<END > /etc/apache2/sites-available/$domain.conf
-<Directory /var/www/$domain/>
+        cat <<END > /etc/apache2/sites-available/$wordpress_name.conf
+<Directory /var/www/$wordpress_name/>
     Options Indexes FollowSymLinks
     AllowOverride All
     Require all granted
@@ -126,7 +65,7 @@ function wp_oca_lamp_stack {
 <VirtualHost $fqdn:80>
     ServerName $fqdn
     ServerAdmin webmaster@$fqdn
-    DocumentRoot /var/www/$domain/
+    DocumentRoot /var/www/$wordpress_name/
     ErrorLog /var/log/apache2/wordpress/error.log
     CustomLog /var/log/apache2/wordpress/access.log combined
     <files xmlrpc.php>
@@ -150,7 +89,7 @@ END
 
 function wordpress_oca_install {
     local -r db_password="$1"
-    local -r domain="${2%.*}"
+    local -r wordpress_name="$2"
     local -r fqdn="$3"
     local -r site_title="$4"
     local -r wpadmin="$5"
@@ -159,7 +98,7 @@ function wordpress_oca_install {
     local -r ip_address="$(system_primary_ip)"
 
 
-    # Install WordPress
+    # Install WordPress useing the WP-CLI tool
     curl -sLo wp-cli.phar https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
     mv wp-cli.phar /usr/local/bin/wp
     chmod 755 /usr/local/bin/wp
@@ -171,7 +110,7 @@ function wordpress_oca_install {
 
     wp core config --allow-root \
         --dbhost=localhost \
-        --dbname=$domain \
+        --dbname="${wordpress_name}db" \
         --dbuser=wordpress \
         --dbpass="$db_password"
 
@@ -182,10 +121,10 @@ function wordpress_oca_install {
             --admin_user="$wpadmin" \
             --admin_email="$soa_email_address" \
             --admin_password="$wp_password" \
-            --path="/var/www/$domain/"
+            --path="/var/www/$wordpress_name/"
 
     # Set ownership of the WordPress installation folder
-    chown www-data:www-data -R /var/www/$domain/
+    chown www-data:www-data -R /var/www/$wordpress_name/
 
     # Configure PHP to play nicely
     sed -i s/post_max_size\ =.*/post_max_size\ =\ 100M/ /etc/php/$PHP_VERSION/apache2/php.ini
@@ -193,13 +132,13 @@ function wordpress_oca_install {
     sed -i s/memory_limit\ =.*/memory_limit\ =\ 256M/ /etc/php/$PHP_VERSION/apache2/php.ini
 
     # Cron for WordPress updates
-    echo "0 1 * * * '/usr/local/bin/wp core update --allow-root --path=/var/www/$domain' > /dev/null 2>&1" >> wpcron
+    echo "0 1 * * * '/usr/local/bin/wp core update --allow-root --path=/var/www/$wordpress_name/' > /dev/null 2>&1" >> wpcron
     crontab wpcron
     rm wpcron
 
     # Disable the default virtual host
     a2dissite 000-default.conf
-    a2ensite $domain.conf
+    a2ensite $wordpress_name.conf
 
     # Fix for error stating that 
     # Restart services
@@ -236,6 +175,9 @@ Admin Username: $WP_ADMIN
 Admin Password: $WP_PASSWORD
 MySQL root Password: $DBROOT_PASSWORD
 WordPress Database Password: $DB_PASSWORD
+PHP Version: $PHP_VERSION
+WordPress Database Name: $DB_NAME
+WordPress Version: $(wp core version --allow-root --path="/var/www/${WORDPRESS_NAME}/")
 Linode/SSH Security Settings
 Username: $USERNAME
 Password: $PASSWORD
@@ -249,5 +191,53 @@ Send E-Mail: $SEND_EMAIL
 END
 
 }
+### Main Script
+# Set hostname, run updates
+get_started \"$SUBDOMAIN\" \"$DOMAIN\" \"$IP\"
+
+# Get the Linode's IP address
+readonly IP=$(system_primary_ip)
+readonly IP6=$(system_primary_ipv6)
+
+# Generate passwords
+readonly WP_PASSWORD=randomString 16
+readonly DBROOT_PASSWORD=randomString 16
+readonly DB_PASSWORD=randomString 16
+readonly DB_NAME=\"${WORDPRESS_NAME}db\"
+
+#set timezone and configure NTP
+system_set_timezone 'UTC'
+system_configure_ntp
+
+# Setup the sudo user, SSH keys, and disable root if needed
+if [ \"$USERNAME\" ]; then
+    # Create the user and add it to the 'sudo' group
+    user_add_sudo \"$USERNAME\" \"$PASSWORD\" && {
+        [ \"$DISABLE_ROOT\" == 'Yes' ] && ssh_disable_root
+        [ \"$PUBKEY\" ] && user_add_pubkey \"$USERNAME\" \"$PUBKEY\"
+
+        # Restart SSH to apply the changes
+        systemctl restart ssh
+    }
+fi
+
+# Configure the firewall and Security
+configure_ufw_firewall 22,80,443,8883,9445,9446
+enable_fail2ban
+automatic_security_updates
+
+### Domain and FQDN Configuration
+if [ \"$DOMAIN\" ]; then
+    # Determine the Linode's FQDN
+    if [ \"$SUBDOMAIN\" == \"\" ];
+        then readonly FQDN=\"$DOMAIN\"
+        else readonly FQDN=\"${SUBDOMAIN}.${DOMAIN}\"
+    fi
+fi
+
+wp_oca_lamp_stack \"$DBROOT_PASSWORD\" \"$WORDPRESS_NAME\" \"$FQDN\"
+
+wordpress_oca_install \"$DBROOT_PASSWORD\" \"$WORDPRESS_NAME\" \"$FQDN\" \
+         \"$SITE_TITLE\" \"$WP_ADMIN\" \"$WP_PASSWORD\" \"$SOA_EMAIL_ADDRESS\"
 
 save_configuration

@@ -408,7 +408,7 @@ while True:
     else:
         got_api_data = True
         latest_data = json.loads(latest_request.read())
-        latest_data_time = datetime.datetime.strptime(latest_data.get('received_at'), '%Y-%m-%dT%H:%M:%S.%fZ')
+        latest_data_time = datetime.datetime.strptime(latest_data.get('received_at'), '%Y-%m-%dT%H:%M:%SZ')
 
     if latest_data_time < now_utc - NO_DATA_REPORT_EVENT:
         if now_utc > next_data_report_time:
