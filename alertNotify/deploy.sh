@@ -5,7 +5,7 @@ echo "stop the existing alertNotify service"
 sudo systemctl stop hydro-alert-notify.service
 echo "copy files to /usr/local/bin/alertNotify"
 sudo cp alert_service.py /usr/local/bin/alertNotify/alert_service.py
-sudo cp tokenHandler.py /usr/local/bin/alertNotify/tokenHandler.py
+sudo cp tokenHandeler.py /usr/local/bin/alertNotify/tokenHandeler.py
 sudo cp sendntfy.py /usr/local/bin/alertNotify/sendntfy.py
 echo "start the alertNotify service"
 sudo systemctl start hydro-alert-notify.service
