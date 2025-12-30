@@ -32,8 +32,8 @@ def calendar_read(api_key):
     CALENDAR_ID = '6fue264k25k03v1ogsmkb2pk5g%40group.calendar.google.com'
 
 # Dictionary of query parameters
-    now = datetime.datetime.now(datetime.UTC).isoformat() + 'Z'
-    now_end = (datetime.datetime.now(datetime.UTC) + datetime.timedelta(days=1)).isoformat() + 'Z'
+    now = datetime.datetime.now(datetime.UTC).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+    now_end = (datetime.datetime.now(datetime.UTC) + datetime.timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
     parms = {
         'maxResults': '10',
         'singleEvents': 'true',
@@ -41,7 +41,6 @@ def calendar_read(api_key):
         'timeMax': now_end,
         'key': api_key
     }
-
     # Encode the query string
     querystring = parse.urlencode(parms)
     url = SCOPE+CALENDAR_ID+'/events?'

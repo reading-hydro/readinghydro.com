@@ -42,8 +42,8 @@ def calendar_read(api_key):
     CALENDAR_ID = '6fue264k25k03v1ogsmkb2pk5g%40group.calendar.google.com'
 
 # Dictionary of query parameters
-    now = datetime.datetime.utcnow().isoformat() + 'Z'
-    now_end = (datetime.datetime.utcnow() + datetime.timedelta(days=1)).isoformat() + 'Z'
+    now = datetime.datetime.now(datetime.UTC).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+    now_end = (datetime.datetime.now(datetime.UTC) + datetime.timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
     parms = {
         'maxResults': '10',
         'singleEvents': 'true',
@@ -94,7 +94,7 @@ def on_message(client, userdata, message):
         alert_time_data = datetime.datetime.utcnow()
     else:
         alert_time_string = datetime.datetime.strftime(alert_time_data, '%Y-%m-%dT%H:%M:%S')
-        compare_now = datetime.datetime.strptime(datetime.datetime.utcnow().strftime('%d/%m/%Y %H:%M:%S'), '%d/%m/%Y %H:%M:%S')
+        compare_now = datetime.datetime.strptime(datetime.datetime.now(datetime.UTC).strftime('%d/%m/%Y %H:%M:%S'), '%d/%m/%Y %H:%M:%S')
         alert_age = compare_now - alert_time_data
     if alert_age < IGNORE_ALERTS_OLDER_THAN:
         log_alert_message(alert_time_string, alertMessage)
@@ -264,7 +264,7 @@ _alert_list_tail = '''\
 def alertlist(environ, start_response):
     start_response('200 OK', [('Content-type', 'text/html')])
     tokenlist = active_token()
-    resp = _alert_list_head.format(time=datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ'))
+    resp = _alert_list_head.format(time=datetime.datetime.now(datetime.UTC).strftime('%Y-%m-%dT%H:%M:%SZ'))
     for entry in alert_log_list:
         resp = resp + _alert_list_body.format(time=entry.get('time'), message=entry.get('message'))
     resp = resp + _alert_list_tail
@@ -349,10 +349,13 @@ while True:
     alertMessages = []
     escalateMessages = []
 
-    now_utc = datetime.datetime.utcnow()
+    now_utc = datetime.datetime.now(datetime.UTC)
     now = datetime.datetime.now(tz_london)
     now_utc_string = now.strftime('%Y-%m-%dT%H:%M:%SZ')
     now_string = now.strftime('%Y-%m-%dT%H:%M:%S')
+
+# every hour read the calendar and see if there is a change in oncall personel
+
     if last_hour != now.hour:
         last_hour = now.hour
         new_who_is_oncall = calendar_read(google_api_key)
