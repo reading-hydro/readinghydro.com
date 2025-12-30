@@ -32,8 +32,8 @@ def calendar_read(api_key):
     CALENDAR_ID = '6fue264k25k03v1ogsmkb2pk5g%40group.calendar.google.com'
 
 # Dictionary of query parameters
-    now = datetime.datetime.utcnow().isoformat() + 'Z'
-    now_end = (datetime.datetime.utcnow() + datetime.timedelta(days=1)).isoformat() + 'Z'
+    now = datetime.datetime.now(datetime.UTC).isoformat() + 'Z'
+    now_end = (datetime.datetime.now(datetime.UTC) + datetime.timedelta(days=1)).isoformat() + 'Z'
     parms = {
         'maxResults': '10',
         'singleEvents': 'true',
