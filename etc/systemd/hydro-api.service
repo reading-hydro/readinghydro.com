@@ -1,0 +1,11 @@
+[Unit]
+Description=RdgHydro Data API
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/bin/bash /usr/local/bin/hydro-api.sh
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

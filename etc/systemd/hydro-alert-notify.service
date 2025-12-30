@@ -1,0 +1,11 @@
+[Unit]
+Description=RdgHydro Alert and Notify service
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /usr/local/bin/alertNotify/alert_service.py
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

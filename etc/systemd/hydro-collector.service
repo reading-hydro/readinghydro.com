@@ -1,0 +1,11 @@
+[Unit]
+Description=RdgHydro Data Collector
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/bin/bash /usr/local/bin/hydro-collector.sh
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
