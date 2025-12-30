@@ -3,7 +3,7 @@
 from __future__ import print_function
 import datetime
 from syslog import syslog
-cat import json
+import json
 import boto3
 
 
