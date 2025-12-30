@@ -7,7 +7,6 @@ import threading
 from calendarread import calendarread
 from restServer import restServer
 from tokenHandeler import generate_token, expired_token
-from sendmail import sendMail_alert, sendMail_shift, sendMail_esclate
 from urllib import request
 
 # Contacts hard coded for the moment need to add this in a database.
@@ -32,8 +31,8 @@ def on_message(client, userdata, message):
     alertMessage = decoded_message.get('MsgText')
     alertTime = decoded_message.get('TimeString')
     token = generate_token(email1, 'At: {time} message: {message}'.format(time=alertTime, message=alertMessage), datetime.timedelta(seconds=5*60))
-    sendMail_alert(email1, alertMessage, alertTime, token)
-    sendMail_alert(email2, alertMessage, alertTime, token)
+    print(email1, alertMessage, alertTime, token)
+    print(email2, alertMessage, alertTime, token)
 
 
 def on_connect(client, userdata, flags, rc):
@@ -124,13 +123,13 @@ try:
                 if last_hour == 9:
                     email = contacts.get(who_is_oncall.get(role)).get('email')
                     message = 'Sending oncall reminder to ' + who_is_oncall.get(role) + ' at ' + email + ' for role ' + role
-                    sendMail_shift(email, role, generate_token(email, message, datetime.timedelta(seconds=15*60)))
+                    print(email, role, generate_token(email, message, datetime.timedelta(seconds=15*60)))
 
 # look through the alert list for any expited alerts that have not been acknowleged.
         tokenlist = expired_token()
         for entry in tokenlist:
             token = generate_token('alerts@readinghydro.org', 'Esculate: '+entry.get('message'), datetime.timedelta(seconds=5*60))
-            sendMail_esclate('alerts@readinghydro.org', 'Esculate: '+entry.get('message'), token)
+            print('alerts@readinghydro.org', 'Esculate: '+entry.get('message'), token)
 
 # check the data feeds to see if we have current data, if not raise an alert
         latest_request = request.urlopen('https://readinghydro.org:9445/api/plc/current')
@@ -144,8 +143,8 @@ try:
                 alertMessage = 'No data recieved since '+latest_data_time.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
                 alertMessage += ' That is {minutes:.2} Minutes ago'.format(minutes=(now_utc-latest_data_time).seconds/60)
                 token = generate_token(email1, 'At: {time} message: {message}'.format(time=now_string, message=alertMessage), datetime.timedelta(seconds=5*60))
-                sendMail_alert(email1, alertMessage, now_string, token)
-                sendMail_alert(email2, alertMessage, now_string, token)
+                print(email1, alertMessage, now_string, token)
+                print(email2, alertMessage, now_string, token)
 
         time.sleep(30)
         pass
