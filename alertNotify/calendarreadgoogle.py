@@ -3,10 +3,7 @@
 from __future__ import print_function
 import datetime
 from syslog import syslog
-from googleapiclient.discovery import build
-from google.oauth2 import service_account
-from urllib.error import HTTPError, URLError
-import json
+cat import json
 import boto3
 
 
