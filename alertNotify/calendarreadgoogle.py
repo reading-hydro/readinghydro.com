@@ -61,7 +61,6 @@ def calendar_read(api_key):
             if (start < now < end):
                 entry = event['summary'].lower().split()
                 oncall.append({'name': entry[0], 'role': entry[1], 'time': now})
-                syslog.syslog('oncall active ' + event['summary'])
     return oncall
 
 
