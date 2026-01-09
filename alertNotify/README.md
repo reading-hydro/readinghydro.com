@@ -21,6 +21,9 @@ for the MQTT library
 pip install paho-mqtt
 sudo apt install python3-paho-mqtt
 
+for the EADataCollector
+sudo apt install python3-psycopg2
+
 ## Modules ##
 
 These modules provide the Alert notification system for Reading Hydro On-Call team

@@ -369,7 +369,7 @@ while True:
                         log_alert_message(now_string, message)
             if last_hour == 7:
                 email = contacts.get(who_is_oncall.get(role)).get('email')
-                message = 'Sending oncall reminder to ' + who_is_oncall.get(role) + ' at ' + email + ' for role ' + role
+                message = 'Sending oncall reminder to ' + who_is_oncall.get(role) + ' for role ' + role
                 token = generate_token(email, message, ONCALL_ESCALATION_TIME)
                 sendntfy(message, now, token)
                 token_mark_sent(token)
