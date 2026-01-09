@@ -30,6 +30,7 @@ WPCode snippet to disable admin bars on these two pages
 All other data pages
 
 WPCode snippet to increase container width from 1240px to 1440px (this allows charts to sit beside data boxes on wider screens)
+Note that it is inserted by conditional logic where page URL contains readinghydro.org/data/
 
 
 #################################
