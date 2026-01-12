@@ -58,3 +58,6 @@ Code to add to make pages work as html for testing elsewhere
 
 </body>
 </html>
+
+Currently dates are all local need to convert from using the getDate() to getUTCDate()
+as graphs are messed up in other time zones.
