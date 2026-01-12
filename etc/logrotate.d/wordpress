@@ -1,9 +1,0 @@
-/var/log/apache2/wordpress/*.log {
-	daily
-	rotate 12
-	compress
-	delaycompress
-	missingok
-	notifempty
-	create 644 root root
-}
