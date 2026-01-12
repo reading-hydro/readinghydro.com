@@ -6,7 +6,6 @@
 <!-- For luxon formatting see https://github.com/moment/luxon/blob/master/docs/formatting.md -->
 <script src="/wp-content/includes/datepicker.min.js"></script>
 <link rel="stylesheet" href="/wp-content/includes/datepicker.min.css">
-
  
 <style>
 
@@ -259,8 +258,8 @@
         // set default API query date to last day
         var today_q = new Date()
 		var today_y = new Date()						
-        today_q.setDate(today_q.getDate())
-        today_y.setDate(today_q.getDate() -1) //yesterday is to request extra day for gap in BST																								
+        today_q.setDate(today_q.getUTCDate())
+        today_y.setDate(today_q.getUTCDate() -1) //yesterday is to request extra day for gap in BST																								
 
         var ds1 = luxon.DateTime.fromJSDate(today_y).toFormat('yyyyLLdd')
         var ds2 = luxon.DateTime.fromJSDate(today_q).toFormat('yyyyLLdd')
@@ -273,7 +272,7 @@
                 var myBST1 = urlParams.get('var1')
                 var myBST1_date = luxon.DateTime.fromFormat(myBST1, 'yyyyLLdd').startOf('day').toJSDate()//testing
                 let myBSTvar1 = new Date(myBST1_date)
-                myBSTvar1.setDate(myBSTvar1.getDate() - 1)
+                myBSTvar1.setDate(myBSTvar1.getUTCDate() - 1)
                 var myds1 = luxon.DateTime.fromJSDate(myBSTvar1).toFormat('yyyyLLdd')																							   
                 var myds1 = urlParams.get('var1')
                 var myds2 = urlParams.get('var2')
@@ -538,11 +537,11 @@
     let lastweek = new Date()
     let lastmonth = new Date()
     let lastyear = new Date()
-    today.setDate(today.getDate())
-    today_end.setDate(today.getDate())
-    lastweek.setDate(today.getDate() - 7)
-    lastmonth.setDate(today.getDate() - 31)
-    lastyear.setDate(today.getDate() - 365)
+    today.setDate(today.getUTCDate())
+    today_end.setDate(today.getUTCDate())
+    lastweek.setDate(today.getUTCDate() - 7)
+    lastmonth.setDate(today.getUTCDate() - 31)
+    lastyear.setDate(today.getUTCDate() - 365)
     
     today = luxon.DateTime.fromJSDate(today).startOf('day').toJSDate()
     today_end = luxon.DateTime.fromJSDate(today).endOf('day').toJSDate()
@@ -566,7 +565,7 @@
     }
 
 // if reloaded with last week, month or year buttons
-if (param2_date.getDate() == today.getDate()) {
+if (param2_date.getUTCDate() == today.getUTCDate()) {
    picker2.setDate(today_end, true)
 }
 
