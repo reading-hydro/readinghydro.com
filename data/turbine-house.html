@@ -1,15 +1,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/luxon@2.0.1/build/global/luxon.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.0.0/dist/chartjs-adapter-luxon.min.js"></script>
+<script src="/wp-content/includes/Chart.min.js"></script>
+<script src="/wp-content/includes/luxon.min.js"></script>
+<script src="/wp-content/includes/chartjs-adapter-luxon.min.js"></script>
 <!-- For luxon formatting see https://github.com/moment/luxon/blob/master/docs/formatting.md -->
-<script src="https://unpkg.com/js-datepicker"></script>
-<link rel="stylesheet" href="https://unpkg.com/js-datepicker/dist/datepicker.min.css">
-
+<script src="/wp-content/includes/datepicker.min.js"></script>
+<link rel="stylesheet" href="/wp-content/includes/datepicker.min.css">
 
 <style>
-
     .tt {
          font-family: Arial, Helvetica, sans-serif;
          font-size: 20px;
@@ -36,7 +34,6 @@
         max-width: 1280px;
         margin: auto;
      }
-
      .col_lef {
         max-width: 500px;
         padding-bottom: 40px;
@@ -141,7 +138,6 @@
     #hum {
         background-color: #167CAC;
      }
-
      #ca_tem {
          height: 100%;                          
      }
@@ -211,7 +207,6 @@
               height: 290px;
               margin: auto;
           }
-          
      }
      @media only screen and (max-width: 360px) {
          /* this is for really tiny phones */
@@ -221,9 +216,8 @@
          margin: 5px auto;
         }
      }
-     
- 
-</style>
+
+     </style>
 
 <script type="text/javascript">
 //<!--
@@ -232,8 +226,8 @@
         // set default API query date to last day
         var today_q = new Date()
         var today_y = new Date()
-        today_q.setDate(today_q.getDate())
-        today_y.setDate(today_q.getDate() -1) //yesterday is to request extra day for gap in BST
+        today_q.setDate(today_q.getUTCDate())
+        today_y.setDate(today_q.getUTCDate() -1) //yesterday is to request extra day for gap in BST
 
         var ds1 = luxon.DateTime.fromJSDate(today_y).toFormat('yyyyLLdd')
         var ds2 = luxon.DateTime.fromJSDate(today_q).toFormat('yyyyLLdd')
@@ -252,12 +246,12 @@
                 var myds2 = urlParams.get('var2')
                 var myhighlight = urlParams.get('var3')
         
-                var myurl = 'https://readinghydro.org:9445/api/ttn/between/' + myds1 + '/' + myds2   
+                var myurl = '/api/ttn/between/' + myds1 + '/' + myds2   
                 var param1 = myBST1// set param1 to the actual requested date
                 var param2 = myds2
                 var param3 = myhighlight
         } else {
-                var myurl = 'https://readinghydro.org:9445/api/ttn/between/' + ds1 + '/' + ds2
+                var myurl = '/api/ttn/between/' + ds1 + '/' + ds2
                 var param1 = ds1
                 var param2 = ds2
                 var param3 = 0
@@ -419,11 +413,11 @@
     let lastweek = new Date()
     let lastmonth = new Date()
     let lastyear = new Date()
-    today.setDate(today.getDate())
-    today_end.setDate(today.getDate())
-    lastweek.setDate(today.getDate() - 7)
-    lastmonth.setDate(today.getDate() - 31)
-    lastyear.setDate(today.getDate() - 365)
+    today.setDate(today.getUTCDate())
+    today_end.setDate(today.getUTCDate())
+    lastweek.setDate(today.getUTCDate() - 7)
+    lastmonth.setDate(today.getUTCDate() - 31)
+    lastyear.setDate(today.getUTCDate() - 365)
     
     today = luxon.DateTime.fromJSDate(today).startOf('day').toJSDate()
     today_end = luxon.DateTime.fromJSDate(today).endOf('day').toJSDate()
@@ -697,7 +691,7 @@ async function getData() {
     var arr = [data, param1, param2, param3] 
     return arr           
 }
-    
+
 // DO NOT REMOVE the comment below, it stops Wordpress from escaping ampersands
 //--></script>  
 
