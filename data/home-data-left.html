@@ -109,8 +109,8 @@
                 inner_now_total_KW.className ="inner fontbig"
                 inner_now_caption_KW.className ="innercaption fontsmall"
 
-                subtitle_TOT_KW.innerHTML = '<!--No power being generated? <a href="https://readinghydro.org/blog" target="_blank">Click here to find out why</a> -->'
-                top_date_TOT_KW.innerHTML = `Last updated:  ${luxon.DateTime.fromISO(global_data2[0].received_at).toFormat('ff')}`
+                subtitle_TOT_KW.innerHTML = '<!--No power being generated? <a href="/blog" target="_blank">Click here to find out why</a> -->'
+                top_date_TOT_KW.innerHTML = `Last updated:  ${luxon.DateTime.fromISO(global_data2[0].received_at).toFormat('yyyy-LL-dd T')} UTC`
                 inner_now_caption_KW.innerHTML = 'of electricity is currently being generated'
 
                 inner_now_total_KW.textContent = (Math.min(global_data2[0].gen1_power_kw + global_data2[0].gen2_power_kw, 46)).toFixed(1)

@@ -270,7 +270,7 @@ background-color: #3ca650;
 var today_q = new Date()
 var today_y = new Date()
 today_q.setDate(today_q.getUTCDate())
-today_y.setDate(today_q.getUTCDate() -1) //yesterday is to request extra day for gap in BST
+today_y.setDate(today_q.getUTCDate())
 
 var ds1 = luxon.DateTime.fromJSDate(today_y).toFormat('yyyyLLdd')
 var ds2 = luxon.DateTime.fromJSDate(today_q).toFormat('yyyyLLdd')
@@ -295,14 +295,11 @@ var myhighlight = urlParams.get('var3')
 
 var myurl = '/api/plc/between/' + myds1 + '/' + myds2
 var myurl_EA = '/api/eadata/between/' + myds1 + '/' + myds2   
-var param1 = myBST1// set param1 to the actual requested date
-//////////////////////////////
+var param1 = myBST1
 var param2 = myds2
 var param3 = myhighlight
 } else {
 var myurl = '/api/plc/between/' + ds1 + '/' + ds2
-// Edit by Stuart to resolve CORS problem 
-// https://readinghydro.org/eadata proxies to http://environment.data.gov.uk/
 var myurl_EA = '/api/eadata/between/' + ds1 + '/' + ds2
 var param1 = ds1
 var param2 = ds2
@@ -464,7 +461,7 @@ canvwrap_EAflow.className = "cwra"
 
 title.innerHTML = "River Conditions"
 notes.innerHTML = "<a href='#notes'>See below for explanatory notes</a>"
-subtitle1.innerHTML = `Current conditions: <span id="ts">${luxon.DateTime.fromISO(global_data[0].received_at).toFormat('D T')} </span>`
+subtitle1.innerHTML = `Current conditions: <span id="ts">${luxon.DateTime.fromISO(global_data[0].received_at).toFormat('yyyy-LL-dd T')} UTC</span>`
 subtitle2.innerHTML = "<span>Conditions over selected period</span>"
 button1.innerHTML = "Last day"
 button1.onclick = function(){picker2.setDate(today_end, true); picker1.setDate(today, true); selectTimescale(today, today_end, param1, param2, param3)}
@@ -696,7 +693,7 @@ return new Date(item.received_at) >= mystart
     //Set global defaults for charts
     //More settings can be global if we use Chartjs v3
     Chart.defaults.global.tooltips.callbacks.title = function(t, d) {
-                            return luxon.DateTime.fromMillis(d.labels[t[0].index]).toFormat('D T');
+                            return luxon.DateTime.fromMillis(d.labels[t[0].index]).toFormat('yyyy-LL-dd T');
                                     }
     //Chart.defaults.global.animation.duration = 0 
     Chart.defaults.global.maintainAspectRatio = false

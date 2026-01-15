@@ -227,7 +227,7 @@
         var today_q = new Date()
         var today_y = new Date()
         today_q.setDate(today_q.getUTCDate())
-        today_y.setDate(today_q.getUTCDate() -1) //yesterday is to request extra day for gap in BST
+        today_y.setDate(today_q.getUTCDate())
 
         var ds1 = luxon.DateTime.fromJSDate(today_y).toFormat('yyyyLLdd')
         var ds2 = luxon.DateTime.fromJSDate(today_q).toFormat('yyyyLLdd')
@@ -240,14 +240,13 @@
                 var myBST1 = urlParams.get('var1')
                 var myBST1_date = luxon.DateTime.fromFormat(myBST1, 'yyyyLLdd').startOf('day').toJSDate()//testing
                 let myBSTvar1 = new Date(myBST1_date)
-                myBSTvar1.setDate(myBSTvar1.getDate() - 1)
                 var myds1 = luxon.DateTime.fromJSDate(myBSTvar1).toFormat('yyyyLLdd')
                 var myds1 = urlParams.get('var1')
                 var myds2 = urlParams.get('var2')
                 var myhighlight = urlParams.get('var3')
         
                 var myurl = '/api/ttn/between/' + myds1 + '/' + myds2   
-                var param1 = myBST1// set param1 to the actual requested date
+                var param1 = myBST1
                 var param2 = myds2
                 var param3 = myhighlight
         } else {
@@ -357,13 +356,13 @@
             button4.className = "btn"
         } 
         label1.className = "lab"
-        label2.className = "lab"
+        label2.className = "lab" 
         canvwrap_temp.className = "cwra"
         canvwrap_humid.className = "cwra"
 
         title.innerHTML = "Turbine House"
         notes.innerHTML = "<a href='#notes'>See below for explanatory notes</a>"
-        subtitle1.innerHTML = `Current conditions: <span id="ts">${luxon.DateTime.fromISO(global_data[0].received_at).toFormat('ff')} </span>`
+        subtitle1.innerHTML = `Current conditions: <span id="ts">${luxon.DateTime.fromISO(global_data[0].received_at).toFormat('yyyy-LL-dd T')} UTC</span>`
         subtitle2.innerHTML = "<span>Conditions over selected period</span>"
         button1.innerHTML = "Last day"
         button1.onclick = function(){picker2.setDate(today_end, true); picker1.setDate(today, true); selectTimescale(today, today_end, param1, param2, param3)}
@@ -549,7 +548,7 @@ function selectTimescale(mystart, myend, myparam1, myparam2, myparam3) {
         //Set global defaults for charts
         //More settings can be global if we use Chartjs v3
         Chart.defaults.global.tooltips.callbacks.title = function(t, d) {
-                                return luxon.DateTime.fromMillis(d.labels[t[0].index]).toFormat('ff');
+                                return luxon.DateTime.fromMillis(d.labels[t[0].index]).toFormat('yyyy-LL-dd T');
                                         }
         //Chart.defaults.global.animation.duration = 0
         Chart.defaults.global.maintainAspectRatio = false

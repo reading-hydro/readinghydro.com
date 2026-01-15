@@ -423,7 +423,7 @@ var EA_data = await getData4()
 
         title_PO.innerHTML = '<a href="/power-output-data/">Electricity generation</a>'
         under_title_PO.innerHTML = '<a href="/power-output-data/">click for data history</a>'
-        subtitle_T1.innerHTML = `Turbine 1 (Tony): <span class="ts">${luxon.DateTime.fromISO(global_data2[0].received_at).toFormat('D T')} </span><br />Current performance of turbine and generator`
+        subtitle_T1.innerHTML = `Turbine 1 (Tony): <span class="ts">${luxon.DateTime.fromISO(global_data2[0].received_at).toFormat('yyyy-LL-dd T')} UTC</span><br />Current performance of turbine and generator`
         subtitle_TOT.innerHTML = 'Total electricity exported to date (both turbines)'
 
         now_total.innerHTML = 'Total export (MWh)'
@@ -460,7 +460,7 @@ var EA_data = await getData4()
         wrap_T1.append(nowPower_G1, nowScrewRPM_G1, nowDriveRPM_G1, nowOpHours_G1, nowEnergy_G1, clear)
         wrap_PO.append(wrap_T1)
 
-        subtitle_T2.innerHTML = `Turbine 2 (Sophie): <span class="ts">${luxon.DateTime.fromISO(global_data2[0].received_at).toFormat('D T')} </span><br />Current performance of turbine and generator`
+        subtitle_T2.innerHTML = `Turbine 2 (Sophie): <span class="ts">${luxon.DateTime.fromISO(global_data2[0].received_at).toFormat('yyyy-LL-dd T')} UTC</span><br />Current performance of turbine and generator`
 
         nowPower_G2.innerHTML = 'Power generation (kW)'
         nowScrewRPM_G2.innerHTML = 'Screw speed (RPM)'
@@ -492,7 +492,7 @@ var EA_data = await getData4()
 
         title_RC.innerHTML = '<a href="/water-level-data/">River conditions</a>'
         under_title_RC.innerHTML = '<a href="/water-level-data/">click for data history</a>'
-        subtitle_RC.innerHTML = `Current conditions: <span class="ts">${luxon.DateTime.fromISO(global_data2[0].received_at).toFormat('D T')} </span>`
+        subtitle_RC.innerHTML = `Current conditions: <span class="ts">${luxon.DateTime.fromISO(global_data2[0].received_at).toFormat('yyyy-LL-dd T')} UTC</span>`
 
         now_upst.innerHTML = "Upstream (metres AOD)"
         now_down.innerHTML = "Downstream (metres AOD)"
@@ -534,7 +534,7 @@ var EA_data = await getData4()
                 return item.device_id == 'rdghydro-ers001'
             })
 
-        subtitle_TH.innerHTML = `Current conditions: <span class="ts">${luxon.DateTime.fromISO(selection1[0].received_at).toFormat('D T')} </span>`
+        subtitle_TH.innerHTML = `Current conditions: <span class="ts">${luxon.DateTime.fromISO(selection1[0].received_at).toFormat('yyyy-LL-dd T')} UTC</span>`
 
         nowtemp.innerHTML = "Temperature (&deg;C)"
         nowhumid.innerHTML = "Relative humidity (&percnt;)"

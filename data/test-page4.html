@@ -259,7 +259,7 @@
         var today_q = new Date()
 		var today_y = new Date()						
         today_q.setDate(today_q.getUTCDate())
-        today_y.setDate(today_q.getUTCDate() -1) //yesterday is to request extra day for gap in BST																								
+        today_y.setDate(today_q.getUTCDate()) 
 
         var ds1 = luxon.DateTime.fromJSDate(today_y).toFormat('yyyyLLdd')
         var ds2 = luxon.DateTime.fromJSDate(today_q).toFormat('yyyyLLdd')
@@ -459,7 +459,7 @@
         canvwrap_gate2.className = "cwra"
 
         title.innerHTML = "Turbine House"
-        subtitle1.innerHTML = `Current conditions: <span id="ts">${luxon.DateTime.fromISO(global_data[0].received_at).toFormat('ff')} </span>`
+        subtitle1.innerHTML = `Current conditions: <span id="ts">${luxon.DateTime.fromISO(global_data[0].received_at).toFormat('yyyy-LL-dd T')} UTC</span>`
         subtitle2.innerHTML = "<span>Conditions over selected period</span>"
         button1.innerHTML = "Last day"
         button1.onclick = function(){picker2.setDate(today_end, true); picker1.setDate(today, true); selectTimescale(today, today_end, param1, param2, param3)}
@@ -973,10 +973,11 @@ function selectTimescale(mystart, myend, myparam1, myparam2, myparam3) {
                             yAxes: [{
                                 ticks: {
                                     fontSize: 15,
-                                    fontStyle: "bold", min:0, max:1400,
+                                    fontStyle: "bold", 
+                                    min:0, max:1200,
                                         },
-                                        scaleLabel: {
-                                    display: false                                      
+                                    scaleLabel: {
+                                    display: false
                                         }
                                     }]
                             },
@@ -1029,10 +1030,11 @@ function selectTimescale(mystart, myend, myparam1, myparam2, myparam3) {
                             yAxes: [{
                                 ticks: {
                                     fontSize: 15,
-                                    fontStyle: "bold", min:0, max:1400,
+                                    fontStyle: "bold", 
+                                    min:0, max:1200,
                                         },
-                                        scaleLabel: {
-                                    display: false                                      
+                                    scaleLabel: {
+                                    display: false
                                         }
                                     }]
                             },
