@@ -1,9 +1,9 @@
 #! /bin/bash
 logger -p local3.info -t hydrodbuser -- called Refresh materalized views
-su hydrodbuser -c "psql -d hydrodb -U hydrodbuser -h localhost -a -c 'REFRESH MATERIALIZED VIEW h_hydro_data;'"
-su hydrodbuser -c "psql -d hydrodb -U hydrodbuser -h localhost -a -c 'REFRESH MATERIALIZED VIEW d_hydro_data;'"
-su hydrodbuser -c "psql -d hydrodb -U hydrodbuser -h localhost -a -c 'REFRESH MATERIALIZED VIEW h_eadata;'"
-su hydrodbuser -c "psql -d hydrodb -U hydrodbuser -h localhost -a -c 'REFRESH MATERIALIZED VIEW d_eadata;'"
+psql -d hydrodb -U hydrodbuser -h localhost -a -c 'REFRESH MATERIALIZED VIEW h_hydro_data;'
+psql -d hydrodb -U hydrodbuser -h localhost -a -c 'REFRESH MATERIALIZED VIEW d_hydro_data;'
+psql -d hydrodb -U hydrodbuser -h localhost -a -c 'REFRESH MATERIALIZED VIEW h_eadata;'
+psql -d hydrodb -U hydrodbuser -h localhost -a -c 'REFRESH MATERIALIZED VIEW d_eadata;'
 logger -p local3.info -t hydrodbuser -- compleated refresh materilised views
 
 
