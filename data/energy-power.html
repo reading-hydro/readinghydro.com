@@ -1,3 +1,4 @@
+<title>Energy and Power Data</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script src="/wp-content/includes/Chart.min.js"></script>
@@ -594,19 +595,35 @@ if (!urlParams.has('var1')) {
 //else select timescale using parameters from buttons or datepicker
 function selectTimescale(mystart, myend, myparam1, myparam2, myparam3) {
 
-//reload page and fetch more data if needed
+//reload page to fetch more data if needed
+        var reload = false
         if (myparam1) {
             var myparam1_date = luxon.DateTime.fromFormat(myparam1, 'yyyyLLdd').startOf('day').toJSDate()
+            var myparam2_date = luxon.DateTime.fromFormat(myparam2, 'yyyyLLdd').endOf('day').toJSDate()
             } else {
                 myparam1_date = today
+                myparam2_date = today_end
             }
 
-    if (mystart < myparam1_date) {
-        
-            if (picked == true) {
-                myparam3 = 4
-            } 
-            
+        if (mystart < myparam1_date) {
+            reload = true
+                if (picked == true) {
+                    myparam3 = 4
+                } 
+        }
+        // If the period is going from more that 336 hours to less then we have 
+        // hourly data and need to reload to get 10 minute interval data.
+        // simularly if we are going from more than 2232 hours to less, we 
+        // are going from daily to hourly data and need to reload.
+        var oldlength = myparam2_date - myparam1_date
+        var newlength = myend - mystart
+        if ( (oldlength > 336*3600000) && (newlength < 336*3600000) ) {
+            reload = true
+        }
+        if ( (oldlength > 2232*3600000) && (newlength < 2232*3600000) ) {
+            reload = true
+        }
+        if (reload == true) {       
             var newstart = luxon.DateTime.fromJSDate(mystart).toFormat('yyyyLLdd')
             var newend = luxon.DateTime.fromJSDate(myend).toFormat('yyyyLLdd')
             var path = window.location.href.split(/[?#]/)[0] // Remove parameters and/or anchor
