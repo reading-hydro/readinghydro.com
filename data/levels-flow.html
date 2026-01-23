@@ -309,6 +309,10 @@ var param3 = 0
 GoDoIt(myurl, param1, param2, param3)
 
 async function GoDoIt (){
+// get the current data from the API for the box displays
+var boxdata = await getData0()
+
+//get the data for the period specified for the charts
 var myreturn = await getData1(myurl, param1, param2, param3);
 var global_data = myreturn[0]
 var param1 = myreturn[1]
@@ -316,15 +320,14 @@ var param2 = myreturn[2]
 var param3 = myreturn[3]
 
 //Filter data to remove zero values in river levels
-if (typeof global_data !== 'undefined'){
-            
+if (global_data !== null) {
             var global_data = global_data.filter(function(item){
                 return new Date(item.downstream) > 0
             }) 
             var global_data = global_data.filter(function(item){
                 return new Date(item.upstream) > 0
             })             
-        }    
+        }
 
 var setdata = await getData2()
 var HOL = setdata.level
@@ -461,7 +464,7 @@ canvwrap_EAflow.className = "cwra"
 
 title.innerHTML = "River Conditions"
 notes.innerHTML = "<a href='#notes'>See below for explanatory notes</a>"
-subtitle1.innerHTML = `Current conditions: <span id="ts">${luxon.DateTime.fromISO(global_data[0].received_at).toFormat('yyyy-LL-dd T')} UTC</span>`
+subtitle1.innerHTML = `Current conditions: <span id="ts">${luxon.DateTime.fromISO(boxdata.received_at).toFormat('yyyy-LL-dd T')} UTC</span>`
 subtitle2.innerHTML = "<span>Conditions over selected period</span>"
 button1.innerHTML = "Last day"
 button1.onclick = function(){picker2.setDate(today_end, true); picker1.setDate(today, true); selectTimescale(today, today_end, param1, param2, param3)}
@@ -482,13 +485,13 @@ now_flow2.innerHTML = "Water flow turbine 2 (m<sup>3</sup>/s)"
 now_EAflow.innerHTML = "Flow at Reading Bridge (m<sup>3</sup>/s)"
 label1.innerHTML = "Start date"
 label2.innerHTML = "End date"
-inner_now_upst.textContent = global_data[0].upstream.toFixed(3)
-inner_now_down.textContent = global_data[0].downstream.toFixed(3)
-inner_now_head.textContent = (global_data[0].upstream - global_data[0].downstream).toFixed(3)
-inner_now_aboveHOL.textContent = (global_data[0].upstream - HOL).toFixed(3)
+inner_now_upst.textContent = boxdata.upstream.toFixed(3)
+inner_now_down.textContent = boxdata.downstream.toFixed(3)
+inner_now_head.textContent = (boxdata.upstream - boxdata.downstream).toFixed(3)
+inner_now_aboveHOL.textContent = (boxdata.upstream - HOL).toFixed(3)
 inner_now_HOL.textContent = HOL.toFixed(3)
-inner_now_flow1.textContent = (global_data[0].gen1_flow_ls/1000).toFixed(2)
-inner_now_flow2.textContent = (global_data[0].gen2_flow_ls/1000).toFixed(2)
+inner_now_flow1.textContent = (boxdata.gen1_flow_ls/1000).toFixed(2)
+inner_now_flow2.textContent = (boxdata.gen2_flow_ls/1000).toFixed(2)
 if (typeof EA_data !== 'undefined'){
 inner_now_EAflow.textContent = (EA_data[0].flow).toFixed(2)
 }
@@ -577,25 +580,41 @@ selectTimescale(param1_date, param2_date, param1, param2, param3)
 function selectTimescale(mystart, myend, myparam1, myparam2, myparam3) {
 
 //reload page and fetch more data if needed
+var reload = false
 if (myparam1) {
     var myparam1_date = luxon.DateTime.fromFormat(myparam1, 'yyyyLLdd').startOf('day').toJSDate()
+    var myparam2_date = luxon.DateTime.fromFormat(myparam2, 'yyyyLLdd').endOf('day').toJSDate()
     } else {
         myparam1_date = today
+        myparam2_date = today_end
     }
 
 if (mystart < myparam1_date) {
-
+    reload = true
     if (picked == true) {
         myparam3 = 4
-    } 
-
+    }
+}
+// If the period is going from more that 336 hours to less then we have 
+// hourly data and need to reload to get 10 minute interval data.
+// simularly if we are going from more than 2232 hours to less, we 
+// are going from daily to hourly data and need to reload.
+var oldlength = myparam2_date - myparam1_date
+var newlength = myend - mystart
+if ( (oldlength > 336*3600000) && (newlength < 336*3600000) ) {
+    reload = true
+}
+if ( (oldlength > 2232*3600000) && (newlength < 2232*3600000) ) {
+    reload = true
+}
+if (reload == true){
     var newstart = luxon.DateTime.fromJSDate(mystart).toFormat('yyyyLLdd')
     var newend = luxon.DateTime.fromJSDate(myend).toFormat('yyyyLLdd')
     var path = window.location.href.split(/[?#]/)[0] // Remove parameters and/or anchor
     var path2 = window.location.pathname
     location.href = path + '?var1=' + newstart + '&var2=' + newend + '&var3=' + myparam3
     return
-} 
+}
 
 var selection = global_data.filter(function(item){
 return new Date(item.received_at) >= mystart
@@ -1014,6 +1033,11 @@ myChart_EAflow = new Chart(ctx_EAflo, {
 function myround(value, precision) {
 var multiplier = Math.pow(10, precision || 0);
 return Math.round(value * multiplier) / multiplier;
+}
+async function getData0() {
+const response = await fetch('/api/plc/current') 
+const data = await response.json()
+return data
 }
 async function getData1() {
 

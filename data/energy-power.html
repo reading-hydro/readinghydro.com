@@ -303,6 +303,8 @@ if (urlParams.has('var1')) {
 GoDoIt(myurl, param1, param2, param3)
 
 async function GoDoIt (){
+var boxdata = await getData0()
+// get the data for the period specified for the charts
 var myreturn = await getData(myurl, param1, param2, param3);
 var global_data = myreturn[0]
 var param1 = myreturn[1]
@@ -464,8 +466,8 @@ var global_data_meter = myreturn2.filter(function(item){
         //title.innerHTML = "Electrical Power Output"
         notes.innerHTML = "<a href='#notes'>See below for explanatory notes</a>"
         subtitle_TOT.innerHTML = "Total electricity exported to date<br />(both turbines)"
-        subtitle1_T1.innerHTML = `Turbine 1 (Tony)<br />Current conditions: <span id="ts">${luxon.DateTime.fromISO(global_data[0].received_at).toFormat('yyyy-LL-dd T')} UTC</span>`
-        subtitle1_T2.innerHTML = `Turbine 2 (Sophie)<br />Current conditions: <span id="ts">${luxon.DateTime.fromISO(global_data[0].received_at).toFormat('yyyy-LL-dd T')} UTC</span>`
+        subtitle1_T1.innerHTML = `Turbine 1 (Tony)<br />Current conditions: <span id="ts">${luxon.DateTime.fromISO(boxdata.received_at).toFormat('yyyy-LL-dd T')} UTC</span>`
+        subtitle1_T2.innerHTML = `Turbine 2 (Sophie)<br />Current conditions: <span id="ts">${luxon.DateTime.fromISO(boxdata.received_at).toFormat('yyyy-LL-dd T')} UTC</span>`
         subtitle2.innerHTML = "<span>Power generation by both turbines<br />over selected period</span>"
         button1.innerHTML = "Last day"
         button1.onclick = function(){picker2.setDate(today_end, true); picker1.setDate(today, true); selectTimescale(today, today_end, param1, param2, param3)}
@@ -490,22 +492,22 @@ var global_data_meter = myreturn2.filter(function(item){
         label1.innerHTML = "Start date"
         label2.innerHTML = "End date"
         inner_now_total.textContent = (global_data_meter[0].export/1000).toFixed(1)
-        inner_nowPower_G1.textContent = Math.min(global_data[0].gen1_power_kw, 23)
+        inner_nowPower_G1.textContent = Math.min(boxdata.gen1_power_kw, 23)
         if (inner_nowPower_G1.textContent < 0){
             inner_nowPower_G1.textContent = 0
                 }
-        inner_nowScrewRPM_G1.textContent = global_data[0].gen1_screw_rpm
-        inner_nowDriveRPM_G1.textContent = global_data[0].gen1_drive_rpm
-        inner_nowOpHours_G1.textContent = global_data[0].gen1_operating_hours
-        inner_nowEnergy_G1.textContent = global_data[0].gen1_energy_mwh
-        inner_nowPower_G2.textContent = Math.min(global_data[0].gen2_power_kw, 23)
+        inner_nowScrewRPM_G1.textContent = boxdata.gen1_screw_rpm
+        inner_nowDriveRPM_G1.textContent = boxdata.gen1_drive_rpm
+        inner_nowOpHours_G1.textContent = boxdata.gen1_operating_hours
+        inner_nowEnergy_G1.textContent = boxdata.gen1_energy_mwh
+        inner_nowPower_G2.textContent = Math.min(boxdata.gen2_power_kw, 23)
         if (inner_nowPower_G2.textContent < 0){
             inner_nowPower_G2.textContent = 0
                 }
-        inner_nowScrewRPM_G2.textContent = global_data[0].gen2_screw_rpm
-        inner_nowDriveRPM_G2.textContent = global_data[0].gen2_drive_rpm
-        inner_nowOpHours_G2.textContent = global_data[0].gen2_operating_hours
-        inner_nowEnergy_G2.textContent = global_data[0].gen2_energy_mwh
+        inner_nowScrewRPM_G2.textContent = boxdata.gen2_screw_rpm
+        inner_nowDriveRPM_G2.textContent = boxdata.gen2_drive_rpm
+        inner_nowOpHours_G2.textContent = boxdata.gen2_operating_hours
+        inner_nowEnergy_G2.textContent = boxdata.gen2_energy_mwh
 
         now_total.append(inner_now_total)
         nowPower_G1.append(inner_nowPower_G1)
@@ -790,6 +792,12 @@ function selectTimescale(mystart, myend, myparam1, myparam2, myparam3) {
 
 
 // functions
+
+async function getData0() {
+const response = await fetch('/api/plc/current') 
+const data = await response.json()
+return data
+}
 async function getData() {
 
     const response = await fetch(myurl) 
@@ -799,7 +807,7 @@ async function getData() {
 }
 
 async function getDataMeter() {
-            const response = await fetch('/api/meter/today') 
+            const response = await fetch('/api/meter/current') 
             const data = await response.json() 
             return data           
         }
