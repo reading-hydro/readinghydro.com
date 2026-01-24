@@ -16,12 +16,11 @@ from sendntfy import sendntfy
 
 # timing parameters
 
-NO_DATA_REPORT_EVENT = datetime.timedelta(seconds=20*60)
-NO_DATA_RE_REPORT_TIME = datetime.timedelta(seconds=15*60)
-ALERT_ESCALATION_TIME = datetime.timedelta(seconds=15*60)
-ONCALL_ESCALATION_TIME = datetime.timedelta(seconds=150*60)
-IGNORE_ALERTS_OLDER_THAN = datetime.timedelta(seconds=10*60)
-
+NO_DATA_REPORT_EVENT = datetime.timedelta(minutes=20)
+NO_DATA_RE_REPORT_TIME = datetime.timedelta(hours=6)
+ALERT_ESCALATION_TIME = datetime.timedelta(minutes=15)
+ONCALL_ESCALATION_TIME = datetime.timedelta(minutes=150)
+IGNORE_ALERTS_OLDER_THAN = datetime.timedelta(minutes=10)
 # table to keep a list of recent alert messages
 
 alert_log_list = []
