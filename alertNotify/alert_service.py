@@ -349,6 +349,7 @@ while True:
     escalateMessages = []
 
     now_utc = datetime.datetime.now(datetime.UTC)
+    now_utc = now_utc.replace(tzinfo=datetime.timezone.utc)
     now = datetime.datetime.now(tz_london)
     now_utc_string = now.strftime('%Y-%m-%dT%H:%M:%SZ')
     now_string = now.strftime('%Y-%m-%dT%H:%M:%S')
