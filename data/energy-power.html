@@ -491,7 +491,11 @@ var global_data_meter = myreturn2.filter(function(item){
         nowEnergy_G2.innerHTML = 'Total generation (MWh)'
         label1.innerHTML = "Start date"
         label2.innerHTML = "End date"
+        if (global_data_meter.length == 0){
+            inner_now_total.textContent = 'No data'
+        } else {
         inner_now_total.textContent = (global_data_meter[0].export/1000).toFixed(1)
+        }
         inner_nowPower_G1.textContent = Math.min(boxdata.gen1_power_kw, 23)
         if (inner_nowPower_G1.textContent < 0){
             inner_nowPower_G1.textContent = 0
