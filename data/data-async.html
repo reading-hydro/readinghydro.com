@@ -1,0 +1,501 @@
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="/wp-content/includes/luxon.min.js"></script>
+    <style>
+
+    .tt {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 10px;
+                    }
+        .ttsmall {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 20px;
+            text-align: center;
+            margin-bottom: 30px;
+                    }
+        .notes {
+            text-align: inherit;
+            color: #E5004D;
+        }
+        .sub_data {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 18px;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .box_data {
+            width: 420px;
+            height: 70px;
+            margin: 5px 25px 5px 25px;
+            padding: 5px 20px 5px 10px;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 22px;
+            color: white;
+            float: left;
+        }
+        .inner {
+            height: 70px; 
+            margin-top: -20px;
+            text-align: right;
+            display:flex;                
+            align-items: center;
+            justify-content: flex-end;
+            font-weight: bold;
+            color: white;             
+        }
+        .fontbig {
+            font-size: 38px;            
+        }
+        .fontsmall {
+            font-size: 25px;            
+        }
+        .cle {
+            clear: left;
+        }
+        .ts {
+            white-space: nowrap;
+        }
+        #wra_PO {
+            max-width: 1000px;
+            margin: auto;
+        }
+        #wra_TOT {
+            max-width: 500px;
+            margin: auto;
+        }
+        #wra_T1 {
+            max-width: 500px;
+            padding-bottom: 40px;
+            float: left;
+        }
+        #wra_T2 {
+            max-width: 500px;
+            padding-bottom: 40px;
+            float: left;
+        }
+        #wra_TH_RC {
+            max-width: 1000px;
+            margin: auto;
+        }
+        #wra_TH {
+            max-width: 500px;
+            padding-bottom: 40px;
+            float: left;
+        }
+        #wra_RC {
+            max-width: 500px;
+            padding-bottom: 40px;
+            float: left;
+        }
+    #con {
+            max-width: 1280px;
+            margin: auto;
+            /* override WP theme */
+            line-height: 1.0;
+    }
+    #tot {
+            background-color: #AA10FF;
+            margin-bottom: 40px;
+        }
+    #pow1 {
+            background-color: #7A65CF;
+        }
+        #srpm1 {
+            background-color: #7A65CF;
+        }
+        #drpm1 {
+            background-color: #7A65CF;
+        }
+        #opho1 {
+            background-color: #7A65CF;
+        }
+        #ener1 {
+            background-color: #7A65CF;
+        }
+        #pow2 {
+            background-color: #DE2F55;
+        }
+        #srpm2 {
+            background-color: #DE2F55;
+        }
+        #drpm2 {
+            background-color: #DE2F55;
+        }
+        #opho2 {
+            background-color: #DE2F55;
+        }
+        #ener2 {
+            background-color: #DE2F55;
+        }
+    #up {
+        background-color: #418AD9;
+        }
+    #dow {
+        background-color: #418AD9;
+        }
+    #he {
+        background-color: #418AD9;
+        }
+    #ahol {
+        background-color: #418AD9;
+        }
+        #hol {
+            background-color: #418AD9;
+        }
+        #flo1 {
+            background-color: #37A19D;
+        }
+        #flo2 {
+            background-color: #37A19D;
+        }
+        #EAflo {
+            background-color: #3ca650;
+        }
+    #tem {
+        background-color: #ED6651;
+        }
+    #hum {
+        background-color: #167CAC;
+        }
+
+        @media only screen and (max-width: 1100px) {
+            #wra_PO, #wra_TOT, #wra_TH_RC {
+            max-width: 580px;              
+            }
+            #wra_T1, #wra_T2, #wra_TH, #wra_RC {
+            max-width: 580px;
+            float: none;
+            }
+            .box_data {
+                float: none;
+                margin: 5px auto;
+            }                
+        }
+
+        @media only screen and (max-width: 610px) {
+            #wra_PO {
+            max-width: 350px;
+            }
+            #wra_TOT {
+            max-width: 350px;
+            }
+            #wra_TH_RC {
+            max-width: 350px;
+            }
+            #wra_T1, #wra_T2, #wra_TH, #wra_RC {
+            padding-bottom: 20px;
+            }
+            .box_data {
+                width: 320px;
+            }
+            .fontbig {
+                font-size: 30px;
+            }
+            .fontsmall {
+                font-size: 20px;
+            }
+            .tt {
+                font-size: 18px;
+            }
+            .ttsmall {
+                font-size: 14px;
+            }
+            .sub_data {
+                font-size: 15px;
+            }
+        }
+
+        @media only screen and (max-width: 360px) {
+            /* this is for really tiny phones */
+            .box_data {
+            width: 270px;
+            float: none;  
+            margin: 5px auto;
+            }
+        }
+
+    </style>        
+
+    <script>
+    //<!--
+    // DO NOT REMOVE the comment above, it stops Wordpress from escaping ampersands
+
+    function buildStaticPage() {
+        const container = document.createElement('div');
+        container.id = "con";
+        container.innerHTML = `
+            <p class="notes">See data history pages for explanatory notes</p>
+            <div id="wra_PO">
+                <div class="tt"><a href="/power-output-data/">Electricity generation</a></div>
+                <div class="ttsmall"><a href="/power-output-data/">click for data history</a></div>
+
+                <div class="sub_data" id="subtitle_TOT">Loading…</div>
+                <div id="wra_TOT">
+                    <div id="tot" class="box_data">
+                        Total export (MWh)
+                        <div class="inner fontbig" id="total_export">—</div>
+                    </div>
+                </div>
+
+                <div id="wra_T1">
+                    <div class="sub_data" id="subtitle_T1">Loading turbine 1…</div>
+                    <div id="pow1" class="box_data">Power generation (kW)<div class="inner fontbig" id="g1_power">—</div></div>
+                    <div id="srpm1" class="box_data">Screw speed (RPM)<div class="inner fontbig" id="g1_srpm">—</div></div>
+                    <div id="drpm1" class="box_data">Drive speed (RPM)<div class="inner fontbig" id="g1_drpm">—</div></div>
+                    <div id="opho1" class="box_data">Total operating (hours)<div class="inner fontbig" id="g1_hours">—</div></div>
+                    <div id="ener1" class="box_data">Total generation (MWh)<div class="inner fontbig" id="g1_energy">—</div></div>
+                    <p class="cle"></p>
+                </div>
+
+                <div id="wra_T2">
+                    <div class="sub_data" id="subtitle_T2">Loading turbine 2…</div>
+                    <div id="pow2" class="box_data">Power generation (kW)<div class="inner fontbig" id="g2_power">—</div></div>
+                    <div id="srpm2" class="box_data">Screw speed (RPM)<div class="inner fontbig" id="g2_srpm">—</div></div>
+                    <div id="drpm2" class="box_data">Drive speed (RPM)<div class="inner fontbig" id="g2_drpm">—</div></div>
+                    <div id="opho2" class="box_data">Total operating (hours)<div class="inner fontbig" id="g2_hours">—</div></div>
+                    <div id="ener2" class="box_data">Total generation (MWh)<div class="inner fontbig" id="g2_energy">—</div></div>
+                    <p class="cle"></p>
+                </div>
+            </div>
+
+            <div id="wra_TH_RC">
+                <div id="wra_RC">
+                    <div class="tt"><a href="/water-level-data/">River conditions</a></div>
+                    <div class="ttsmall"><a href="/water-level-data/">click for data history</a></div>
+                    <div class="sub_data" id="subtitle_RC">Loading…</div>
+
+                    <div id="up" class="box_data">Upstream<div class="inner fontbig" id="upstream">—</div></div>
+                    <div id="dow" class="box_data">Downstream<div class="inner fontbig" id="downstream">—</div></div>
+                    <div id="he" class="box_data">Head<div class="inner fontbig" id="head">—</div></div>
+                    <div id="ahol" class="box_data">Above HOL<div class="inner fontbig" id="aboveHOL">—</div></div>
+                    <div id="hol" class="box_data">HOL<div class="inner fontbig" id="HOL">—</div></div>
+                    <div id="flo1" class="box_data">Flow T1<div class="inner fontbig" id="flow1">—</div></div>
+                    <div id="flo2" class="box_data">Flow T2<div class="inner fontbig" id="flow2">—</div></div>
+                    <div id="EAflo" class="box_data">EA Flow<div class="inner fontbig" id="EAflow">—</div></div>
+                    <p class="cle"></p>
+                </div>
+
+                <div id="wra_TH">
+                    <div class="tt"><a href="/turbine-house-data/">Turbine house</a></div>
+                    <div class="ttsmall"><a href="/turbine-house-data/">click for data history</a></div>
+                    <div class="sub_data" id="subtitle_TH">Loading…</div>
+
+                    <div id="tem" class="box_data">Temperature<div class="inner fontbig" id="temp">—</div></div>
+                    <div id="hum" class="box_data">Humidity<div class="inner fontbig" id="humid">—</div></div>
+                    <p class="cle"></p>
+                </div>
+            </div>
+        `;
+
+        document.getElementsByClassName("entry-header")[0].append(container);
+    }
+    function setText(id, text) {
+        const el = document.getElementById(id);
+        if (el) {
+            el.textContent = text;
+        }
+    }
+    async function loadPLCData() {
+        const d = await getData2();
+
+        setText("subtitle_T1", `Turbine 1 (Tony): ${luxon.DateTime.fromISO(d.received_at).toFormat('yyyy-LL-dd T')} UTC`);
+
+        setText("g1_power", Math.max(0, Math.min(d.gen1_power_kw, 23)));
+        setText("g1_srpm", d.gen1_screw_rpm);
+        setText("g1_drpm", d.gen1_drive_rpm);
+        setText("g1_hours", d.gen1_operating_hours);
+        setText("g1_energy", d.gen1_energy_mwh);
+
+        setText("subtitle_T2", `Turbine 2 (Sophie): ${luxon.DateTime.fromISO(d.received_at).toFormat('yyyy-LL-dd T')} UTC`);
+
+        setText("g2_power", Math.max(0, Math.min(d.gen2_power_kw, 23)));
+        setText("g2_srpm", d.gen2_screw_rpm);
+        setText("g2_drpm", d.gen2_drive_rpm);
+        setText("g2_hours", d.gen2_operating_hours);
+        setText("g2_energy", d.gen2_energy_mwh);
+    }
+    async function loadMeterData() {
+        const data = await getDataMeter();
+        const meter = data.find(m => m.meter === '70150046');
+
+        setText("subtitle_TOT", `Total Export as of: ${luxon.DateTime.fromISO(meter.date).toFormat('yyyy-LL-dd T')} UTC`);
+        setText("total_export", (meter.export / 1000).toFixed(1));
+    }
+    async function loadRiverData() {
+        const [d, setlevel, ea] = await Promise.all([
+            getData2(),
+            getData3(),
+            getData4().catch(() => null)
+        ]);
+
+        const HOL = setlevel.level;
+        setText("subtitle_RC", `Current conditions: ${luxon.DateTime.fromISO(d.received_at).toFormat('yyyy-LL-dd T')} UTC`);
+
+        setText("upstream", d.upstream.toFixed(3));
+        setText("downstream", d.downstream.toFixed(3));
+        setText("head", (d.upstream - d.downstream).toFixed(3));
+        setText("aboveHOL", (d.upstream - HOL).toFixed(3));
+        setText("HOL", HOL.toFixed(3));
+        setText("flow1", (d.gen1_flow_ls / 1000).toFixed(2));
+        setText("flow2", (d.gen2_flow_ls / 1000).toFixed(2));
+
+        if (ea) {
+            setText("EAflow", ea.flow.toFixed(2));
+        }
+    }
+    async function loadTHData() {
+        const data = await getData1();
+        const th = data.find(d => d.device_id === 'rdghydro-ers001');
+
+        setText("subtitle_TH", `Current conditions: ${luxon.DateTime.fromISO(th.received_at).toFormat('yyyy-LL-dd T')} UTC`);
+
+        setText("temp", th.temperature);
+        setText("humid", th.humidity);
+    }
+    async function updateMeterData() {
+        try {
+            const data = await getDataMeter();
+            const meter = data.find(m => m.meter === '70150046');
+
+            if (meter) {
+                setText("subtitle_TOT", `Total Export as of: ${luxon.DateTime.fromISO(meter.date).toFormat('yyyy-LL-dd T')} UTC`);
+                setText("total_export", (meter.export / 1000).toFixed(1));
+            }
+        } catch (e) {
+            console.warn("Meter update failed", e);
+        }
+    }
+    async function updatePLCData() {
+        try {
+            const d = await getData2();
+
+            setText(
+                "subtitle_T1",
+                `Turbine 1 (Tony): ${luxon.DateTime.fromISO(d.received_at).toFormat('yyyy-LL-dd T')} UTC`
+            );
+
+            setText("g1_power", Math.max(0, Math.min(d.gen1_power_kw, 23)));
+            setText("g1_srpm", d.gen1_screw_rpm);
+            setText("g1_drpm", d.gen1_drive_rpm);
+            setText("g1_hours", d.gen1_operating_hours);
+            setText("g1_energy", d.gen1_energy_mwh);
+
+            setText(
+                "subtitle_T2",
+                `Turbine 2 (Sophie): ${luxon.DateTime.fromISO(d.received_at).toFormat('yyyy-LL-dd T')} UTC`
+            );
+
+            setText("g2_power", Math.max(0, Math.min(d.gen2_power_kw, 23)));
+            setText("g2_srpm", d.gen2_screw_rpm);
+            setText("g2_drpm", d.gen2_drive_rpm);
+            setText("g2_hours", d.gen2_operating_hours);
+            setText("g2_energy", d.gen2_energy_mwh);
+
+        } catch (e) {
+            console.warn("PLC update failed", e);
+        }
+    }
+    async function updateRiverData() {
+        try {
+            const [d, setlevel, ea] = await Promise.all([
+                getData2(),
+                getData3(),
+                getData4().catch(() => null)
+            ]);
+
+            const HOL = setlevel.level;
+
+            setText(
+                "subtitle_RC",
+                `Current conditions: ${luxon.DateTime.fromISO(d.received_at).toFormat('yyyy-LL-dd T')} UTC`
+            );
+
+            setText("upstream", d.upstream.toFixed(3));
+            setText("downstream", d.downstream.toFixed(3));
+            setText("head", (d.upstream - d.downstream).toFixed(3));
+            setText("aboveHOL", (d.upstream - HOL).toFixed(3));
+            setText("HOL", HOL.toFixed(3));
+            setText("flow1", (d.gen1_flow_ls / 1000).toFixed(2));
+            setText("flow2", (d.gen2_flow_ls / 1000).toFixed(2));
+
+            if (ea) {
+                setText("EAflow", ea.flow.toFixed(2));
+            }
+        } catch (e) {
+            console.warn("River update failed", e);
+        }
+    }
+    async function updateTHData() {
+        try {
+            const data = await getData1();
+            const th = data.find(d => d.device_id === 'rdghydro-ers001');
+
+            setText(
+                "subtitle_TH",
+                `Current conditions: ${luxon.DateTime.fromISO(th.received_at).toFormat('yyyy-LL-dd T')} UTC`
+            );
+
+            setText("temp", th.temperature);
+            setText("humid", th.humidity);
+        } catch (e) {
+            console.warn("TH update failed", e);
+        }
+    }
+    document.addEventListener("visibilitychange", () => {
+        if (document.hidden) return;
+        updatePLCData();
+        updateRiverData();
+    });
+    async function getData1() {
+        const response = await fetch('/api/ttn/today') 
+        const data = await response.json() 
+        return data           
+    }
+    let plcCache = null;
+    let plcTime = 0;
+    async function getData2() {
+        if (Date.now() - plcTime < 600_000 && plcCache) {
+            return plcCache;
+        }
+        plcCache = await fetch('/api/plc/current')
+            .then(res => res.json());
+        plcTime = Date.now();
+        return plcCache;
+    }
+
+    async function getDataMeter() {
+        const response = await fetch('/api/meter/current') 
+        const data = await response.json() 
+        return data           
+    }
+
+    async function getData3() {
+        const response = await fetch('/api/setlevel/current') 
+        const data = await response.json()
+        return data           
+        }
+
+    async function getData4() {
+        const response = await fetch('/api/eadata/current') 
+        const data = await response.json()
+        return data           
+        }
+    (async function(){
+    buildStaticPage();
+
+    // Initial load
+    loadPLCData();
+    loadMeterData();
+    loadRiverData();
+    loadTHData();
+
+    // Polling intervals
+    setInterval(updatePLCData,   600_000);   // 10 mins
+    setInterval(updateRiverData, 600_000);   // 10 min
+    setInterval(updateTHData,    600_000);   // 10 min
+    setInterval(updateMeterData, 3600_000);  // 1 hour
+    })();
+    </script>
