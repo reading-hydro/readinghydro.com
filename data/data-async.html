@@ -440,11 +440,7 @@
             console.warn("TH update failed", e);
         }
     }
-    document.addEventListener("visibilitychange", () => {
-        if (document.hidden) return;
-        updatePLCData();
-        updateRiverData();
-    });
+    
     async function getData1() {
         const response = await fetch('/api/ttn/today') 
         const data = await response.json() 
@@ -460,7 +456,6 @@
         plcCache = await fetch('/api/plc/current')
             .then(res => res.json());
         plcTime = Date.parse(plcCache.received_at);
-        console.log("Fetched new PLC data at " + interval + " ms ago " +plcTime);
         return plcCache;
     }
 
@@ -490,6 +485,14 @@
     loadRiverData();
     loadTHData();
 
+    document.addEventListener("visibilitychange", () => {
+        if (document.hidden) return;
+        updateMeterData();
+        updatePLCData();
+        updateRiverData();
+        updateTHData();
+    });
+    
     // Polling intervals
     setInterval(updatePLCData,   60_000);   // 1 min
     setInterval(updateRiverData, 60_000);   // 1 min
