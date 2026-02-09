@@ -227,7 +227,7 @@
         const container = document.createElement('div');
         container.id = "con";
         container.innerHTML = `
-            <p class="notes">See data history pages for explanatory notes</p>
+            <p class="notes">See data history pages for explanatory notes.</p>
             <div id="wra_PO">
                 <div class="tt"><a href="/power-output-data/">Electricity generation</a></div>
                 <div class="ttsmall"><a href="/power-output-data/">click for data history</a></div>
@@ -316,6 +316,15 @@
         setText("g2_drpm", d.gen2_drive_rpm);
         setText("g2_hours", d.gen2_operating_hours);
         setText("g2_energy", d.gen2_energy_mwh);
+
+        setText("subtitle_RC", `Current conditions: ${luxon.DateTime.fromISO(d.received_at).toFormat('yyyy-LL-dd T')} UTC`);
+        setText("upstream", d.upstream.toFixed(3));
+        setText("downstream", d.downstream.toFixed(3));
+        setText("head", (d.upstream - d.downstream).toFixed(3));
+        setText("aboveHOL", (d.upstream - HOL).toFixed(3));
+        setText("flow1", (d.gen1_flow_ls / 1000).toFixed(2));
+        setText("flow2", (d.gen2_flow_ls / 1000).toFixed(2));
+
     }
     async function loadMeterData() {
         const data = await getDataMeter();
@@ -324,24 +333,15 @@
         setText("subtitle_TOT", `Total Export as of: ${luxon.DateTime.fromISO(meter.date).toFormat('yyyy-LL-dd T')} UTC`);
         setText("total_export", (meter.export / 1000).toFixed(1));
     }
+    let HOL = 0;
     async function loadRiverData() {
-        const [d, setlevel, ea] = await Promise.all([
-            getData2(),
+        const [setlevel, ea] = await Promise.all([
             getData3(),
             getData4().catch(() => null)
         ]);
 
-        const HOL = setlevel.level;
-        setText("subtitle_RC", `Current conditions: ${luxon.DateTime.fromISO(d.received_at).toFormat('yyyy-LL-dd T')} UTC`);
-
-        setText("upstream", d.upstream.toFixed(3));
-        setText("downstream", d.downstream.toFixed(3));
-        setText("head", (d.upstream - d.downstream).toFixed(3));
-        setText("aboveHOL", (d.upstream - HOL).toFixed(3));
+        HOL = setlevel.level;
         setText("HOL", HOL.toFixed(3));
-        setText("flow1", (d.gen1_flow_ls / 1000).toFixed(2));
-        setText("flow2", (d.gen2_flow_ls / 1000).toFixed(2));
-
         if (ea) {
             setText("EAflow", ea.flow.toFixed(2));
         }
@@ -360,7 +360,7 @@
             const data = await getDataMeter();
             const meter = data.find(m => m.meter === '70150046');
 
-            if (meter) {
+            if (meter && meter.length > 0) {
                 setText("subtitle_TOT", `Total Export as of: ${luxon.DateTime.fromISO(meter.date).toFormat('yyyy-LL-dd T')} UTC`);
                 setText("total_export", (meter.export / 1000).toFixed(1));
             }
@@ -394,20 +394,6 @@
             setText("g2_hours", d.gen2_operating_hours);
             setText("g2_energy", d.gen2_energy_mwh);
 
-        } catch (e) {
-            console.warn("PLC update failed", e);
-        }
-    }
-    async function updateRiverData() {
-        try {
-            const [d, setlevel, ea] = await Promise.all([
-                getData2(),
-                getData3(),
-                getData4().catch(() => null)
-            ]);
-
-            const HOL = setlevel.level;
-
             setText(
                 "subtitle_RC",
                 `Current conditions: ${luxon.DateTime.fromISO(d.received_at).toFormat('yyyy-LL-dd T')} UTC`
@@ -421,9 +407,18 @@
             setText("flow1", (d.gen1_flow_ls / 1000).toFixed(2));
             setText("flow2", (d.gen2_flow_ls / 1000).toFixed(2));
 
+        } catch (e) {
+            console.warn("PLC update failed", e);
+        }
+    }
+    async function updateRiverData() {
+        try {
+            const ea = await getData4().catch(() => null);
+
             if (ea) {
                 setText("EAflow", ea.flow.toFixed(2));
             }
+            console.log("River data updated");
         } catch (e) {
             console.warn("River update failed", e);
         }
@@ -440,6 +435,7 @@
 
             setText("temp", th.temperature);
             setText("humid", th.humidity);
+            console.log("TH data updated");
         } catch (e) {
             console.warn("TH update failed", e);
         }
@@ -457,12 +453,14 @@
     let plcCache = null;
     let plcTime = 0;
     async function getData2() {
-        if (Date.now() - plcTime < 600_000 && plcCache) {
+        const interval = Date.now() - plcTime;
+        if (interval < 600_000 && plcCache) {
             return plcCache;
         }
         plcCache = await fetch('/api/plc/current')
             .then(res => res.json());
-        plcTime = Date.now();
+        plcTime = Date.parse(plcCache.received_at);
+        console.log("Fetched new PLC data at " + interval + " ms ago " +plcTime);
         return plcCache;
     }
 
@@ -493,9 +491,9 @@
     loadTHData();
 
     // Polling intervals
-    setInterval(updatePLCData,   600_000);   // 10 mins
-    setInterval(updateRiverData, 600_000);   // 10 min
-    setInterval(updateTHData,    600_000);   // 10 min
+    setInterval(updatePLCData,   60_000);   // 1 min
+    setInterval(updateRiverData, 60_000);   // 1 min
+    setInterval(updateTHData,    60_000);   // 1 min
     setInterval(updateMeterData, 3600_000);  // 1 hour
     })();
     </script>
