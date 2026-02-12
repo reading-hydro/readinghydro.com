@@ -1,0 +1,511 @@
+<title>Levels Flow</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="/wp-content/includes/Chart.min.js"></script>
+<script src="/wp-content/includes/luxon.min.js"></script>
+<script src="/wp-content/includes/chartjs-adapter-luxon.min.js"></script>
+<!-- For luxon formatting see https://github.com/moment/luxon/blob/master/docs/formatting.md -->
+<script src="/wp-content/includes/chartjs-plugin-annotation.min.js"></script>
+<script src="/wp-content/includes/datepicker.min.js"></script>
+<link rel="stylesheet" href="/wp-content/includes/datepicker.min.css">
+<style> 
+
+.tt {
+ font-family: Arial, Helvetica, sans-serif;
+ font-size: 20px;
+ text-align: center;
+ margin-bottom: 30px;
+            }
+.notes {
+text-align: inherit;
+}
+.sub1 {
+ font-family: Arial, Helvetica, sans-serif;
+ font-size: 18px;
+ text-align: center;
+ padding-right: 60px;
+ margin-bottom: 20px;
+}
+.sub2 {
+ font-family: Arial, Helvetica, sans-serif;
+ font-size: 18px;
+ text-align: center;
+ padding-bottom: 20px;
+}
+.col_wra {
+max-width: 1280px;
+margin: auto;
+}
+
+.col_lef {
+max-width: 500px;
+padding-bottom: 40px;
+float: left;
+}
+.col_rig {
+max-width: 780px;
+padding-bottom: 40px;
+float: left;
+}   
+.btn {
+ font-size: 18px;
+ font-family: Arial, Helvetica, sans-serif;
+ padding: 10px 16px;
+ margin: 5px;
+ border-radius: 4px;
+ background-color: #d3d3d3;
+}
+.lab {
+ font-family: Arial, Helvetica, sans-serif;
+ font-style: normal;
+ white-space: nowrap;
+}
+
+/* Style the active class, and buttons on mouse-over */
+.active, .btn:hover {
+background-color: #1a73e8;
+color: white;
+}
+.box {
+ width: 420px;
+ height: 70px;
+ margin: 5px 0;
+ padding: 5px 20px 5px 10px;
+ font-family: Arial, Helvetica, sans-serif;
+ font-size: 22px;
+ color: white;
+ float: left;
+}
+.inner {
+ height: 70px; 
+ margin-top: -20px;
+ text-align: right;
+ display:flex;                
+ align-items: center;
+ justify-content: flex-end;
+ font-weight: bold;
+ color: white;               
+}
+.fontbig {
+ font-size: 38px;            
+}
+.fontsmall {
+ font-size: 25px;            
+}
+.cwra {
+ width: 780px;
+ height: 390px;
+ margin: auto;
+}
+.cwra_lev {
+ /* extra height for legend */
+ width: 780px;
+ height: 430px;
+ margin: auto;
+}
+.cle {
+ clear: left;
+}
+#ts {
+ white-space: nowrap;
+}
+#con {
+ max-width: 1280px;
+ margin: auto;
+ /* override WP theme */
+ line-height: 1.0;
+}
+#pan {
+ max-width: 760px;
+ border: lightgrey solid 2px;
+ background-color: #e7e7e7;
+ padding-top: 10px;
+ margin: 5px auto;
+}
+#dpk1, #dpk2 {
+ margin: 10px;
+ font-family: Arial, Helvetica, sans-serif;
+ /* override WP theme */
+ background: white;
+ border: 1px solid black;
+ /* add for new site Jan 2026 */
+ width: fit-content;
+}
+#btw {
+ max-width: 780px;
+ margin: auto;
+ text-align:center;
+}
+#dtw {
+ max-width: 780px;
+ margin: auto;
+ text-align:center;
+}
+#up {
+background-color: #418AD9;
+}
+#do {
+background-color: #418AD9;
+}
+#he {
+background-color: #418AD9;
+}
+#ahol {
+background-color: #418AD9;
+}
+#hol {
+background-color: #418AD9;
+}
+#flo1 {
+background-color: #37A19D;
+}
+#flo2 {
+background-color: #37A19D;
+}
+#EAflo {
+background-color: #3ca650;
+}
+#ca_lev {
+ height: 100%;                          
+}
+#ca_flo {
+ height: 100%;                          
+}
+#ca_EAflo {
+ height: 100%;                          
+}
+
+@media only screen and (max-width: 1420px) {
+ .col_wra {
+ max-width: 580px;                
+ }
+ .col_lef {
+ max-width: 580px;
+ float: none;                
+ }
+ .sub1 {
+ padding-right: 0;
+  }
+ .box {
+ float: none;
+ margin: 5px auto;
+}
+ .col_rig {
+ max-width: 580px;                
+ }
+ .cwra {
+ width: 580px;
+ height: 290px; 
+ margin: auto;        
+}
+.cwra_lev {
+ /* extra height for legend */
+ width: 580px;
+ height: 320px; 
+ margin: auto;   
+}
+}
+@media only screen and (max-width: 610px) {
+ .col_wra {
+ max-width: 350px;
+  }
+  #btw {
+ max-width: 300px;
+  }
+  #dtw {
+ width: 300px;
+  }                 
+  .col_lef {
+ max-width: 350px;
+ float: none;  
+  }
+  .sub1, .sub2 {
+ padding-right: 0;
+ font-size: 17px;
+ margin-bottom: 10px;
+  }
+  .box {
+ width: 320px;
+ float: none;  
+ margin: 5px auto;
+}
+.fontbig {
+    font-size: 30px;
+}
+.fontsmall {
+    font-size: 20px;
+}
+  .col_rig {
+ max-width: 350px;
+  }
+  .cwra {
+      width: 350px;
+      height: 290px;
+      margin: auto;
+  }
+  .cwra_lev {
+      /* extra height for legend */
+      width: 350px;
+      height: 320px;
+      margin: auto;
+  }
+  
+}
+@media only screen and (max-width: 360px) {
+ /* this is for really tiny phones */
+.box {
+ width: 270px;
+ float: none;  
+ margin: 5px auto;
+}
+}
+
+</style>        
+
+<script type="text/javascript">
+//<!--
+// DO NOT REMOVE the comment above, it stops Wordpress from escaping ampersands
+
+function buildStaticPage() {
+    const container = document.createElement('div');
+    container.id = "con";
+
+    container.innerHTML = `
+        <p class="notes"><a href="#notes">See below for explanatory notes</a></p>
+
+        <div class="col_wra">
+            <div class="col_lef">
+                <div class="sub1" id="subtitle_current">Loading current conditions…</div>
+
+                ${makeBox("up", "Upstream (metres AOD)", "upstream")}
+                ${makeBox("do", "Downstream (metres AOD)", "downstream")}
+                ${makeBox("he", "Head (metres)", "head")}
+                ${makeBox("ahol", "Above set level (metres)", "aboveHOL")}
+                ${makeBox("hol", "Present set level (metres)", "HOL")}
+                ${makeBox("flo1", "Water flow turbine 1 (m³/s)", "flow1")}
+                ${makeBox("flo2", "Water flow turbine 2 (m³/s)", "flow2")}
+                ${makeBox("EAflo", "Flow at Reading Bridge (m³/s)", "EAflow")}
+                <p class="cle"></p>
+            </div>
+
+            <div class="col_rig">
+                <div class="sub2">Conditions over selected period</div>
+                <div id="pan">
+                    <div id="btw">
+                        <button class="btn active" data-range="day">Last day</button>
+                        <button class="btn" data-range="week">Last week</button>
+                        <button class="btn" data-range="month">Last month</button>
+                        <button class="btn" data-range="year">Last year</button>
+                        <p class="cle"></p>
+                    </div>
+                    <div id="dtw">
+                        <label class="lab" for="dpk1">Start date</label>
+                        <input id="dpk1" type="text">
+                        <label class="lab" for="dpk2">End date</label>
+                        <input id="dpk2" type="text">
+                        <p class="cle"></p></div>
+                </div>
+
+                <div class="cwra_lev"><canvas id="ca_lev"></canvas></div>
+                <div class="cwra_lev"><canvas id="ca_flo"></canvas></div>
+                <div class="cwra"><canvas id="ca_EAflo"></canvas></div>
+            </div>
+        </div>
+    `;
+
+    document.getElementsByClassName("entry-header")[0].append(container);
+}
+
+function makeBox(id, label, valueId) {
+    return `
+        <div id="${id}" class="box">
+            ${label}
+            <div class="inner fontbig" id="${valueId}">—</div>
+        </div>
+    `;
+}
+
+function setText(id, value) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value;
+}
+
+let HOL = 0;
+async function loadCurrentConditions() {
+    try {
+        const [plc, setlevel, ea] = await Promise.all([
+            getPLCDataCurrent(),
+            getSetlevel(),
+            getEADataCurrent()
+        ]);
+
+        HOL = setlevel.level;
+        setText(
+            "subtitle_current",
+            `Current conditions: ${luxon.DateTime.fromISO(plc.received_at).toFormat('yyyy-LL-dd T')} UTC`
+        );
+
+        setText("upstream", plc.upstream.toFixed(3));
+        setText("downstream", plc.downstream.toFixed(3));
+        setText("head", (plc.upstream - plc.downstream).toFixed(3));
+        setText("aboveHOL", (plc.upstream - HOL).toFixed(3));
+        setText("HOL", HOL.toFixed(3));
+        setText("flow1", (plc.gen1_flow_ls / 1000).toFixed(2));
+        setText("flow2", (plc.gen2_flow_ls / 1000).toFixed(2));
+
+        if (ea && ea[0]) {
+            setText("EAflow", ea[0].flow.toFixed(2));
+        }
+    } catch (e) {
+        console.warn("Current conditions update failed", e);
+    }
+}
+async function updateCurrentConditions() {
+    try {
+        const [plc, ea] = await Promise.all([
+            getPLCDataCurrent(),
+            getEADataCurrent()
+        ]);
+
+        setText(
+            "subtitle_current",
+            `Current conditions: ${luxon.DateTime.fromISO(plc.received_at).toFormat('yyyy-LL-dd T')} UTC`
+        );
+
+        setText("upstream", plc.upstream.toFixed(3));
+        setText("downstream", plc.downstream.toFixed(3));
+        setText("head", (plc.upstream - plc.downstream).toFixed(3));
+        setText("aboveHOL", (plc.upstream - HOL).toFixed(3));
+        setText("HOL", HOL.toFixed(3));
+        setText("flow1", (plc.gen1_flow_ls / 1000).toFixed(2));
+        setText("flow2", (plc.gen2_flow_ls / 1000).toFixed(2));
+        setText("EAflow", ea[0].flow.toFixed(2));
+    } catch (e) {
+        console.warn("Current conditions update failed", e);
+    }
+}
+
+async function loadChartData() {
+    const myreturn = await getData1();
+    global_data = myreturn[0];
+    param1 = myreturn[1];
+    param2 = myreturn[2];
+    param3 = myreturn[3];
+
+    EA_data = await getData3().catch(() => null);
+
+    selectTimescale(
+        luxon.DateTime.fromFormat(param1, 'yyyyLLdd').startOf('day').toJSDate(),
+        luxon.DateTime.fromFormat(param2, 'yyyyLLdd').endOf('day').toJSDate(),
+        param1,
+        param2,
+        param3
+    );
+}
+//select timescale using parameters from buttons or datepicker
+function selectTimescale(mystart, myend, myparam1, myparam2, myparam3) {
+
+    //if reload is set we need to fetch more data
+    var reload = false
+    if (myparam1) {
+        var myparam1_date = luxon.DateTime.fromFormat(myparam1, 'yyyyLLdd').startOf('day').toJSDate()
+        var myparam2_date = luxon.DateTime.fromFormat(myparam2, 'yyyyLLdd').endOf('day').toJSDate()
+        } else {
+            myparam1_date = today
+            myparam2_date = today_end
+        }
+
+    if (mystart < myparam1_date) {
+        reload = true
+        if (picked == true) {
+            myparam3 = 4
+        }
+    }
+    // If the period is going from more that 336 hours to less then we have 
+    // hourly data and need to reload to get 10 minute interval data.
+    // simularly if we are going from more than 2232 hours to less, we 
+    // are going from daily to hourly data and need to reload.
+    var oldlength = myparam2_date - myparam1_date
+    var newlength = myend - mystart
+    if ( (oldlength > 336*3600000) && (newlength < 336*3600000) ) {
+        reload = true
+    }
+    if ( (oldlength > 2232*3600000) && (newlength < 2232*3600000) ) {
+        reload = true
+    }
+    if (reload == true){
+        var newstart = luxon.DateTime.fromJSDate(mystart).toFormat('yyyyLLdd')
+        var newend = luxon.DateTime.fromJSDate(myend).toFormat('yyyyLLdd')
+        var path = window.location.href.split(/[?#]/)[0] 
+        var path2 = window.location.pathname
+        location.href = path + '?var1=' + newstart + '&var2=' + newend + '&var3=' + myparam3
+        updateChart(newstart, newend, myparam3)
+    };
+}
+
+let global_data = [];
+let EA_data = [];
+
+async function updateCharts(start, end) {
+    // reload page if higher-resolution data is needed
+    if (needsReload(start, end)) {
+        global_data = getPLCdata(start, end);
+        EA_data = getEAdata(start, end);
+    }
+   
+    renderLevelChart(start, end);
+    renderFlowChart(start, end);
+    renderEAChart(start, end);
+}
+async function getPLCdata(fromdate, todate){
+    const start = luxon.DateTime.fromJSDate(fromdate).toFormat('yyyyLLdd') 
+    const end = luxon.DateTime.fromJSDate(todate).toFormat('yyyyLLdd')
+    const response = await fetch('/api/plc/between/${start}/${end}');
+    if (!response.ok) {
+        throw new Error('HTTP error! status: ${response.status}');
+    }
+    return await response.json();
+}
+
+async function getEAdata(fromdate, todate){
+    const start = luxon.DateTime.fromJSDate(fromdate).toFormat('yyyyLLdd')
+    const end = luxon.DateTime.fromJSDate(todate).toFormat('yyyyLLdd')
+   
+    const response = await fetch('/api/eadata/between/${start}/${end}');
+    if (!response.ok) { 
+        throw new Error('HTTP error! status: ${response.status}'); 
+    } 
+    return await response.json(); 
+}
+
+let plcCache = null;
+let plcTime = 0;
+async function getPLCDataCurrent() {
+    const interval = Date.now() - plcTime;
+    if (interval < 600_000 && plcCache) {
+        return plcCache;
+    }
+    plcCache = await fetch('/api/plc/current')
+        .then(res => res.json());
+    plcTime = Date.parse(plcCache.received_at);
+    return plcCache;
+}
+
+
+buildStaticPage();
+
+// initial load
+loadCurrentConditions();
+loadChartData();
+
+// refresh current conditions every 60 seconds
+setInterval(updateCurrentConditions, 60_000);
+
+// refresh immediately when tab becomes visible
+document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) {
+        updateCurrentConditions();
+    }
+});
+//-->
+</script>
