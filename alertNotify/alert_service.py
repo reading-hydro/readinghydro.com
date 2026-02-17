@@ -90,7 +90,8 @@ def on_message(client, userdata, message):
     except ValueError:
         alert_time_string = alertTime
         alert_age = datetime.timedelta(seconds=1)
-        alert_time_data = datetime.datetime.utcnow()
+        alert_time_data = datetime.datetime.now(datetime.UTC)
+        alert_time_data = alert_time_data.replace(tzinfo=datetime.timezone.utc)
     else:
         alert_time_string = datetime.datetime.strftime(alert_time_data, '%Y-%m-%dT%H:%M:%S')
         compare_now = datetime.datetime.strptime(datetime.datetime.now(datetime.UTC).strftime('%d/%m/%Y %H:%M:%S'), '%d/%m/%Y %H:%M:%S')
@@ -103,7 +104,7 @@ def on_message(client, userdata, message):
     else:
         if not(check_dup('Ignoring old alerts')):
             token = generate_token(email1, 'Ignoring old alerts', ALERT_ESCALATION_TIME)
-            sendntfy('Ignoring old alerts', datetime.datetime.utcnow(), token)
+            sendntfy('Ignoring old alerts', datetime.datetime.now(datetime.UTC), token)
             check_token(token)
     return
 
@@ -296,7 +297,7 @@ f.close()
 tz_london = pytz.timezone('Europe/London')
 now = datetime.datetime.now(tz_london)
 now_string = now.strftime('%Y-%m-%dT%H:%M:%S')
-sendntfy("Alert Service Startup", datetime.datetime.utcnow(), "")
+sendntfy("Alert Service Startup", datetime.datetime.now(datetime.UTC), "")
 log_alert_message(now_string, 'Alert Service startup')
 
 # This section starts the mqtt subscribe thread
@@ -319,9 +320,11 @@ client.tls_set("/etc/ssl/certs/ca-certificates.crt")
 
 who_is_oncall = {'primary': 'Unknown', 'second': 'Unknown'}
 got_api_data = False
-latest_data_time = datetime.datetime.utcnow()
+latest_data_time = datetime.datetime.now(datetime.UTC)
+latest_data_time = latest_data_time.replace(tzinfo=datetime.timezone.utc)
 latest_data = latest_data_time.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
-next_data_report_time = datetime.datetime.utcnow()
+next_data_report_time = datetime.datetime.now(datetime.UTC)
+next_data_report_time = next_data_report_time.replace(tzinfo=datetime.timezone.utc)
 
 google_api_key = get_secret('GOOGLE_API_KEY')
 

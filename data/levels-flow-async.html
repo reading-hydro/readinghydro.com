@@ -86,8 +86,9 @@ function initRangeButtons() {
 
             btn.classList.add('active');
 
-            const now = new Date();
             let start = new Date();
+            let now = new Date();
+            now.setDate(now.getUTCDate());
 
             switch (btn.dataset.range) {
                 case 'week':  start.setDate(now.getUTCDate() - 7); break;
@@ -105,10 +106,28 @@ function initRangeButtons() {
             updateCharts(newstart, newend);
         });
     });
+    // datepicker
+    const picker1 = datepicker('#dpk1', { id: 1, dateSelected: param1_date, onSelect: instance => {picked = true; selectTimescale(picker1.getRange().start, dayEnd(picker1.getRange().end), param1, param2, param3 ) }})
+    const picker2 = datepicker('#dpk2', { id: 1, dateSelected: param2_date, onSelect: instance => {picked = true; selectTimescale(picker2.getRange().start, dayEnd(picker2.getRange().end), param1, param2, param3 ) }})
+
+    // push end date to end of day
+    function dayEnd(pick){
+    var dayend = luxon.DateTime.fromJSDate(pick).endOf('day').toJSDate()
+    return dayend
+    }
+
+    picker1 = document.getElementById('dpk1');
+    picker1.addEventListener('change', (e) => {
+        const newstart = luxon.DateTime.fromFormat(e.target.value, 'yyyy-LL-dd').toJSDate();
+        const end = luxon.DateTime.fromJSDate(enddate).toJSDate();
+        if (newstart < end) {
+            updateCharts(newstart, end);
+        }
+    });
 }
 
 
-let HOL = 0;
+let HOL = 36.700;
 async function loadCurrentConditions() {
     try {
         const [plc, setlevel, ea] = await Promise.all([
@@ -236,19 +255,23 @@ async function getEAdata(fromdate, todate){
     } 
     return await response.json(); 
 }
+
 function creatChartDefaults() { 
 //Set global defaults for charts
     Chart.defaults.global.tooltips.callbacks.title = function(t, d) {
-                            return luxon.DateTime.fromMillis(d.labels[t[0].index]).toFormat('yyyy-LL-dd T');
-                                    }
-    Chart.defaults.global.animation.duration = 0 
+        return luxon.DateTime.fromMillis(d.labels[t[0].index]).toFormat('yyyy-LL-dd T');}
+//    Chart.defaults.global.animation.duration = 0 
     Chart.defaults.global.maintainAspectRatio = false
     Chart.defaults.global.title.display = true
     Chart.defaults.global.title.fontSize = 20
     Chart.defaults.global.title.fontStyle = 'bold'
     Chart.defaults.global.legend.labels.fontSize = 15
     Chart.defaults.global.legend.labels.fontStyle = 'bold'
-    anno_HOL = {
+}
+
+let myChart_levels = null; 
+let myChart_flow = null; 
+const anno_HOL = {
         type: 'line',
         id: 'line1',
         mode: 'horizontal',
@@ -265,73 +288,68 @@ function creatChartDefaults() {
             yAdjust: 10,
             enabled: true,
         }
-    }
-    // Change legend click handler to accommodate annotations
-    // Store the original click handler for reuse
-    var defaultLegendClickHandler = Chart.defaults.global.legend.onClick;
-  
-    // New click handler is called from myChart_levels
-    var newLegendClickHandler = function (e, legendItem) {
-        var index = legendItem.datasetIndex;
-        var ci = myChart_levels;
-        var meta = ci.getDatasetMeta(index);
-        
-        defaultLegendClickHandler.call(this, e, legendItem);
-        var is_u = ci.isDatasetVisible(0)
-        var is_d = ci.isDatasetVisible(1)
-        // if downstream only is visible, hide HOL
-        // flag is used to avoid Boolean ampersand, which causes problems in Wordpress
-            var flag = 0
-            if(!is_u){ flag++ }
-            if(is_d){ flag++ }
-            if (flag == 2) { //downstream only visible. Don't show HOL. 
-                ci.config.options.annotation.annotations[0] = ''
-                ci.options.scales.yAxes[0] = {
-                    ticks: {
-                                min: ymin2,
-                                fontSize: 15,
-                                fontStyle: "bold",
-                                    },
-                            scaleLabel: {
-                                display: false,                                      
-                                    },                                  
-                };
-                ci.update() 
-            } else if(flag == 0) { //upstream only visible. Reset min tick value.
-                ci.config.options.annotation.annotations[0] = anno_HOL;
-                ci.options.scales.yAxes[0] = {
-                    ticks: {min: HOL - 0.02,
-                            fontSize: 15,
-                            fontStyle: "bold",},
-                    scaleLabel: {display: false,},
-                };
-                
-                ci.update();  
-            } else { //upstream and downstream are both visible. Reset min tick value.
-                ci.config.options.annotation.annotations[0] = anno_HOL
-                ci.options.scales.yAxes[0] = {
-                    ticks: {min: ymin2,
-                            max: ymax1,
-                            fontSize: 15,
-                            fontStyle: "bold",},
-                    scaleLabel: {display: false},
-                };
-                ci.update();
-            };
+    }; 
+
+// Change legend click handler to accommodate annotations
+// Store the original click handler for reuse
+var defaultLegendClickHandler = Chart.defaults.global.legend.onClick;
+// New click handler is called from myChart_levels
+var newLegendClickHandler = function (e, legendItem) {
+    var index = legendItem.datasetIndex;
+    var ci = myChart_levels;
+    var meta = ci.getDatasetMeta(index);
+    
+    defaultLegendClickHandler.call(this, e, legendItem);
+    if(!ci.isDatasetVisible(0) && ci.isDatasetVisible(1)){ //Downstream only no HOL. 
+        ci.config.options.annotation.annotations[0] = ''
+        ci.options.scales.yAxes[0] = {
+            ticks: {
+                        min: ymin2,
+                        fontSize: 15,
+                        fontStyle: "bold",
+                            },
+                    scaleLabel: {
+                        display: false,                                      
+                            },                                  
+        };
+        ci.update() 
     };
+    if (ci.isDatasetVisible(0) && !ci.isDatasetVisible(1)) { //Upstream only.
+        ci.config.options.annotation.annotations[0] = anno_HOL;
+        ci.options.scales.yAxes[0] = {
+            ticks: {min: (Math.min(HOL - 0.02, ymin1)),
+                    max: (Math.max(HOL + 0.02, ymax1)),
+                    fontSize: 15,
+                    fontStyle: "bold",},
+            scaleLabel: {display: false,},
+        };
+        
+        ci.update();  
+    }
+    if (ci.isDatasetVisible(0) && ci.isDatasetVisible(1)){
+        ci.config.options.annotation.annotations[0] = anno_HOL
+        ci.options.scales.yAxes[0] = {
+            ticks: {min: ymin2,
+                    max: ymax1,
+                    fontSize: 15,
+                    fontStyle: "bold",},
+            scaleLabel: {display: false},
+        };
+        ci.update();
+    };
+};
 
-}
+var ymin1 = 35.0; // set a default minimum for the y axis of the levels graph. 
+var ymax1 = 40.0; // set a default maximum for the y axis of the levels graph.
+var ymin2 = 0.0; // set a default minimum for the y axis of the flow graph. 
+var ymax2 = 8.0; // set a default maximum for the y axis of the flow graph.
 
-let myChart_levels = null; 
-let myChart_flow = null; 
-let anno_HOL = null; 
-let newLegendClickHandler = null;
 function renderLevelChart(start, end) { 
-    const xs = []
-    const ys1 = []
-    const ys2 = []
-    const ys3 = []
-    const ys4 = []
+    const xs = []      // array for timestamps for levels and flow graphs
+    const ys1 = []     // array for upstream levels for levels graph
+    const ys2 = []     // array for downstream levels for levels graph
+    const ys3 = []     // array for flow from turbine 1 for flow graph
+    const ys4 = []     // array for flow from turbine 2 for flow graph
     
     var selection = global_data.filter(function(item){
         return new Date(item.received_at) >= start &&
@@ -345,8 +363,8 @@ function renderLevelChart(start, end) {
 
     for(item of selection) {                
         //convert the timestamp to milliseconds (faster)                
-        const mydate = new Date(item.received_at)
-        xs.push(mydate.getTime);
+        const mydate = new Date(item.received_at).getTime()
+        xs.push(mydate);
         ys1.push(item.upstream);
         ys2.push(item.downstream);
         ys3.push((item.gen1_flow_ls/1000).toFixed(2));
@@ -355,11 +373,11 @@ function renderLevelChart(start, end) {
 
     // tweak scales for y axes of graphs
     // upstream/downstream levels
-    var ymax1 = myround((Math.max(...ys1) + 0.2), 1) // max level plus 0.2
-    var ymin2 = myround((Math.min(...ys2) - 0.2), 1) // min level minus 0.2
-    if (ymin2 > 35.0){ //don't go above 35 for base level of graph
-        ymin2 = 35.0
-    }
+    ymax1 = myround((Math.max(...ys1) + 0.02), 1)
+    ymax1 = Math.max(ymax1, HOL + 0.02)
+    ymin1 = myround((Math.min(...ys1) - 0.02), 1)
+    ymin2 = myround((Math.min(...ys2) - 0.02), 1)
+    if (ymin2 > 35.0){ymin2 = 35.0} // but not greater than 35.0
 
     if (typeof myChart_levels !== 'undefined' && myChart_levels) {
         myChart_levels.destroy();
@@ -395,7 +413,8 @@ function renderLevelChart(start, end) {
             scales: {
                 xAxes: [{
                     type: 'time',
-                    time: {minUnit: unit},
+                    time: {minUnit: unit,
+                           tooltipFormat: 'yyyy-LL-dd T',},
                     distribution: 'linear',
                     ticks: {
                         fontStyle: "bold",
