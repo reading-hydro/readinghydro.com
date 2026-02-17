@@ -78,6 +78,16 @@ function setText(id, value) {
     if (el) el.textContent = value;
 }
 
+// datepicker
+let startdate = luxon.DateTime.now().startOf('day').toJSDate();
+let enddate = luxon.DateTime.now().endOf('day').toJSDate();
+
+// push end date to end of day
+function dayEnd(pick){
+    var dayend = luxon.DateTime.fromJSDate(pick).endOf('day').toJSDate()
+    return dayend
+}
+let picker1, picker2;
 function initRangeButtons() {
     document.querySelectorAll('#btw .btn').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -100,32 +110,45 @@ function initRangeButtons() {
             let newstart = luxon.DateTime.fromJSDate(start).startOf('day').toJSDate();
             let newend = luxon.DateTime.now().endOf('day').toJSDate();
 
+            picker1.setMax(newend);
+            picker1.setDate(newstart);
+            picker2.setDate(newend);
             setText("dpk1",luxon.DateTime.fromJSDate(newstart).toFormat('yyyy-LL-dd')); 
             setText("dpk2",luxon.DateTime.fromJSDate(newend).toFormat('yyyy-LL-dd'));
 
             updateCharts(newstart, newend);
         });
     });
-    // datepicker
-    const picker1 = datepicker('#dpk1', { id: 1, dateSelected: param1_date, onSelect: instance => {picked = true; selectTimescale(picker1.getRange().start, dayEnd(picker1.getRange().end), param1, param2, param3 ) }})
-    const picker2 = datepicker('#dpk2', { id: 1, dateSelected: param2_date, onSelect: instance => {picked = true; selectTimescale(picker2.getRange().start, dayEnd(picker2.getRange().end), param1, param2, param3 ) }})
-
-    // push end date to end of day
-    function dayEnd(pick){
-    var dayend = luxon.DateTime.fromJSDate(pick).endOf('day').toJSDate()
-    return dayend
-    }
-
-    picker1 = document.getElementById('dpk1');
-    picker1.addEventListener('change', (e) => {
-        const newstart = luxon.DateTime.fromFormat(e.target.value, 'yyyy-LL-dd').toJSDate();
-        const end = luxon.DateTime.fromJSDate(enddate).toJSDate();
-        if (newstart < end) {
-            updateCharts(newstart, end);
+    picker1 = datepicker( "#dpk1" , {
+        id: 1,
+        dateSelected: startdate,
+        maxDate: enddate,
+        formatter: (input, date, instance) => {
+            input.value = luxon.DateTime.fromJSDate(date).toFormat('yyyy-LL-dd');
+        },
+        onSelect: instance => {
+            if (picker1.dateSelected > picker2.dateSelected) {
+                picker2.setDate(picker1.dateSelected);
+            }
+            updateCharts(picker1.dateSelected, dayEnd(picker2.dateSelected));
+        }
+    });
+    picker2 = datepicker( "#dpk2" , {
+        id: 2,
+        dateSelected: enddate,
+        maxDate: enddate,
+        formatter: (input, date, instance) => {
+            input.value = luxon.DateTime.fromJSDate(date).toFormat('yyyy-LL-dd');
+        },
+        onSelect: instance => {
+            if (picker1.dateSelected > picker2.dateSelected) {
+                picker1.setDate(picker2.dateSelected);
+                picker1.setMax(picker2.dateSelected);
+            }
+            updateCharts(picker1.dateSelected, dayEnd(picker2.dateSelected));
         }
     });
 }
-
 
 let HOL = 36.700;
 async function loadCurrentConditions() {
@@ -188,7 +211,7 @@ async function loadChartData() {
 
 async function loadChartDataEA() { 
     EA_data = await getEAdata(startdate, enddate);
-//    renderEAChart(startdate, enddate);
+    renderEAChart(startdate, enddate);
 }
 
 function myround(value, precision) {
@@ -200,11 +223,14 @@ function myround(value, precision) {
 function needsReload(mystart, myend) {
 
     //if reload is set we need to fetch more data
-    var reload = false
+    var reload = false;
 
     if (mystart < startdate) {
-        reload = true
-        }
+        reload = true;
+        };
+    if (myend > enddate) {
+        reload = true;
+        };
     // If the period is going from more that 336 hours to less then we have 
     // hourly data and need to reload to get 10 minute interval data.
     // simularly if we are going from more than 2232 hours to less, we 
@@ -224,21 +250,23 @@ let global_data = [];
 let EA_data = [];
 
 async function updateCharts(start, end) {
+    console.log(`Updating charts ${luxon.DateTime.fromJSDate(start).toFormat('yyyy-LL-dd T')} to ${luxon.DateTime.fromJSDate(end).toFormat('yyyy-LL-dd T')}`);
     // reload page if higher-resolution data is needed
     if (needsReload(start, end)) {
         global_data = await getPLCdata(start, end);
-//        EA_data = await getEAdata(start, end);
+        EA_data = await getEAdata(start, end);
     }
    
     renderLevelChart(start, end);
-//    renderFlowChart(start, end);
-//    renderEAChart(start, end);
+    renderEAChart(start, end);
 }
 async function getPLCdata(fromdate, todate){
     const start = luxon.DateTime.fromJSDate(fromdate).toFormat('yyyyLLdd') 
     const end = luxon.DateTime.fromJSDate(todate).toFormat('yyyyLLdd')
     console.log(`Fetching PLC data between ${start} and ${end}`);
     const response = await fetch(`/api/plc/between/${start}/${end}`);
+    startdate = fromdate;
+    enddate = todate;
     if (!response.ok) {
         throw new Error('HTTP error! status: ${response.status}');
     }
@@ -440,8 +468,136 @@ function renderLevelChart(start, end) {
             }
        }
     });
+    var ctx_flo = document.getElementById('ca_flo').getContext('2d');
+    myChart_flow = new Chart(ctx_flo, {
+        type: 'line',
+        data: {
+            labels: xs,
+            datasets: [{
+                label: 'Tony (turbine 1)',                     
+                data: ys3,
+                fill: true,
+                backgroundColor: 'rgba(58,170,166,1.0)',
+                borderColor: 'rgba(58,170,166,1.0)',
+                borderWidth: 1,
+                radius: 0
+            },{
+                label: 'Sophie (turbine 2)',                       
+                data: ys4,
+                fill: true,
+                backgroundColor: 'rgba(128,226,222,1.0)',
+                borderColor: 'rgba(128,226,222,1.0)',
+                borderWidth: 1,
+                radius: 0
+            },]
+        },
+        options: {                                
+            scales: {
+                xAxes: [{
+                    type: 'time', 
+                    time: {minUnit: unit,
+                           tooltipFormat: 'yyyy-LL-dd T',
+                    },
+                    distribution: 'linear',
+                    ticks: {
+                        fontStyle: "bold",
+                        min: start,
+                        max: end,
+                    },
+                    scaleLabel: {
+                        display: false,
+                    },
+                }],
+                yAxes: [{
+                    stacked: true,
+                    ticks: {
+                        fontSize: 15,
+                        fontStyle: "bold",
+                    },
+                    scaleLabel: {
+                        display: false                                      
+                    },
+                }]
+            },
+            title: {text: "Flow through turbines (cubic metres/sec)",},
+                legend: {display: true,}
+        } 
+    });                 
+
 }
 
+function renderEAChart(startdate, enddate) {
+    const xs = []      // array for timestamps for EA flow graph
+    const ys = []      // array for flow at Reading Bridge for EA flow graph
+    
+    var selection = EA_data.filter(function(item){
+        return new Date(item.entrytime) >= startdate &&
+            new Date(item.entrytime) <= enddate
+    })
+    var length = enddate - startdate
+    var unit = 'hour'
+    if (length >= 172800000){
+        unit = 'day'
+        }
+
+    for(item of selection) {                
+        //convert the timestamp to milliseconds (faster)                
+        const mydate = new Date(item.entrytime).getTime()
+        xs.push(mydate);
+        ys.push(item.flow);
+    }
+
+    var ctx_EAflo = document.getElementById('ca_EAflo').getContext('2d');
+    if (typeof myChart_EAflo !== 'undefined' && myChart_EAflo) {
+        myChart_EAflo.destroy();
+    }
+    myChart_EAflo = new Chart(ctx_EAflo, {
+        type: 'line',
+        data: {
+            labels: xs,
+            datasets: [{
+                label: 'Flow at Reading Bridge',                     
+                data: ys,
+                fill: true,
+                backgroundColor: 'rgba(60,166,80,1.0)',
+                borderColor: 'rgba(60,166,80,1.0)',
+                borderWidth: 1,
+                radius: 0
+            },]
+        },
+        options: {                                
+            scales: {
+                xAxes: [{
+                    type: 'time', 
+                    time: {minUnit: unit,
+                           tooltipFormat: 'yyyy-LL-dd T',
+                    },
+                    distribution: 'linear',
+                    ticks: {
+                        fontStyle: "bold",
+                        min: startdate,
+                        max: enddate,
+                    },
+                    scaleLabel: {
+                        display: false,
+                    },
+                }],
+                yAxes: [{
+                    ticks: {
+                        fontSize: 15,
+                        fontStyle: "bold",
+                    },
+                    scaleLabel: {
+                        display: false                                      
+                    },
+                }]
+            },
+            title: {text: "Flow at Reading Bridge (cubic metres/sec)",},
+                legend: {display: true,}
+        } 
+    });                 
+
+}
 
 let plcCache = null;
 let plcTime = 0;
@@ -462,17 +618,27 @@ async function getSetlevel() {
     } return await response.json(); 
 }
 
+let EAcache = null;
+let EAtime = 0;
 async function getEADataCurrent() { 
+    const interval = Date.now() - EAtime;
+    if (interval < 7_200_000 && EAcache) {
+        return EAcache;
+    }
     const response = await fetch('/api/eadata/current'); 
     if (!response.ok) { throw new Error('HTTP error! status: ${response.status}'); 
-    } return await response.json(); }
+    } 
+    EAcache = await response.json();
+    EAtime = Date.now();
+    return EAcache;
+}
 
 buildStaticPage();
 initRangeButtons();
 
 // initial load
-let startdate = luxon.DateTime.now().startOf('day').toJSDate();
-let enddate = luxon.DateTime.now().endOf('day').toJSDate();
+startdate = luxon.DateTime.now().startOf('day').toJSDate();
+enddate = luxon.DateTime.now().endOf('day').toJSDate();
 loadCurrentConditions();
 creatChartDefaults();
 loadChartData();
