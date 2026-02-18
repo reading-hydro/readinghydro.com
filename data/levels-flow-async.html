@@ -8,7 +8,248 @@
 <script src="/wp-content/includes/chartjs-plugin-annotation.min.js"></script>
 <script src="/wp-content/includes/datepicker.min.js"></script>
 <link rel="stylesheet" href="/wp-content/includes/datepicker.min.css">
-<link rel="stylesheet" href="/wp-content/includes/hydrodata.css">
+
+<style>
+.tt {
+ font-family: Arial, Helvetica, sans-serif;
+ font-size: 20px;
+ text-align: center;
+ margin-bottom: 30px;
+}
+.notes {
+text-align: inherit;
+}
+.sub1 {
+ font-family: Arial, Helvetica, sans-serif;
+ font-size: 18px;
+ text-align: center;
+ padding-right: 60px;
+ margin-bottom: 20px;
+}
+.sub2 {
+ font-family: Arial, Helvetica, sans-serif;
+ font-size: 18px;
+ text-align: center;
+ padding-bottom: 20px;
+}
+.col_wra {
+ max-width: 1280px;
+ margin: auto;
+}
+.col_lef {
+ max-width: 500px;
+ padding-bottom: 40px;
+ float: left;
+}
+.col_rig {
+ max-width: 780px;
+ padding-bottom: 40px;
+ float: left;
+}   
+.btn {
+ font-size: 18px;
+ font-family: Arial, Helvetica, sans-serif;
+ padding: 10px 16px;
+ margin: 5px;
+ border-radius: 4px;
+ background-color: #d3d3d3;
+}
+.lab {
+ font-family: Arial, Helvetica, sans-serif;
+ font-style: normal;
+ white-space: nowrap;
+}
+
+.active, .btn:hover {
+ background-color: #1a73e8;
+ color: white;
+}
+.box {
+ width: 420px;
+ height: 70px;
+ margin: 5px 0;
+ padding: 5px 20px 5px 10px;
+ font-family: Arial, Helvetica, sans-serif;
+ font-size: 22px;
+ color: white;
+ float: left;
+}
+.inner {
+ height: 70px; 
+ margin-top: -20px;
+ text-align: right;
+ display:flex;                
+ align-items: center;
+ justify-content: flex-end;
+ font-weight: bold;
+ color: white;               
+}
+.fontbig {
+ font-size: 38px;            
+}
+.fontsmall {
+ font-size: 25px;            
+}
+.cwra {
+ width: 780px;
+ height: 390px;
+ margin: auto;
+}
+.cwra_lev {
+ width: 780px;
+ height: 430px;
+ margin: auto;
+}
+.cle {
+ clear: left;
+}
+#ts {
+ white-space: nowrap;
+}
+#con {
+ max-width: 1280px;
+ margin: auto;
+ line-height: 1.0;
+}
+#pan {
+ max-width: 760px;
+ border: lightgrey solid 2px;
+ background-color: #e7e7e7;
+ padding-top: 10px;
+ margin: 5px auto;
+}
+#dpk1, #dpk2 {
+ margin: 10px;
+ font-family: Arial, Helvetica, sans-serif;
+ background: white;
+ border: 1px solid black;
+ width: fit-content;
+}
+#btw {
+ max-width: 780px;
+ margin: auto;
+ text-align:center;
+}
+#dtw {
+ max-width: 780px;
+ margin: auto;
+ text-align:center;
+}
+#up {
+ background-color: #418AD9;
+}
+#do {
+ background-color: #418AD9;
+}
+#he {
+ background-color: #418AD9;
+}
+#ahol {
+ background-color: #418AD9;
+}
+#hol {
+ background-color: #418AD9;
+}
+#flo1 {
+ background-color: #37A19D;
+}
+#flo2 {
+ background-color: #37A19D;
+}
+#EAflo {
+ background-color: #3ca650;
+}
+#ca_lev {
+ height: 100%;                          
+}
+#ca_flo {
+ height: 100%;                          
+}
+#ca_EAflo {
+ height: 100%;                          
+}
+
+@media only screen and (max-width: 1420px) {
+ .col_wra {
+  max-width: 580px;                
+ }
+ .col_lef {
+  max-width: 580px;
+  float: none;                
+ }
+ .sub1 {
+  padding-right: 0;
+ }
+ .box {
+  float: none;
+  margin: 5px auto;
+ }
+ .col_rig {
+  max-width: 580px;                
+ }
+ .cwra {
+  width: 580px;
+  height: 290px; 
+  margin: auto;        
+ }
+ .cwra_lev {
+  width: 580px;
+  height: 320px; 
+  margin: auto;   
+ }
+}
+@media only screen and (max-width: 610px) {
+ .col_wra {
+  max-width: 350px;
+ }
+ #btw {
+  max-width: 300px;
+ }
+ #dtw {
+  width: 300px;
+ }                 
+ .col_lef {
+  max-width: 350px;
+  float: none;  
+ }
+ .sub1, .sub2 {
+  padding-right: 0;
+  font-size: 17px;
+  margin-bottom: 10px;
+ }
+ .box {
+  width: 320px;
+  float: none;  
+  margin: 5px auto;
+ }
+ .fontbig {
+  font-size: 30px;
+ }
+ .fontsmall {
+  font-size: 20px;
+ }
+ .col_rig {
+  max-width: 350px;
+ }
+ .cwra {
+  width: 350px;
+  height: 290px;
+  margin: auto;
+ }
+ .cwra_lev {
+  width: 350px;
+  height: 320px;
+  margin: auto;
+ }
+}
+@media only screen and (max-width: 360px) {
+ .box {
+  width: 270px;
+  float: none;  
+  margin: 5px auto;
+ }
+}
+</style>
 
 <script type="text/javascript">
 //<!--
@@ -113,9 +354,6 @@ function initRangeButtons() {
             picker1.setMax(newend);
             picker1.setDate(newstart);
             picker2.setDate(newend);
-            setText("dpk1",luxon.DateTime.fromJSDate(newstart).toFormat('yyyy-LL-dd')); 
-            setText("dpk2",luxon.DateTime.fromJSDate(newend).toFormat('yyyy-LL-dd'));
-
             updateCharts(newstart, newend);
         });
     });
@@ -546,6 +784,10 @@ function renderEAChart(startdate, enddate) {
         xs.push(mydate);
         ys.push(item.flow);
     }
+    var ymin3 = 0
+    var ymax3 = myround((Math.max(...ys)), 0)
+    ymax3 = Math.ceil(ymax3/10)*10
+    if (ymax3 < 100){ymax3 = 100}
 
     var ctx_EAflo = document.getElementById('ca_EAflo').getContext('2d');
     if (typeof myChart_EAflo !== 'undefined' && myChart_EAflo) {
@@ -584,6 +826,8 @@ function renderEAChart(startdate, enddate) {
                 }],
                 yAxes: [{
                     ticks: {
+                        min: ymin3,
+                        max: ymax3,
                         fontSize: 15,
                         fontStyle: "bold",
                     },
