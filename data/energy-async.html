@@ -1,0 +1,780 @@
+<title>Energy and Power Data</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="/wp-content/includes/Chart.min.js"></script>
+<script src="/wp-content/includes/luxon.min.js"></script>
+<script src="/wp-content/includes/chartjs-adapter-luxon.min.js"></script>
+<script src="/wp-content/includes/chartjs-plugin-annotation.min.js"></script>
+<script src="/wp-content/includes/datepicker.min.js"></script>
+<link rel="stylesheet" href="/wp-content/includes/datepicker.min.css">
+
+<style>
+.tt {
+ font-family: Arial, Helvetica, sans-serif;
+ font-size: 20px;
+ text-align: center;
+ margin-bottom: 30px;
+}
+.notes {
+ text-align: inherit;
+}
+.sub1 {
+ font-family: Arial, Helvetica, sans-serif;
+ font-size: 18px;
+ text-align: center;
+ padding-right: 60px;
+ margin-bottom: 20px;
+}
+.sub2 {
+ font-family: Arial, Helvetica, sans-serif;
+ font-size: 18px;
+ text-align: center;
+ padding-bottom: 20px;
+}
+.wra {
+ max-width: 1280px;
+ margin: auto;
+}
+.col_lef {
+ max-width: 500px;
+ float: left;
+}
+.col_lef_T0 {
+ max-width: 500px;
+ float: left;
+}
+.col_lef_T1 {
+ max-width: 500px;
+ float: left;
+ padding-bottom: 30px;
+}
+col_lef_T2 {
+ max-width: 500px;
+ float: left;
+ padding-bottom: 40px;
+}
+.col_rig {
+ max-width: 780px;
+ padding-bottom: 40px;
+ float: left;
+}
+.btn {
+ font-size: 18px;
+ font-family: Arial, Helvetica, sans-serif;
+ padding: 10px 16px;
+ margin: 5px;
+ border-radius: 4px;
+ background-color: #d3d3d3;
+}
+.lab {
+ font-family: Arial, Helvetica, sans-serif;
+ font-style: normal;
+ white-space: nowrap;
+}
+.active, .btn:hover {
+ background-color: #1a73e8;
+ color: white;
+}
+.box {
+ width: 420px;
+ height: 70px;
+ margin: 5px 0;
+ padding: 5px 20px 5px 10px;
+ font-family: Arial, Helvetica, sans-serif;
+ font-size: 22px;
+ color: white;
+ float: left;
+}
+.inner {
+ height: 70px; 
+ margin-top: -20px;
+ text-align: right;
+ display:flex;                
+ align-items: center;
+ justify-content: flex-end;
+ font-weight: bold;
+ color: white;               
+}
+.fontbig {
+ font-size: 38px;            
+}
+.fontsmall {
+ font-size: 25px;            
+}
+.cwra_pow {
+ width: 780px;
+ height: 390px;
+ margin: auto;
+}
+.cwra_gate {
+ width: 780px;
+ height: 390px;
+ margin: auto;
+}
+.cle {
+ clear: left;
+}
+#ts {
+ white-space: nowrap;
+}
+#con {
+ max-width: 1280px;
+ margin: auto;
+ line-height: 1.0;
+}
+#pan {
+ max-width: 760px;
+ border: lightgrey solid 2px;
+ background-color: #e7e7e7;
+ padding-top: 10px;
+ margin: 5px auto;
+}
+#dpk1, #dpk2 {
+ margin: 10px;
+ font-family: Arial, Helvetica, sans-serif;
+ background: white;
+ border: 1px solid black;
+ width: fit-content;
+}
+#btw {
+ max-width: 1160px;
+ margin: auto;
+ text-align: center;
+}
+#dtw {
+ max-width: 1160px;
+ margin: auto;
+ text-align:center;
+}
+#tot {
+ background-color: #AA10FF;
+ margin-bottom: 30px;
+}
+#pow1 {
+ background-color: #7A65CF;
+}
+#srpm1 {
+ background-color: #7A65CF;
+}
+#drpm1 {
+ background-color: #7A65CF;
+}
+#opho1 {
+ background-color: #7A65CF;
+}
+#ener1 {
+ background-color: #7A65CF;
+}
+#pow2 {
+ background-color: #DE2F55;
+}
+#srpm2 {
+ background-color: #DE2F55;
+}
+#drpm2 {
+ background-color: #DE2F55;
+}
+#opho2 {
+ background-color: #DE2F55;
+}
+#ener2 {
+ background-color: #DE2F55;
+}
+#ca_pow {
+ height: 100%;                          
+}
+@media only screen and (max-width: 1420px) {
+ .wra {
+  max-width: 580px;                
+ }
+ .col_lef, .col_lef_T0, .col_lef_T1, .col_lef_T2 {
+  max-width: 580px;
+  float: none;                
+ }
+ .sub1 {
+  padding-right: 0;
+ }
+ .box {
+  float: none;
+  margin: 5px auto;
+ }
+ .col_rig {
+  max-width: 580px;                
+ }
+ .cwra {
+  width: 580px;
+  height: 290px; 
+  margin: auto;        
+ }
+ .cwra_gate {
+  width: 580px;
+  height: 290px; 
+  margin: auto;        
+ }
+}
+@media only screen and (max-width: 610px) {
+ .wra {
+  max-width: 350px;
+ }
+ #btw {
+  max-width: 300px;
+ }
+ #dtw {
+  width: 300px;
+ }                 
+ .col_lef, .col_lef_T0, .col_lef_T1, .col_lef_T2 {
+  max-width: 350px;
+  float: none;  
+ }
+ .sub1, .sub2 {
+  padding-right: 0;
+  font-size: 17px;
+  margin-bottom: 10px;
+ }
+ .box {
+  width: 320px;
+  float: none;  
+  margin: 5px auto;
+ }
+ .fontbig {
+  font-size: 30px;
+ }
+ .fontsmall {
+  font-size: 20px;
+ }
+ .col_rig {
+  max-width: 350px;
+ }
+ .cwra_pow {
+  width: 350px;
+  height: 290px;
+  margin: auto;
+ }
+ .ca_gate {
+  width: 350px;
+  height: 290px;
+  margin: auto;
+ }
+ .cwra {
+  width: 350px;
+  height: 290px;
+  margin: auto;
+ }
+}
+@media only screen and (max-width: 360px) {
+  /* this is for really tiny phones */
+ .box {
+  width: 270px;
+  float: none;  
+  margin: 5px auto;
+ }
+}
+</style>
+
+<script type="text/javascript">
+//<!--
+// DO NOT REMOVE the comment above, it stops Wordpress from escaping ampersands
+function buildStaticPage() {
+    const container = document.createElement('div');
+    container.id = "con";
+
+    container.innerHTML = `
+        <p class="notes"><a href="#notes">See below for explanatory notes</a></p>
+        <div class="col_wra">
+            <div class="col_lef">
+                <div class=sub1 id=total_gen>Total electricity exported to date<br />(both turbines)</div>
+                ${makeBox("tot", "Total Export(MWh)","now_total")}
+                <div class="sub1" id="subtitle_current">Turbine 1 (Tony)<br />Current conditions: <span id="ts1"></span></div>
+                ${makeBox("pow1", "Power generation (kW)", "power_g1")}
+                ${makeBox("srpm1", "Screw speed (RPM)", "screw1-rpm")}
+                ${makeBox("drpm1", "Drive speed (RPM)", "drive1-rpm")}
+                ${makeBox("opho1", "Total operating (hours)", "operating1")}
+                ${makeBox("ener1", "Total generation (MWh)", "energy1")}
+                <div class="sub1" id="subtitle_current2">Turbine 2 (Sophie)<br />Current conditions: <span id="ts2"></span></div>
+                ${makeBox("pow2", "Power generation (kW)", "power_g2")}
+                ${makeBox("srpm2", "Screw speed (RPM)", "screw2-rpm")}
+                ${makeBox("drpm2", "Drive speed (RPM)", "drive2-rpm")}
+                ${makeBox("opho2", "Total operating (hours)", "operating2")}
+                ${makeBox("ener2", "Total generation (MWh)", "energy2")}
+                <p class="cle"></p>
+            </div>
+
+            <div class="col_rig">
+                <div class="sub2">Power generation by both turbines<br />over selected period</div>
+                <div id="pan">
+                    <div id="btw">
+                        <button class="btn active" data-range="day">Last day</button>
+                        <button class="btn" data-range="week">Last week</button>
+                        <button class="btn" data-range="month">Last month</button>
+                        <button class="btn" data-range="year">Last year</button>
+                        <p class="cle"></p>
+                    </div>
+                    <div id="dtw">
+                        <label class="lab" for="dpk1">Start date</label>
+                        <input id="dpk1" type="text">
+                        <label class="lab" for="dpk2">End date</label>
+                        <input id="dpk2" type="text">
+                        <p class="cle"></p></div>
+                </div>
+
+                <div class="cwra_pow"><canvas id="cwra"></canvas></div>
+                <div class="cwra_gate"><canvas id="ca_gate"></canvas></div>
+            </div>
+        </div>
+    `;
+
+    document.getElementsByClassName("entry-header")[0].append(container);
+}
+
+function makeBox(id, label, valueId) {
+    return `
+        <div id="${id}" class="box">
+            ${label}
+            <div class="inner fontbig" id="${valueId}">—</div>
+        </div>
+    `;
+}
+
+function setText(id, value) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value;
+}
+
+// datepicker
+let startdate = luxon.DateTime.now().startOf('day').toJSDate();
+let enddate = luxon.DateTime.now().endOf('day').toJSDate();
+
+// push end date to end of day
+function dayEnd(pick){
+    var dayend = luxon.DateTime.fromJSDate(pick).endOf('day').toJSDate()
+    return dayend
+}
+let picker1, picker2;
+function initRangeButtons() {
+    document.querySelectorAll('#btw .btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('#btw .btn')
+                .forEach(b => b.classList.remove('active'));
+
+            btn.classList.add('active');
+
+            let start = new Date();
+            let now = new Date();
+            now.setDate(now.getUTCDate());
+
+            switch (btn.dataset.range) {
+                case 'week':  start.setDate(now.getUTCDate() - 7); break;
+                case 'month': start.setDate(now.getUTCDate() - 31); break;
+                case 'year':  start.setDate(now.getUTCDate() - 365); break;
+                default:      start.setDate(now.getUTCDate()); break;
+            }
+
+            let newstart = luxon.DateTime.fromJSDate(start).startOf('day').toJSDate();
+            let newend = luxon.DateTime.now().endOf('day').toJSDate();
+
+            picker1.setMax(newend);
+            picker1.setDate(newstart);
+            picker2.setDate(newend);
+            updateCharts(newstart, newend);
+        });
+    });
+    picker1 = datepicker( "#dpk1" , {
+        id: 1,
+        dateSelected: startdate,
+        maxDate: enddate,
+        formatter: (input, date, instance) => {
+            input.value = luxon.DateTime.fromJSDate(date).toFormat('yyyy-LL-dd');
+        },
+        onSelect: instance => {
+            if (picker1.dateSelected > picker2.dateSelected) {
+                picker2.setDate(picker1.dateSelected);
+            }
+            updateCharts(picker1.dateSelected, dayEnd(picker2.dateSelected));
+        }
+    });
+    picker2 = datepicker( "#dpk2" , {
+        id: 2,
+        dateSelected: enddate,
+        maxDate: enddate,
+        formatter: (input, date, instance) => {
+            input.value = luxon.DateTime.fromJSDate(date).toFormat('yyyy-LL-dd');
+        },
+        onSelect: instance => {
+            if (picker1.dateSelected > picker2.dateSelected) {
+                picker1.setDate(picker2.dateSelected);
+                picker1.setMax(picker2.dateSelected);
+            }
+            updateCharts(picker1.dateSelected, dayEnd(picker2.dateSelected));
+        }
+    });
+}
+async function loadCurrentConditions() {
+    try {
+        const plc = await getPLCDataCurrent();
+        setText("ts1", luxon.DateTime.fromISO(plc.received_at).toFormat('yyyy-LL-dd T') + ' UTC');
+
+        setText("power_g1", plc.gen1_power_kw.toFixed(1));
+        setText("screw1-rpm", plc.gen1_screw_rpm.toFixed(0));
+        setText("drive1-rpm", plc.gen1_drive_rpm.toFixed(0));
+        setText("operating1", plc.gen1_operating_hours.toFixed(0));
+        setText("energy1", plc.gen1_energy_mwh.toFixed(1));
+
+        setText("ts2", luxon.DateTime.fromISO(plc.received_at).toFormat('yyyy-LL-dd T') + ' UTC');
+        setText("power_g2", plc.gen2_power_kw.toFixed(1));
+        setText("screw2-rpm", plc.gen2_screw_rpm.toFixed(0));
+        setText("drive2-rpm", plc.gen2_drive_rpm.toFixed(0));
+        setText("operating2", plc.gen2_operating_hours.toFixed(0));
+        setText("energy2", plc.gen2_energy_mwh.toFixed(1));
+    } catch (e) {
+        console.warn("Current conditions update failed", e);
+    }
+    const meter = await getMeterData();
+    setText("now_total", (meter[0].export/1000).toFixed(3));
+}
+async function updateCurrentConditions() {
+    try {
+        const plc = await getPLCDataCurrent();
+        setText("ts1", luxon.DateTime.fromISO(plc.received_at).toFormat('yyyy-LL-dd T') + ' UTC');
+
+        setText("power_g1", plc.gen1_power_kw.toFixed(1));
+        setText("screw1-rpm", plc.gen1_screw_rpm.toFixed(0));
+        setText("drive1-rpm", plc.gen1_drive_rpm.toFixed(0));
+        setText("operating1", plc.gen1_operating_hours.toFixed(0));
+        setText("energy1", plc.gen1_energy_mwh.toFixed(1));
+
+        setText("ts2", luxon.DateTime.fromISO(plc.received_at).toFormat('yyyy-LL-dd T') + ' UTC');
+        setText("power_g2", plc.gen2_power_kw.toFixed(1));
+        setText("screw2-rpm", plc.gen2_screw_rpm.toFixed(0));
+        setText("drive2-rpm", plc.gen2_drive_rpm.toFixed(0));
+        setText("operating2", plc.gen2_operating_hours.toFixed(0));
+        setText("energy2", plc.gen2_energy_mwh.toFixed(1));
+    } catch (e) {
+        console.warn("Current conditions update failed", e);
+    }
+}
+async function loadChartData() {
+    global_data = await getPLCdata(startdate, enddate);
+
+    renderPowerChart(startdate, enddate);
+}
+async function loadGateData() {
+    gate_data = await getGateData(startdate, enddate);
+
+    renderGateChart(startdate, enddate);
+}
+function myround(value, precision) {
+    var multiplier = Math.pow(10, precision || 0);
+    return Math.round(value * multiplier) / multiplier;
+}
+
+//select timescale using parameters from buttons or datepicker
+function needsReload(mystart, myend) {
+
+    //if reload is set we need to fetch more data
+    var reload = false;
+
+    if (mystart < startdate) {
+        reload = true;
+        };
+    if (myend > enddate) {
+        reload = true;
+        };
+    // If the period is going from more that 336 hours to less then we have 
+    // hourly data and need to reload to get 10 minute interval data.
+    // simularly if we are going from more than 2232 hours to less, we 
+    // are going from daily to hourly data and need to reload.
+    var oldlength = enddate - startdate
+    var newlength = myend - mystart
+    if ( (oldlength > 336*3600000) && (newlength < 336*3600000) ) {
+        reload = true
+    }
+    if ( (oldlength > 2232*3600000) && (newlength < 2232*3600000) ) {
+        reload = true
+    }
+    return reload 
+}
+
+let global_data = [];
+let gate_data = [];
+
+async function updateCharts(start, end) {
+    console.log(`Updating charts ${luxon.DateTime.fromJSDate(start).toFormat('yyyy-LL-dd T')} to ${luxon.DateTime.fromJSDate(end).toFormat('yyyy-LL-dd T')}`);
+    // reload page if higher-resolution data is needed
+    if (needsReload(start, end)) {
+        global_data = await getPLCdata(start, end);
+        gate_data = await getGateData(start, end);
+    }
+   
+    renderPowerChart(start, end);
+    renderGateChart(start, end);
+}
+async function getPLCdata(fromdate, todate){
+    const start = luxon.DateTime.fromJSDate(fromdate).toFormat('yyyyLLdd') 
+    const end = luxon.DateTime.fromJSDate(todate).toFormat('yyyyLLdd')
+    console.log(`Fetching PLC data between ${start} and ${end}`);
+    const response = await fetch(`/api/plc/between/${start}/${end}`);
+    startdate = fromdate;
+    enddate = todate;
+    if (!response.ok) {
+        throw new Error('HTTP error! status: ${response.status}');
+    }
+    return await response.json();
+}
+async function getGateData(fromdate, todate){
+    const start = luxon.DateTime.fromJSDate(fromdate).toFormat('yyyyLLdd') 
+    const end = luxon.DateTime.fromJSDate(todate).toFormat('yyyyLLdd')
+    console.log(`Fetching gate data between ${start} and ${end}`);
+    const response = await fetch(`/api/sluice/between/${start}/${end}`);
+    if (!response.ok) {
+        throw new Error('HTTP error! status: ${response.status}');
+    }
+    return await response.json();
+}
+function creatChartDefaults() { 
+//Set global defaults for charts
+    Chart.defaults.global.tooltips.callbacks.title = function(t, d) {
+        return luxon.DateTime.fromMillis(d.labels[t[0].index]).toFormat('yyyy-LL-dd T');}
+//    Chart.defaults.global.animation.duration = 0 
+    Chart.defaults.global.maintainAspectRatio = false
+    Chart.defaults.global.title.display = true
+    Chart.defaults.global.title.fontSize = 20
+    Chart.defaults.global.title.fontStyle = 'bold'
+    Chart.defaults.global.legend.labels.fontSize = 15
+    Chart.defaults.global.legend.labels.fontStyle = 'bold'
+}
+
+let myChart_energy = null;
+let myChart_gate = null;
+
+function renderPowerChart(start, end) {
+
+    const xs = [];
+    const ys1 = [];
+    const ys2 = [];
+
+        var selection = global_data.filter(function(item){
+        return new Date(item.received_at) >= start &&
+            new Date(item.received_at) <= end
+    })
+    var length = end - start
+    var unit = 'hour'
+    if (length >= 172800000){
+        unit = 'day'
+        }
+
+    for(item of selection) {                
+        //convert the timestamp to milliseconds (faster)                
+        const mydate = new Date(item.received_at).getTime()
+        xs.push(mydate);
+        ys1.push(item.gen1_power_kw);
+        ys2.push(item.gen2_power_kw);
+    }
+
+    const ctx = document.getElementById('cwra').getContext('2d');
+    if (typeof myChart_energy !== 'undefined' && myChart_energy) {
+        myChart_energy.destroy();
+    }
+    myChart_energy = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: xs,
+            datasets: [
+                {
+                    label: 'Tony (Turbine 1)',
+                    data: ys1,
+                    fill: true,
+                    backgroundColor: 'rgba(143, 118, 242, 1)',
+                    borderColor: 'rgba(143, 118, 242, 1)',
+                    borderWidth: 1,
+                    radius: 0,
+                },
+                {
+                    label: 'Sophie (Turbine 2)',
+                    data: ys2,
+                    fill: true,
+                    backgroundColor: 'rgba(230, 48, 86, 0.8)',
+                    borderColor: 'rgba(230, 48, 86, 0.9)',
+                    borderWidth: 1,
+                    radius: 0,
+                }
+            ]
+        },
+        options: {
+            scales: {
+                xAxes: [{
+                    type: 'time', 
+                    time: {minUnit: unit,},
+                    distribution: 'linear',
+                    ticks: {
+                        fontStyle: "bold",
+                        min: startdate.getTime(),
+                        max: enddate.getTime(),
+                    },
+                    scaleLabel: {
+                        display:false,
+                    }
+                }],
+                yAxes: [{
+                    stacked: true,
+                    ticks: {
+                        fontSize: 15,
+                        fontStyle: "bold",
+                        min: 0,
+                    },
+                    scaleLabel: {
+                        display: false
+                    }
+                }]
+            },
+            title: {
+                text: `Power (kW)`
+            },
+        }
+    });
+}
+function renderGateChart(start, end) {
+    var selection = gate_data.filter(function(item){
+        return new Date(item.date) >= start &&
+            new Date(item.date) <= end
+    })
+    length = end - start
+    var unit = 'hour'
+    if (length >= 172800000){
+        unit = 'day'
+        }
+
+    const xs = [];
+    const ys1 = [];
+    const ys2 = [];
+    let last_sluice_1 = 0;
+    let last_sluice_2 = 0;
+    for(item of selection) {                
+        //convert the timestamp to milliseconds (faster)                
+        const mydate = new Date(item.date).getTime()
+        xs.push(mydate);
+        if (item.sensor === "sluice_1") {
+            ys1.push(item.gate_raised_mm);
+            last_sluice_1 = item.gate_raised_mm;
+            ys2.push(last_sluice_2);
+        }
+        else if (item.sensor === "sluice_2") {
+            ys2.push(item.gate_raised_mm);
+            last_sluice_2 = item.gate_raised_mm;
+            ys1.push(last_sluice_1);
+        }
+        else {
+            console.warn("Unknown sluice sensor", item.sensor);
+        }
+    }
+
+    const ctx = document.getElementById('ca_gate').getContext('2d');
+    if (typeof myChart_gate !== 'undefined' && myChart_gate) {
+        myChart_gate.destroy();
+    }
+    myChart_gate = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: xs,
+            datasets: [
+                {
+                    label: 'Tony (Turbine 1) Gate Raised (mm)',
+                    data: ys1,
+                    fill: false,
+                    borderColor: 'rgba(143, 118, 242, 1)',
+                    borderWidth: 1,
+                    radius: 0,
+                },
+                {
+                    label: 'Sophie (Turbine 2) Gate Raised (mm)',
+                    data: ys2,
+                    fill: false,
+                    borderColor: 'rgba(230, 48, 86, 0.8)',
+                    borderWidth: 1,
+                    radius: 0,
+                }
+            ]
+        },
+        options: {
+            scales: {
+                xAxes: [{
+                    type: 'time', 
+                    time: {minUnit: unit,},
+                    distribution: 'linear',
+                    ticks: {
+                        fontStyle: "bold",
+                        min: startdate.getTime(),
+                        max: enddate.getTime(),
+                    },
+                    scaleLabel: {
+                        display:false,
+                    }
+                }],
+                yAxes: [{
+                    ticks: {
+                        fontSize: 15,
+                        fontStyle: "bold",
+                        min: 0,
+                        max: 100,
+                    },
+                    scaleLabel: {
+                        display:false
+                    }
+                }]
+            },
+            title: {
+                text: `Sluice gate position (mm)`
+            },
+        }
+    });
+}
+
+let plcCache = null;
+let plcTime = 0;
+async function getPLCDataCurrent() {
+    const interval = Date.now() - plcTime;
+    if (interval < 600_000 && plcCache) {
+        return plcCache;
+    }
+    plcCache = await fetch('/api/plc/current')
+        .then(res => res.json());
+    plcTime = Date.parse(plcCache.received_at);
+    return plcCache;
+}
+let globalMeterData = null;
+async function getMeterData(){
+    if (globalMeterData) {
+        return globalMeterData;
+    }
+    const response = await fetch('/api/meter/current');
+    if (!response.ok) {
+        throw new Error('HTTP error! status: ${response.status}');
+    }
+    meterCache = await response.json();
+    globalMeterData = meterCache.filter(function(item){
+                        return item.meter == '70150046' 
+                            })
+    return globalMeterData;
+}
+
+buildStaticPage();
+initRangeButtons();
+
+// initial load
+startdate = luxon.DateTime.now().startOf('day').toJSDate();
+enddate = luxon.DateTime.now().endOf('day').toJSDate();
+loadCurrentConditions();
+creatChartDefaults();
+loadChartData();
+loadGateData();
+
+// refresh current conditions every 60 seconds
+setInterval(updateCurrentConditions, 60_000);
+
+// refresh immediately when tab becomes visible
+document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) {
+        updateCurrentConditions();
+    }
+});
+//-->
+</script>
