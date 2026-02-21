@@ -201,7 +201,7 @@ col_lef_T2 {
  .col_rig {
   max-width: 580px;                
  }
- .cwra {
+ .cwra_pow {
   width: 580px;
   height: 290px; 
   margin: auto;        
@@ -250,12 +250,7 @@ col_lef_T2 {
   height: 290px;
   margin: auto;
  }
- .ca_gate {
-  width: 350px;
-  height: 290px;
-  margin: auto;
- }
- .cwra {
+ .cwra_gate {
   width: 350px;
   height: 290px;
   margin: auto;
@@ -681,7 +676,7 @@ function renderGateChart(start, end) {
             labels: xs,
             datasets: [
                 {
-                    label: 'Tony (Turbine 1) Gate Raised (mm)',
+                    label: 'Tony (Turbine 1)',
                     data: ys1,
                     fill: true,
                     borderColor: 'rgba(143, 118, 242, 1)',
@@ -690,7 +685,7 @@ function renderGateChart(start, end) {
                     radius: 0,
                 },
                 {
-                    label: 'Sophie (Turbine 2) Gate Raised (mm)',
+                    label: 'Sophie (Turbine 2)',
                     data: ys2,
                     fill: true,
                     borderColor: 'rgba(230, 48, 86, 1)',
