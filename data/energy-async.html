@@ -389,6 +389,8 @@ function initRangeButtons() {
             if (picker1.dateSelected > picker2.dateSelected) {
                 picker2.setDate(picker1.dateSelected);
             }
+            document.querySelectorAll('#btw .btn')
+                .forEach(b => b.classList.remove('active'));
             updateCharts(picker1.dateSelected, dayEnd(picker2.dateSelected));
         }
     });
@@ -404,6 +406,8 @@ function initRangeButtons() {
                 picker1.setDate(picker2.dateSelected);
                 picker1.setMax(picker2.dateSelected);
             }
+            document.querySelectorAll('#btw .btn')
+                .forEach(b => b.classList.remove('active'));
             updateCharts(picker1.dateSelected, dayEnd(picker2.dateSelected));
         }
     });
@@ -592,8 +596,8 @@ function renderPowerChart(start, end) {
                     label: 'Sophie (Turbine 2)',
                     data: ys2,
                     fill: true,
-                    backgroundColor: 'rgba(230, 48, 86, 0.8)',
-                    borderColor: 'rgba(230, 48, 86, 0.9)',
+                    backgroundColor: 'rgba(230, 48, 86, 1)',
+                    borderColor: 'rgba(230, 48, 86, 1)',
                     borderWidth: 1,
                     radius: 0,
                 }
@@ -653,13 +657,13 @@ function renderGateChart(start, end) {
         const mydate = new Date(item.date).getTime()
         xs.push(mydate);
         if (item.sensor === "sluice_1") {
-            ys1.push(item.gate_raised_mm);
-            last_sluice_1 = item.gate_raised_mm;
+            last_sluice_1 = Math.max(0, item.gate_raised_mm);
+            ys1.push(last_sluice_1);
             ys2.push(last_sluice_2);
         }
         else if (item.sensor === "sluice_2") {
-            ys2.push(item.gate_raised_mm);
-            last_sluice_2 = item.gate_raised_mm;
+            last_sluice_2 = Math.max(0, item.gate_raised_mm);
+            ys2.push(last_sluice_2);
             ys1.push(last_sluice_1);
         }
         else {
@@ -679,16 +683,18 @@ function renderGateChart(start, end) {
                 {
                     label: 'Tony (Turbine 1) Gate Raised (mm)',
                     data: ys1,
-                    fill: false,
+                    fill: true,
                     borderColor: 'rgba(143, 118, 242, 1)',
+                    backgroundColor: 'rgba(143, 118, 242, 0.4)',
                     borderWidth: 1,
                     radius: 0,
                 },
                 {
                     label: 'Sophie (Turbine 2) Gate Raised (mm)',
                     data: ys2,
-                    fill: false,
-                    borderColor: 'rgba(230, 48, 86, 0.8)',
+                    fill: true,
+                    borderColor: 'rgba(230, 48, 86, 1)',
+                    backgroundColor: 'rgba(230, 48, 86, 0.4)',
                     borderWidth: 1,
                     radius: 0,
                 }
@@ -714,7 +720,7 @@ function renderGateChart(start, end) {
                         fontSize: 15,
                         fontStyle: "bold",
                         min: 0,
-                        max: 100,
+                        max: 1200,
                     },
                     scaleLabel: {
                         display:false

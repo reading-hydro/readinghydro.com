@@ -370,6 +370,8 @@ function initRangeButtons() {
             if (picker1.dateSelected > picker2.dateSelected) {
                 picker2.setDate(picker1.dateSelected);
             }
+            document.querySelectorAll('#btw .btn')
+                .forEach(b => b.classList.remove('active'));
             updateCharts(picker1.dateSelected, dayEnd(picker2.dateSelected));
         }
     });
@@ -385,6 +387,8 @@ function initRangeButtons() {
                 picker1.setDate(picker2.dateSelected);
                 picker1.setMax(picker2.dateSelected);
             }
+            document.querySelectorAll('#btw .btn')
+                .forEach(b => b.classList.remove('active'));
             updateCharts(picker1.dateSelected, dayEnd(picker2.dateSelected));
         }
     });
@@ -446,7 +450,6 @@ async function loadChartData() {
     global_data = await getPLCdata(startdate, enddate);
 
     renderLevelChart(startdate, enddate);
-//    renderFlowChart(startdate, enddate);
 }
 
 async function loadChartDataEA() { 
