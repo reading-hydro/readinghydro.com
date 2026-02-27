@@ -1,0 +1,394 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="/wp-content/includes/Chart.min.js"></script>
+<script src="/wp-content/includes/luxon.min.js"></script>
+<script src="/wp-content/includes/chartjs-adapter-luxon.min.js"></script>
+<!-- For luxon formatting see https://github.com/moment/luxon/blob/master/docs/formatting.md -->
+<script src="/wp-content/includes/datepicker.min.js"></script>
+<link rel="stylesheet" href="/wp-content/includes/datepicker.min.css">
+
+<style>
+.tt {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 20px;
+    text-align: center;
+    margin-bottom: 30px;
+}
+.notes {
+text-align: inherit;
+}
+.sub1 {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    text-align: center;
+    padding-right: 60px;
+    margin-bottom: 20px;
+}
+.sub2 {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    text-align: center;
+    padding-bottom: 20px;
+}
+.wra {
+max-width: 1280px;
+margin: auto;
+}
+.col_lef {
+max-width: 500px;
+padding-bottom: 40px;
+float: left;
+}
+.col_rig {
+max-width: 780px;
+padding-bottom: 40px;
+float: left;
+}
+.btn {
+    font-size: 18px;
+    font-family: Arial, Helvetica, sans-serif;
+    padding: 10px 16px;
+    margin: 5px;
+    border-radius: 4px;
+    background-color: #d3d3d3;
+}
+.lab {
+    font-family: Arial, Helvetica, sans-serif;
+    font-style: normal;
+    white-space: nowrap;
+}
+.active, .btn:hover {
+background-color: #1a73e8;
+color: white;
+}
+.box {
+    width: 420px;
+    height: 70px;
+    margin: 5px 0;
+    padding: 5px 20px 5px 10px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 22px;
+    color: white;
+    float: left;
+}
+.inner {
+    height: 70px; 
+    margin-top: -20px;
+    text-align: right;
+    display:flex;                
+    align-items: center;
+    justify-content: flex-end;
+    font-weight: bold;
+    color: white;               
+}
+.fontbig {
+    font-size: 38px;            
+}
+.fontsmall {
+    font-size: 25px;            
+}
+.cwra_temp, .cwra_hum {
+    width: 780px;
+    height: 390px;
+    margin: auto;
+}
+.cle {
+    clear: left;
+}
+#ts {
+    white-space: nowrap;
+}
+#con {
+max-width: 1280px;
+    margin: auto;
+    /* override WP theme */
+line-height: 1.0;
+}
+#pan {
+    max-width: 760px;
+    border: lightgrey solid 2px;
+    background-color: #e7e7e7;
+    padding-top: 10px;
+    margin: 5px auto;
+}
+#dpk1, #dpk2 {
+    margin: 10px;
+    font-family: Arial, Helvetica, sans-serif;
+    /* override WP theme */
+    background: white;
+    border: 1px solid black;
+    /* add for new site Jan 2026 */
+    width: fit-content;
+}
+#btw {
+    max-width: 780px;
+    margin: auto;
+    text-align:center;
+}
+#dtw {
+    max-width: 780px;
+    margin: auto;
+    text-align:center;
+}
+#tem {
+background-color: #ED6651;
+}
+#hum {
+background-color: #167CAC;
+}
+#ca_tem {
+    height: 100%;                          
+}
+#ca_hum {
+    height: 100%;                          
+}
+
+@media only screen and (max-width: 1420px) {
+    .wra {
+        max-width: 580px;                
+    }
+    .col_lef {
+        max-width: 580px;
+        float: none;                
+    }
+    .sub1 {
+        padding-right: 0;
+    }
+    .box {
+        float: none;
+        margin: 5px auto;
+    }
+    .col_rig {
+        max-width: 580px;                
+    }
+    .cwra_hum, .cwra_temp {
+        width: 580px;
+        height: 290px; 
+        margin: auto;        
+    }
+}
+@media only screen and (max-width: 610px) {
+    .wra {
+        max-width: 350px;
+    }
+    #btw {
+        max-width: 300px;
+    }
+    #dtw {
+        width: 300px;
+    }
+    .col_lef {
+        max-width: 350px;
+        float: none;  
+    }
+    .sub1, .sub2 {
+        padding-right: 0;
+        font-size: 17px;
+        margin-bottom: 10px;
+    }
+    .box {
+        width: 320px;
+        float: none;  
+        margin: 5px auto;
+    }
+    .fontbig {
+        font-size: 30px;
+    }
+    .fontsmall {
+        font-size: 20px;
+    }
+    .col_rig {
+        max-width: 350px;
+    }
+    .cwra_temp, .cwra_hum {
+        width: 350px;
+        height: 290px;
+        margin: auto;
+    }
+}
+@media only screen and (max-width: 360px) {
+    /* this is for really tiny phones */
+    .box {
+        width: 270px;
+        float: none;  
+        margin: 5px auto;
+    }
+}
+</style>
+
+<script type="text/javascript">
+//<!--
+// DO NOT REMOVE the comment above, it stops Wordpress from escaping ampersands
+function buildstaticpage() {
+        const container = document.createElement('div');
+    container.id = "con";
+
+    container.innerHTML = `
+        <p class="notes"><a href="#notes">See below for explanatory notes</a></p>
+        <div class="col_wra">
+            <div class="col_lef">
+                <div class="sub1" id="subtitle_current">Current conditions: <span id="ts1"></span></div>
+                ${makeBox("tem", "Room Temperature (°C)", "nowrmtemp")}
+                ${makeBox("cptemp", "Control Panel Temperature (°C)", "nowcptemp")}
+                ${makeBox("gen1temp", "Generator 1 Gearbox (°C)", "gb1temp")}
+                ${makeBox("gen2temp", "Generator 2 Gearbox (°C)", "gb2temp")}
+                ${makeBox("outtemp", "Outside Temperature (°C)", "nowtemp")}
+                ${makeBox("hum", "Humidity (%)", "nowhum")}
+                <p class="cle"></p>
+            </div>
+
+            <div class="col_rig">
+                <div class="sub2">Conditions over selected period</div>
+                <div id="pan">
+                    <div id="btw">
+                        <button class="btn active" data-range="day">Last day</button>
+                        <button class="btn" data-range="week">Last week</button>
+                        <button class="btn" data-range="month">Last month</button>
+                        <button class="btn" data-range="year">Last year</button>
+                        <p class="cle"></p>
+                    </div>
+                    <div id="dtw">
+                        <label class="lab" for="dpk1">Start date</label>
+                        <input id="dpk1" type="text">
+                        <label class="lab" for="dpk2">End date</label>
+                        <input id="dpk2" type="text">
+                        <p class="cle"></p></div>
+                </div>
+
+                <div class="cwra_temp"><canvas id="ca_temp"></canvas></div>
+                <div class="cwra_hum"><canvas id="ca_hum"></canvas></div>
+            </div>
+        </div>
+    `;
+
+    document.getElementsByClassName("entry-header")[0].append(container);
+}
+function makeBox(id, label, valueId) {
+    return `
+        <div id="${id}" class="box">
+            ${label}
+            <div class="inner fontbig" id="${valueId}">—</div>
+        </div>
+    `;
+}
+
+function setText(id, value) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value;
+}
+
+// datepicker
+let startdate = luxon.DateTime.now().startOf('day').toJSDate();
+let enddate = luxon.DateTime.now().endOf('day').toJSDate();
+
+// push end date to end of day
+function dayEnd(pick){
+    var dayend = luxon.DateTime.fromJSDate(pick).endOf('day').toJSDate()
+    return dayend
+}
+let picker1, picker2;
+function initRangeButtons() {
+    document.querySelectorAll('#btw .btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('#btw .btn')
+                .forEach(b => b.classList.remove('active'));
+
+            btn.classList.add('active');
+
+            let start = new Date();
+            let now = new Date();
+            now.setDate(now.getUTCDate());
+
+            switch (btn.dataset.range) {
+                case 'week':  start.setDate(now.getUTCDate() - 7); break;
+                case 'month': start.setDate(now.getUTCDate() - 31); break;
+                case 'year':  start.setDate(now.getUTCDate() - 365); break;
+                default:      start.setDate(now.getUTCDate()); break;
+            }
+
+            let newstart = luxon.DateTime.fromJSDate(start).startOf('day').toJSDate();
+            let newend = luxon.DateTime.now().endOf('day').toJSDate();
+
+            picker1.setMax(newend);
+            picker1.setDate(newstart);
+            picker2.setDate(newend);
+            updateCharts(newstart, newend);
+        });
+    });
+    picker1 = datepicker( "#dpk1" , {
+        id: 1,
+        dateSelected: startdate,
+        maxDate: enddate,
+        formatter: (input, date, instance) => {
+            input.value = luxon.DateTime.fromJSDate(date).toFormat('yyyy-LL-dd');
+        },
+        onSelect: instance => {
+            if (picker1.dateSelected > picker2.dateSelected) {
+                picker2.setDate(picker1.dateSelected);
+            }
+            document.querySelectorAll('#btw .btn')
+                .forEach(b => b.classList.remove('active'));
+            updateCharts(picker1.dateSelected, dayEnd(picker2.dateSelected));
+        }
+    });
+    picker2 = datepicker( "#dpk2" , {
+        id: 2,
+        dateSelected: enddate,
+        maxDate: enddate,
+        formatter: (input, date, instance) => {
+            input.value = luxon.DateTime.fromJSDate(date).toFormat('yyyy-LL-dd');
+        },
+        onSelect: instance => {
+            if (picker1.dateSelected > picker2.dateSelected) {
+                picker1.setDate(picker2.dateSelected);
+                picker1.setMax(picker2.dateSelected);
+            } else {
+                picker1.setMax(picker2.dateSelected);
+            }
+            document.querySelectorAll('#btw .btn')
+                .forEach(b => b.classList.remove('active'));
+            updateCharts(picker1.dateSelected, dayEnd(picker2.dateSelected));
+        }
+    });
+}
+async function loadCurrentConditions() {
+    try {
+        const plc = await getPLCDataCurrent();
+        setText("ts1", luxon.DateTime.fromISO(plc.received_at).toFormat('yyyy-LL-dd T') + ' UTC');
+
+        setText("nowtemp", plc.room_temp.toFixed(1));
+        setText("nowhum", plc.room_hum.toFixed(1));
+        setText("cptemp", plc.control_panel_temp.toFixed(1));
+        setText("gb1temp", plc.gen1_gearbox_temp.toFixed(1));
+        setText("gb2temp", plc.gen2_gearbox_temp.toFixed(1));
+    } catch (err) {
+        console.error("Error loading current conditions", err);
+    }
+}
+function creatChartDefaults() { 
+//Set global defaults for charts
+    Chart.defaults.global.tooltips.callbacks.title = function(t, d) {
+        return luxon.DateTime.fromMillis(d.labels[t[0].index]).toFormat('yyyy-LL-dd T');}
+//    Chart.defaults.global.animation.duration = 0 
+    Chart.defaults.global.maintainAspectRatio = false
+    Chart.defaults.global.title.display = true
+    Chart.defaults.global.title.fontSize = 20
+    Chart.defaults.global.title.fontStyle = 'bold'
+    Chart.defaults.global.legend.labels.fontSize = 15
+    Chart.defaults.global.legend.labels.fontStyle = 'bold'
+}
+
+let ttn_data = [];
+async function getTTNdata(start, end) {
+        const start = luxon.DateTime.fromJSDate(fromdate).toFormat('yyyyLLdd') 
+    const end = luxon.DateTime.fromJSDate(todate).toFormat('yyyyLLdd')
+    console.log(`Fetching TTN data between ${start} and ${end}`);
+    const response = await fetch(`/api/ttn/between/${start}/${end}`);
+    startdate = fromdate;
+    enddate = todate;
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return await response.json();
+
+}

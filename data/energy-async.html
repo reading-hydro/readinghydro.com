@@ -368,6 +368,7 @@ function initRangeButtons() {
             let newend = luxon.DateTime.now().endOf('day').toJSDate();
 
             picker1.setMax(newend);
+            picker2.setMax(newend);
             picker1.setDate(newstart);
             picker2.setDate(newend);
             updateCharts(newstart, newend);
@@ -499,8 +500,6 @@ let global_data = [];
 let gate_data = [];
 
 async function updateCharts(start, end) {
-    console.log(`Updating charts ${luxon.DateTime.fromJSDate(start).toFormat('yyyy-LL-dd T')} to ${luxon.DateTime.fromJSDate(end).toFormat('yyyy-LL-dd T')}`);
-    // reload page if higher-resolution data is needed
     if (needsReload(start, end)) {
         global_data = await getPLCdata(start, end);
         gate_data = await getGateData(start, end);
@@ -608,8 +607,8 @@ function renderPowerChart(start, end) {
                     distribution: 'linear',
                     ticks: {
                         fontStyle: "bold",
-                        min: startdate.getTime(),
-                        max: enddate.getTime(),
+                        min: start.getTime(),
+                        max: end.getTime(),
                     },
                     scaleLabel: {
                         display:false,
@@ -705,8 +704,8 @@ function renderGateChart(start, end) {
                     distribution: 'linear',
                     ticks: {
                         fontStyle: "bold",
-                        min: startdate.getTime(),
-                        max: enddate.getTime(),
+                        min: start.getTime(),
+                        max: end.getTime(),
                     },
                     scaleLabel: {
                         display:false,
