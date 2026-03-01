@@ -131,11 +131,17 @@ line-height: 1.0;
     text-align:center;
 }
 #tem {
-background-color: #ED6651;
-}
+background-color: #ED6651;}
 #hum {
-background-color: #167CAC;
-}
+background-color: #167CAC;}
+#cptemp {
+background-color: #0062ff;}
+#gen1temp {
+background-color: #9900ff;}
+#gen2temp {
+background-color: #ff00d0;}
+#outtemp {
+background-color: #ff0051;}
 #ca_tem {
     height: 100%;                          
 }
@@ -219,7 +225,7 @@ background-color: #167CAC;
 <script type="text/javascript">
 //<!--
 // DO NOT REMOVE the comment above, it stops Wordpress from escaping ampersands
-function buildstaticpage() {
+function buildStaticPage() {
         const container = document.createElement('div');
     container.id = "con";
 
@@ -256,7 +262,7 @@ function buildstaticpage() {
                 </div>
 
                 <div class="cwra_temp"><canvas id="ca_temp"></canvas></div>
-                <div class="cwra_hum"><canvas id="ca_hum"></canvas></div>
+                <div class="cwra_hum"><canvas id="ca_humid"></canvas></div>
             </div>
         </div>
     `;
@@ -310,6 +316,7 @@ function initRangeButtons() {
             let newend = luxon.DateTime.now().endOf('day').toJSDate();
 
             picker1.setMax(newend);
+            picker2.setMax(newend);
             picker1.setDate(newstart);
             picker2.setDate(newend);
             updateCharts(newstart, newend);
@@ -353,14 +360,18 @@ function initRangeButtons() {
 }
 async function loadCurrentConditions() {
     try {
+        const ttn = await getTTNDataCurrent();
+        const latest = ttn.filter(function(item){
+                return item.device_id == 'rdghydro-ers001'})[0];
         const plc = await getPLCDataCurrent();
         setText("ts1", luxon.DateTime.fromISO(plc.received_at).toFormat('yyyy-LL-dd T') + ' UTC');
 
-        setText("nowtemp", plc.room_temp.toFixed(1));
-        setText("nowhum", plc.room_hum.toFixed(1));
-        setText("cptemp", plc.control_panel_temp.toFixed(1));
+        setText("nowtemp", latest.temperature.toFixed(1));
+        setText("nowhum", latest.humidity.toFixed(1));
+        setText("nowcptemp", plc.control_panel_temp.toFixed(1));
         setText("gb1temp", plc.gen1_gearbox_temp.toFixed(1));
         setText("gb2temp", plc.gen2_gearbox_temp.toFixed(1));
+        setText("nowrmtemp", plc.room_temp.toFixed(1));
     } catch (err) {
         console.error("Error loading current conditions", err);
     }
@@ -374,21 +385,205 @@ function creatChartDefaults() {
     Chart.defaults.global.title.display = true
     Chart.defaults.global.title.fontSize = 20
     Chart.defaults.global.title.fontStyle = 'bold'
-    Chart.defaults.global.legend.labels.fontSize = 15
-    Chart.defaults.global.legend.labels.fontStyle = 'bold'
+    Chart.defaults.global.legend.display = false
 }
-
-let ttn_data = [];
-async function getTTNdata(start, end) {
-        const start = luxon.DateTime.fromJSDate(fromdate).toFormat('yyyyLLdd') 
+async function getTTNdata(fromdate, todate) {
+    const start = luxon.DateTime.fromJSDate(fromdate).toFormat('yyyyLLdd') 
     const end = luxon.DateTime.fromJSDate(todate).toFormat('yyyyLLdd')
-    console.log(`Fetching TTN data between ${start} and ${end}`);
     const response = await fetch(`/api/ttn/between/${start}/${end}`);
-    startdate = fromdate;
-    enddate = todate;
     if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
     }
-    return await response.json();
-
+    ttn_data = (await response.json()).filter(function(item){
+        return item.device_id == 'rdghydro-ers001'})
+    return ttn_data;
 }
+function updateCharts(start, end) {
+    getTTNdata(start, end).then(data => {
+        ttn_data = data;
+        renderChart(start, end);
+    });
+}
+
+function renderChart(start, end) {
+
+    const xs = [];
+    const ys1 = [];
+    const ys2 = [];
+
+        var selection = ttn_data.filter(function(item){
+        return new Date(item.received_at) >= start &&
+            new Date(item.received_at) <= end
+    })
+    var length = end - start
+    var unit = 'hour'
+    if (length >= 172800000){
+        unit = 'day'
+        }
+
+    for(item of selection) {                
+        //convert the timestamp to milliseconds (faster)                
+        const mydate = new Date(item.received_at).getTime()
+        xs.push(mydate);
+        ys1.push(item.temperature);
+        ys2.push(item.humidity);
+    }
+
+    const ctx_temp = document.getElementById('ca_temp').getContext('2d');
+    if (typeof myChart_temp !== 'undefined' && myChart_temp) {
+        myChart_temp.destroy();
+    }
+    myChart_temp = new Chart(ctx_temp, {
+        type: 'line',
+        data: {
+            labels: xs,
+            datasets: [
+                {
+                    data: ys1,
+                    fill: true,
+                    backgroundColor: 'rgb(255, 0, 81, 1)',
+                    borderColor: 'rgb(255, 0, 81, 1)',
+                    borderWidth: 1,
+                    radius: 0,
+                },
+            ]
+        },
+        options: {
+            scales: {
+                xAxes: [{
+                    type: 'time', 
+                    time: {minUnit: unit,},
+                    distribution: 'linear',
+                    ticks: {
+                        fontStyle: "bold",
+                        min: start.getTime(),
+                        max: end.getTime(),
+                    },
+                    scaleLabel: {
+                        display:false,
+                    }
+                }],
+                yAxes: [{
+                    ticks: {
+                        fontSize: 15,
+                        fontStyle: "bold",
+                        min: 0,
+                    },
+                    scaleLabel: {
+                        display: false
+                    }
+                }]
+            },
+            title: {
+                text: `Temperature (°C)`
+            },
+        }
+    });
+
+    const ctx_humid = document.getElementById('ca_humid').getContext('2d');
+    if (typeof myChart_humid !== 'undefined' && myChart_humid) {
+        myChart_humid.destroy();
+    }
+    myChart_humid = new Chart(ctx_humid, {
+        type: 'line',
+        data: {
+            labels: xs,
+            datasets: [
+                {
+                    data: ys2,
+                    fill: true,
+                    backgroundColor: 'rgb(22, 124, 172, 1)',
+                    borderColor: 'rgb(22, 124, 172, 1)',
+                    borderWidth: 1,
+                    radius: 0,
+                },
+            ]
+        },
+        options: {
+            scales: {
+                xAxes: [{
+                    type: 'time', 
+                    time: {minUnit: unit,},
+                    distribution: 'linear',
+                    ticks: {
+                        fontStyle: "bold",
+                        min: start.getTime(),
+                        max: end.getTime(),
+                    },
+                    scaleLabel: {
+                        display:false,
+                    }
+                }],
+                yAxes: [{
+                    ticks: {
+                        fontSize: 15,
+                        fontStyle: "bold",
+                        min: 0,
+                        max: 100,
+                    },
+                    scaleLabel: {
+                        display:false
+                    }
+                }]
+            },
+            title: {
+                text: `Relative Humidity (%)`
+            },
+        }
+    });
+}
+
+let plcCache = null;
+let plcTime = 0;
+async function getPLCDataCurrent() {
+    const interval = Date.now() - plcTime;
+    if (interval < 600_000 && plcCache) {
+        return plcCache;
+    }
+    plcCache = await fetch('/api/plc/current')
+        .then(res => res.json());
+    plcTime = Date.parse(plcCache.received_at);
+    return plcCache;
+}
+let ttnCache = null;
+let ttnTime = 0;
+async function getTTNDataCurrent() {
+    const interval = Date.now() - ttnTime;
+    if (interval < 60_000 && ttnCache) {
+        return ttnCache;
+    }
+    const start = luxon.DateTime.fromJSDate(startdate).toFormat('yyyyLLdd');
+    const end = luxon.DateTime.fromJSDate(enddate).toFormat('yyyyLLdd');
+    const response = await fetch(`/api/ttn/between/${start}/${end}`);
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    ttnCache = await response.json();
+    ttnTime = Date.parse(ttnCache[0].received_at);
+    return ttnCache;
+}
+
+buildStaticPage();
+initRangeButtons();
+
+// initial load
+startdate = luxon.DateTime.now().minus({days: 1}).startOf('day').toJSDate();
+enddate = luxon.DateTime.now().endOf('day').toJSDate();
+loadCurrentConditions();
+creatChartDefaults();
+getTTNdata(startdate, enddate).then(data => {
+    ttn_data = data;
+    renderChart(startdate, enddate);
+});
+
+// refresh current conditions every 60 seconds
+setInterval(loadCurrentConditions, 60_000);
+
+// refresh immediately when tab becomes visible
+document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) {
+        loadCurrentConditions();
+    }
+});
+//-->
+</script>
