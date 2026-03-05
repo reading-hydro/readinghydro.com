@@ -22,7 +22,7 @@
  font-family: Arial, Helvetica, sans-serif;
  font-size: 18px;
  text-align: center;
- padding-right: 60px;
+ width: 420px;
  margin-bottom: 20px;
 }
 .sub2 {
@@ -192,7 +192,8 @@
   float: none;                
  }
  .sub1 {
-  padding-right: 0;
+  float: none;
+  margin: 5px auto;
  }
  .box {
   float: none;
@@ -227,6 +228,7 @@
   float: none;  
  }
  .sub1, .sub2 {
+  float: none;
   padding-right: 0;
   font-size: 17px;
   margin-bottom: 10px;
@@ -456,13 +458,15 @@ async function updateCurrentConditions() {
 }
 async function loadChartData() {
     global_data = await getPLCdata(startdate, enddate);
-
-    renderPowerChart(startdate, enddate);
+    if (global_data !== null && global_data.length > 0) {
+        renderPowerChart(startdate, enddate);
+    }
 }
 async function loadGateData() {
     gate_data = await getGateData(startdate, enddate);
-
-    renderGateChart(startdate, enddate);
+    if (gate_data !== null && gate_data.length > 0) {
+        renderGateChart(startdate, enddate);
+    }
 }
 function myround(value, precision) {
     var multiplier = Math.pow(10, precision || 0);
@@ -481,6 +485,10 @@ function needsReload(mystart, myend) {
     if (myend > enddate) {
         reload = true;
         };
+    const latest = Date.parse(global_data[0].received_at);
+    if ((Date.now() - latest) > 600_000) {
+        reload = true;
+    }
     // If the period is going from more that 336 hours to less then we have 
     // hourly data and need to reload to get 10 minute interval data.
     // simularly if we are going from more than 2232 hours to less, we 
@@ -502,7 +510,9 @@ let gate_data = [];
 async function updateCharts(start, end) {
     if (needsReload(start, end)) {
         global_data = await getPLCdata(start, end);
-        gate_data = await getGateData(start, end);
+        if (end - start < 336*3600000) {
+            gate_data = await getGateData(start, end);
+        }
     }
    
     renderPowerChart(start, end);
@@ -566,8 +576,8 @@ function renderPowerChart(start, end) {
         //convert the timestamp to milliseconds (faster)                
         const mydate = new Date(item.received_at).getTime()
         xs.push(mydate);
-        ys1.push(item.gen1_power_kw);
-        ys2.push(item.gen2_power_kw);
+        ys1.push(Math.max(0, item.gen1_power_kw));
+        ys2.push(Math.max(0, item.gen2_power_kw));
     }
 
     const ctx = document.getElementById('cwra').getContext('2d');

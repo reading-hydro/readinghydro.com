@@ -450,13 +450,16 @@ async function updateCurrentConditions() {
 
 async function loadChartData() {
     global_data = await getPLCdata(startdate, enddate);
-
-    renderLevelChart(startdate, enddate);
+    if (global_data !== null && global_data.length > 0) {
+        renderLevelChart(startdate, enddate);
+    }
 }
 
 async function loadChartDataEA() { 
     EA_data = await getEAdata(startdate, enddate);
-    renderEAChart(startdate, enddate);
+    if (EA_data !== null && EA_data.length > 0) {
+        renderEAChart(startdate, enddate);
+    }
 }
 
 function myround(value, precision) {
@@ -476,6 +479,10 @@ function needsReload(mystart, myend) {
     if (myend > enddate) {
         reload = true;
         };
+    const latest = Date.parse(global_data[0].received_at);
+    if ((Date.now() - latest) > 600_000) {
+        reload = true;
+    }
     // If the period is going from more that 336 hours to less then we have 
     // hourly data and need to reload to get 10 minute interval data.
     // simularly if we are going from more than 2232 hours to less, we 
@@ -501,9 +508,12 @@ async function updateCharts(start, end) {
         global_data = await getPLCdata(start, end);
         EA_data = await getEAdata(start, end);
     }
-   
-    renderLevelChart(start, end);
-    renderEAChart(start, end);
+    if ( global_data !== null && global_data.length > 0) {
+        renderLevelChart(start, end);
+    }
+    if (EA_data !== null && EA_data.length > 0) {
+        renderEAChart(start, end);
+    }
 }
 async function getPLCdata(fromdate, todate){
     const start = luxon.DateTime.fromJSDate(fromdate).toFormat('yyyyLLdd') 
