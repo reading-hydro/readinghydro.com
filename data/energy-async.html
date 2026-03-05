@@ -485,9 +485,12 @@ function needsReload(mystart, myend) {
     if (myend > enddate) {
         reload = true;
         };
-    const latest = Date.parse(global_data[0].received_at);
-    if ((Date.now() - latest) > 600_000) {
-        reload = true;
+    // if the enddate is today and it is 10 minutes since the last data allow reload
+    if (myend > new Date()) {
+        const latest = Date.parse(global_data[0].received_at);
+        if ((Date.now() - latest) > 600_000) {
+            reload = true;
+        }
     }
     // If the period is going from more that 336 hours to less then we have 
     // hourly data and need to reload to get 10 minute interval data.
