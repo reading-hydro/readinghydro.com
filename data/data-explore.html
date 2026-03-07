@@ -1,0 +1,776 @@
+<title>Reading Hydro Data Explorer</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="/wp-content/includes/Chart.min.js"></script>
+<script src="/wp-content/includes/luxon.min.js"></script>
+<script src="/wp-content/includes/chartjs-adapter-luxon.min.js"></script>
+<script src="/wp-content/includes/chartjs-plugin-annotation.min.js"></script>
+<script src="/wp-content/includes/datepicker.min.js"></script>
+<link rel="stylesheet" href="/wp-content/includes/datepicker.min.css">
+
+<style>
+.col_wra {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+.col_lef {
+    flex: 1 1 300px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+.col_rig {
+    flex: 2 1 500px;
+}
+.box {
+    width: 420px;
+    height: 70px;
+    margin: -12px 0 0 0;
+    padding: 5px 5px 5px 5px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    color: white;
+    background-color: #7A65CF;
+    float: left;
+    border-radius: 5px;
+}
+.box1, .box2 {
+    border: 5px solid aqua;
+}
+.box1:hover, .box2:hover {
+    border: 5px solid black;
+}
+.boxon1, .boxon2 {
+    border: 5px solid black;
+}
+.inner {
+    margin-top: -5px;
+    float: inline-start;
+}
+.fontbig {
+    font-size: 38px;
+    font-weight: bold;
+    float: inline-end;
+}
+.sub {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    text-align: center;
+    width: 100%;
+    font-weight: bold;
+    margin-top: 20px;
+}
+.cwra_one, .cwra_two {
+    width: 100%;
+    height: 400px;
+    margin-top: 20px;
+}
+#ts {
+ white-space: nowrap;}
+#con {
+ max-width: 1280px;
+ margin: auto;
+ line-height: 1.0;}
+#pan {
+ max-width: 760px;
+ border: lightgrey solid 2px;
+ background-color: #e7e7e7;
+ padding-top: 10px;
+ margin: 5px auto;}
+#dpk1, #dpk2 {
+ margin: 10px;
+ font-family: Arial, Helvetica, sans-serif;
+ background: white;
+ border: 1px solid black;
+ width: fit-content;}
+#btw {
+ max-width: 1160px;
+ margin: auto;
+ text-align: center;}
+#dtw {
+ max-width: 1160px;
+ margin: auto;
+ text-align:center;}
+#tot {
+ background-color: #AA10FF;}
+#upst {
+ background-color: #07d0ee;}
+#dwnst {
+ background-color: #1207ee;}
+#head {
+ background-color: #07ee7b;}
+#pow1 {
+ background-color: #7A65CF;}
+#srpm1 {
+ background-color: #7A65CF;}
+#drpm1 {
+ background-color: #7A65CF;}
+#opho1 {
+ background-color: #7A65CF;}
+#ener1 {
+ background-color: #7A65CF;}
+#pow2 {
+ background-color: #DE2F55;}
+#srpm2 {
+ background-color: #DE2F55;}
+#drpm2 {
+ background-color: #DE2F55;}
+#opho2 {
+ background-color: #DE2F55;}
+#ener2 {
+ background-color: #DE2F55;}
+
+</style>
+
+<script type="text/javascript">
+//<!--
+// DO NOT REMOVE the comment above, it stops Wordpress from escaping ampersands
+function buildStaticPage() {
+    const container = document.createElement('div');
+    container.id = "con";
+
+    container.innerHTML = `
+        <p class="notes"><a href="#notes">See below for explanatory notes</a></p>
+        <div class="col_wra">
+            <div class="col_lef">
+                <div class=sub id=total_gen>Parameters accross both turbines</div>
+                ${makeBox("tot", "Total Export(MWh)","now_total")}
+                ${makeBox1("upst", "Upstream Level (meters AOD)", "upstream")}
+                ${makeBox1("dwnst", "Downstream Level (meters AOD)", "downstream")}
+                ${makeBox1("head", "Head (meters)", "headvalue")}
+                <div class="sub" id="subtitle_current">Turbine 1 (Tony)<br />Current conditions: <span id="ts1"></span></div>
+                ${makeBox2("for1", "Forebay 1 water level (m AOD)", "forbay1")}
+                ${makeBox2("pow1", "Power generation (kW)", "power_g1")}
+                ${makeBox2("srpm1", "Screw speed (RPM)", "screw1-rpm")}
+                ${makeBox2("drpm1", "Drive speed (RPM)", "drive1-rpm")}
+                ${makeBox2("tor1", "Torque (Nm)", "torque1")}
+                ${makeBox2("invamp1", "Inverter current (A)", "inverter1")}
+                ${makeBox2("gbtemp1", "Gearbox temperature (°C)", "gearbox1")}
+                ${makeBox2("flow1", "Flow rate (m³/s)", "flow1value")}
+                ${makeBox("opho1", "Total operating (hours)", "operating1")}
+                ${makeBox("ener1", "Total generation (MWh)", "energy1")}
+                <div class="sub" id="subtitle_current2">Turbine 2 (Sophie)<br />Current conditions: <span id="ts2"></span></div>
+                ${makeBox2("for2", "Forebay 2 water level (m AOD)", "forbay2")}
+                ${makeBox2("pow2", "Power generation (kW)", "power_g2")}
+                ${makeBox2("srpm2", "Screw speed (RPM)", "screw2-rpm")}
+                ${makeBox2("drpm2", "Drive speed (RPM)", "drive2-rpm")}
+                ${makeBox2("tor2", "Torque (Nm)", "torque2")}
+                ${makeBox2("invamp2", "Inverter current (A)", "inverter2")}
+                ${makeBox2("gbtemp2", "Gearbox temperature (°C)", "gearbox2")}
+                ${makeBox2("flow2", "Flow rate (m³/s)", "flow2value")}
+                ${makeBox("opho2", "Total operating (hours)", "operating2")}
+                ${makeBox("ener2", "Total generation (MWh)", "energy2")}
+                <p class="cle"></p>
+            </div>
+
+            <div class="col_rig">
+                <div class="sub2">Selected period</div>
+                <div id="pan">
+                    <div id="btw">
+                        <button class="btn active" data-range="day">Last day</button>
+                        <button class="btn" data-range="week">Last week</button>
+                        <button class="btn" data-range="month">Last month</button>
+                        <button class="btn" data-range="year">Last year</button>
+                        <p class="cle"></p>
+                    </div>
+                    <div id="dtw">
+                        <label class="lab" for="dpk1">Start date</label>
+                        <input id="dpk1" type="text">
+                        <label class="lab" for="dpk2">End date</label>
+                        <input id="dpk2" type="text">
+                        <p class="cle"></p></div>
+                </div>
+
+                <div class="cwra_one"><canvas id="ca_one"></canvas></div>
+                <div class="cwra_two"><canvas id="ca_two"></canvas></div>
+            </div>
+        </div>
+    `;
+
+    document.getElementsByClassName("entry-header")[0].append(container);
+    document.querySelectorAll('.box1').forEach(box => {
+        box.addEventListener('click', () => boxClickOne(box));
+    });
+    document.querySelectorAll('.box2').forEach(box => {
+        box.addEventListener('click', () => boxClickTwo(box));
+    });
+}
+function makeBox(id, label, valueId) {
+    return `
+        <div id="${id}" class="box">
+            <div id="label-${id}" class="inner">${label}</div>
+            <div class="inner fontbig" id="${valueId}">—</div>
+        </div>
+    `;
+}
+function makeBox1(id, label, valueId) {
+    return `
+        <div id="${id}" class="box box1">
+            <div id="label-${id}"class="inner">${label}</div>
+            <div class="fontbig" id="${valueId}">—</div>
+        </div>
+    `;
+}
+function makeBox2(id, label, valueId) {
+    return `
+        <div id="${id}" class="box box2">
+            <div id="label-${id}" class="inner">${label}</div>
+            <div class="fontbig" id="${valueId}">—</div>
+        </div>
+    `;
+}   
+function setText(id, value) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value;
+}
+function myround(value, precision) {
+    var multiplier = Math.pow(10, precision || 0);
+    return Math.round(value * multiplier) / multiplier;
+}
+
+// these hold the date range of the currently loaded data
+let startdate = luxon.DateTime.now().startOf('day').toJSDate();
+let enddate = luxon.DateTime.now().endOf('day').toJSDate();
+
+// push end date to end of day
+function dayEnd(pick){
+    var dayend = luxon.DateTime.fromJSDate(pick).endOf('day').toJSDate()
+    return dayend
+}
+let picker1, picker2;
+function initRangeButtons() {
+    document.querySelectorAll('#btw .btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('#btw .btn')
+                .forEach(b => b.classList.remove('active'));
+
+            btn.classList.add('active');
+
+            let start = new Date();
+            let now = new Date();
+            now.setDate(now.getUTCDate());
+
+            switch (btn.dataset.range) {
+                case 'week':  start.setDate(now.getUTCDate() - 7); break;
+                case 'month': start.setDate(now.getUTCDate() - 31); break;
+                case 'year':  start.setDate(now.getUTCDate() - 365); break;
+                default:      start.setDate(now.getUTCDate()); break;
+            }
+
+            let newstart = luxon.DateTime.fromJSDate(start).startOf('day').toJSDate();
+            let newend = luxon.DateTime.now().endOf('day').toJSDate();
+
+            picker1.setMax(newend);
+            picker2.setMax(newend);
+            picker1.setDate(newstart);
+            picker2.setDate(newend);
+            updateCharts(newstart, newend, chart1params, chart2params);
+        });
+    });
+    picker1 = datepicker( "#dpk1" , {
+        id: 1,
+        dateSelected: startdate,
+        maxDate: enddate,
+        formatter: (input, date, instance) => {
+            input.value = luxon.DateTime.fromJSDate(date).toFormat('yyyy-LL-dd');
+        },
+        onSelect: instance => {
+            if (picker1.dateSelected > picker2.dateSelected) {
+                picker2.setDate(picker1.dateSelected);
+            }
+            document.querySelectorAll('#btw .btn')
+                .forEach(b => b.classList.remove('active'));
+            updateCharts(picker1.dateSelected, dayEnd(picker2.dateSelected),
+                chart1params, chart2params);
+        }
+    });
+    picker2 = datepicker( "#dpk2" , {
+        id: 2,
+        dateSelected: enddate,
+        maxDate: enddate,
+        formatter: (input, date, instance) => {
+            input.value = luxon.DateTime.fromJSDate(date).toFormat('yyyy-LL-dd');
+        },
+        onSelect: instance => {
+            if (picker1.dateSelected > picker2.dateSelected) {
+                picker1.setDate(picker2.dateSelected);
+                picker1.setMax(picker2.dateSelected);
+            } else {
+                picker1.setMax(picker2.dateSelected);
+            }
+            document.querySelectorAll('#btw .btn')
+                .forEach(b => b.classList.remove('active'));
+            updateCharts(picker1.dateSelected, dayEnd(picker2.dateSelected),
+                chart1params, chart2params);
+        }
+    });
+}
+//select timescale using parameters from buttons or datepicker
+function needsReload(mystart, myend) {
+
+    //if reload is set we need to fetch more data
+    var reload = false;
+
+    if (mystart < startdate) {
+        reload = true;
+        };
+    if (myend > enddate) {
+        reload = true;
+        };
+    if (myend > new Date()) {
+        const latest = Date.parse(global_data[0].received_at);
+        if ((Date.now() - latest) > 600_000) {
+            reload = true;
+        }
+    }
+    // If the period is going from more that 336 hours to less then we have 
+    // hourly data and need to reload to get 10 minute interval data.
+    // simularly if we are going from more than 2232 hours to less, we 
+    // are going from daily to hourly data and need to reload.
+    var oldlength = enddate - startdate
+    var newlength = myend - mystart
+    if ( (oldlength > 336*3600000) && (newlength < 336*3600000) ) {
+        reload = true
+    }
+    if ( (oldlength > 2232*3600000) && (newlength < 2232*3600000) ) {
+        reload = true
+    }
+    return reload 
+}
+function creatChartDefaults() { 
+//Set global defaults for charts
+    Chart.defaults.global.tooltips.callbacks.title = function(t, d) {
+        return luxon.DateTime.fromMillis(d.labels[t[0].index]).toFormat('yyyy-LL-dd T');}
+//    Chart.defaults.global.animation.duration = 0 
+    Chart.defaults.global.maintainAspectRatio = false
+    Chart.defaults.global.title.display = true
+    Chart.defaults.global.title.fontSize = 20
+    Chart.defaults.global.title.fontStyle = 'bold'
+    Chart.defaults.global.legend.labels.fontSize = 15
+    Chart.defaults.global.legend.labels.fontStyle = 'bold'
+}
+
+let HOL = null;
+async function loadCurrentConditions() {
+    try {
+        const setlevel = await getSetlevel();
+        HOL = setlevel.level;
+        anno_HOL.value = HOL;
+        const plc = await getPLCDataCurrent();
+        setText("ts1", luxon.DateTime.fromISO(plc.received_at).toFormat('yyyy-LL-dd T') + ' UTC');
+
+        setText("upstream", plc.upstream.toFixed(2));
+        setText("downstream", plc.downstream.toFixed(2));
+        setText("headvalue", (plc.upstream - plc.downstream).toFixed(2));
+        setText("forbay1", plc.forebay_1.toFixed(2));
+        setText("power_g1", plc.gen1_power_kw.toFixed(1));
+        setText("screw1-rpm", plc.gen1_screw_rpm.toFixed(0));
+        setText("drive1-rpm", plc.gen1_drive_rpm.toFixed(0));
+        setText("torque1", (plc.gen1_torque * 1.932).toFixed(0));
+        setText("inverter1", plc.gen1_inverter_amp.toFixed(1));
+        setText("gearbox1", plc.gen1_gearbox_temp.toFixed(1));
+        setText("flow1value", (plc.gen1_flow_ls/1000).toFixed(2));
+        setText("operating1", plc.gen1_operating_hours.toFixed(0));
+        setText("energy1", plc.gen1_energy_mwh.toFixed(1));
+
+        setText("ts2", luxon.DateTime.fromISO(plc.received_at).toFormat('yyyy-LL-dd T') + ' UTC');
+        setText("forbay2", plc.forebay_2.toFixed(2));
+        setText("power_g2", plc.gen2_power_kw.toFixed(1));
+        setText("screw2-rpm", plc.gen2_screw_rpm.toFixed(0));
+        setText("drive2-rpm", plc.gen2_drive_rpm.toFixed(0));
+        setText("torque2", (plc.gen2_torque * 1.932).toFixed(0));
+        setText("inverter2", plc.gen2_inverter_amp.toFixed(1));
+        setText("gearbox2", plc.gen2_gearbox_temp.toFixed(1));
+        setText("flow2value", (plc.gen2_flow_ls/1000).toFixed(2));
+        setText("operating2", plc.gen2_operating_hours.toFixed(0));
+        setText("energy2", plc.gen2_energy_mwh.toFixed(1));
+    } catch (e) {
+        console.warn("Current conditions update failed", e);
+    }
+    const meter = await getMeterData();
+    setText("now_total", (meter[0].export/1000).toFixed(3));
+}
+let chart1params = {
+    title: "Water Levels",
+    y1element: "upstream",
+    yminvalue: 0,
+    bgcolor: 'rgba(143, 118, 242, 70)',
+    bocolor: 'rgba(143, 118, 242, 1)',
+};
+function boxClickOne(box) {
+    document.querySelectorAll('.box1').forEach(b => b.classList.remove('boxon1'));
+    box.classList.add("boxon1");
+    chart1params.title = document.getElementById("label-" + box.id).textContent;
+    switch (box.id) {
+        case "upst":
+            chart1params.y1element = "upstream";
+            chart1params.bgcolor = 'rgba(7, 208, 238, 0.70)';
+            chart1params.bocolor = 'rgba(7, 208, 238, 1)';
+            chart1params.minvalue = 36;
+            break;
+        case "dwnst":
+            chart1params.y1element = "downstream";
+            chart1params.bgcolor = 'rgba(18, 7, 238, 0.70)';
+            chart1params.bocolor = 'rgba(18, 7, 238, 1)';
+            chart1params.minvalue = 34;
+            break;
+        case "head":
+            chart1params.y1element = "headvalue";
+            chart1params.bgcolor = 'rgba(7, 238, 123, 0.70)';
+            chart1params.bocolor = 'rgba(7, 238, 123, 1)';
+            chart1params.minvalue = 0;
+            break;
+    }
+    getPLCData(startdate, enddate).then(() => {
+        renderChart1(startdate, enddate, chart1params);
+    });
+}
+let chart2params = {
+    title: "",
+    unitfactor: 1,
+    y1element: "",
+    y2element: "",
+    stacked: true,
+    minvalue: 0,
+};
+function boxClickTwo(box) {
+    document.querySelectorAll('.box2').forEach(b => b.classList.remove('boxon2'));
+    box.classList.add("boxon2");
+    const id = box.id.slice(0, -1);
+    const otherId = id + (box.id.endsWith("1") ? "2" : "1");
+    const otherBox = document.getElementById(otherId);
+    if (otherBox) {
+        otherBox.classList.add("boxon2");
+    };
+    chart2params.unitfactor = 1;
+    chart2params.title = document.getElementById("label-" + box.id).textContent;
+    chart2params.stacked = true;
+    chart2params.minvalue = 0;
+    switch (id) {
+        case "for":
+            chart2params.y1element = "forebay_1";
+            chart2params.y2element = "forebay_2";
+            chart2params.stacked = false;
+            break;
+        case "pow":
+            chart2params.y1element = "gen1_power_kw";
+            chart2params.y2element = "gen2_power_kw";
+            break;
+        case "srpm":
+            chart2params.y1element = "gen1_screw_rpm";
+            chart2params.y2element = "gen2_screw_rpm";
+            chart2params.stacked = false;
+            break;
+        case "drpm":
+            chart2params.y1element = "gen1_drive_rpm";
+            chart2params.y2element = "gen2_drive_rpm";
+            chart2params.stacked = false;
+            break;
+        case "tor":
+            chart2params.y1element = "gen1_torque";
+            chart2params.y2element = "gen2_torque";
+            chart2params.unitfactor = 1.932;
+            chart2params.stacked = false;
+            break;
+        case "invamp":
+            chart2params.y1element = "gen1_inverter_amp";
+            chart2params.y2element = "gen2_inverter_amp";
+            chart2params.stacked = false;
+            break;
+        case "gbtemp":
+            chart2params.y1element = "gen1_gearbox_temp";
+            chart2params.y2element = "gen2_gearbox_temp";
+            chart2params.stacked = false;
+            break;
+        case "flow":
+            chart2params.y1element = "gen1_flow_ls";
+            chart2params.y2element = "gen2_flow_ls";
+            chart2params.unitfactor = 0.001;
+            chart2params.stacked = true;
+            break;
+        };
+    getPLCData(startdate, enddate).then(() => {
+        renderChart2(startdate, enddate, chart2params);
+    });
+}
+function updateCharts(start, end, chart1params, chart2params) {
+    if (needsReload(start, end)) {
+        getPLCData(start, end).then(() => {
+            if (chart1params) {
+                renderChart1(start, end, chart1params);
+            };
+            if (chart2params) {
+                renderChart2(start, end, chart2params);
+            };
+        });
+    } else {
+        renderChart1(start, end, chart1params);
+        renderChart2(start, end, chart2params);
+    }
+};
+let anno_HOL = {
+        type: 'line',
+        id: 'line1',
+        mode: 'horizontal',
+        scaleID: 'y-axis-0',
+        value: HOL,
+        borderWidth: 1,
+        borderDash: [2,2],
+        borderColor: '#E4004D',
+        label: {
+            backgroundColor: 'rgba(255,255,255,0.4)',
+            fontColor: 'rgba(228,0,77,1)',
+            content: 'Present set level',
+            position: 'right',
+            yAdjust: 10,
+            enabled: true,
+        }
+    }; 
+
+function renderChart1(start, end, params) {
+
+    const xs = [];
+    const ys1 = [];
+
+    var selection = global_data.filter(function(item){
+        return new Date(item.received_at) >= start &&
+            new Date(item.received_at) <= end
+    })
+    var length = end - start
+    var unit = 'hour'
+    if (length >= 172800000){
+        unit = 'day'
+        }
+    switch (params.y1element) {
+        case "upstream":
+            for(item of selection) {                
+                xs.push(new Date(item.received_at).getTime());
+                ys1.push(item[params.y1element]);
+            };
+            params.minvalue = (Math.min(...ys1) - 0.02);
+            params.minvalue = Math.min(params.minvalue, HOL - 0.05);
+            break;
+        case "downstream":
+            for(item of selection) {                
+                xs.push(new Date(item.received_at).getTime());
+                ys1.push(item[params.y1element]);
+            }
+            params.minvalue = (Math.min(...ys1) - 0.02);
+            break;
+        case "headvalue":
+            for(item of selection) {                
+                xs.push(new Date(item.received_at).getTime());
+                ys1.push(item.upstream - item.downstream);
+            }
+            break;
+    }
+
+    const ctx = document.getElementById('ca_one').getContext('2d');
+    if (typeof myChart_one !== 'undefined' && myChart_one) {
+        myChart_one.destroy();
+    }
+    myChart_one = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: xs,
+            datasets: [
+                {
+                    label: params.title,
+                    data: ys1,
+                    fill: true,
+                    backgroundColor: params.bgcolor,
+                    borderColor: params.bocolor,
+                    borderWidth: 1,
+                    radius: 0,
+                }
+            ]
+        },
+        options: {
+            annotation: {
+                drawTime: 'afterDraw',
+                annotations: [anno_HOL],
+            },
+            scales: {
+                xAxes: [{
+                    type: 'time', 
+                    time: {minUnit: unit,},
+                    distribution: 'linear',
+                    ticks: {
+                        fontStyle: "bold",
+                        min: start.getTime(),
+                        max: end.getTime(),
+                    },
+                    scaleLabel: {
+                        display:false,
+                    }
+                }],
+                yAxes: [{
+                    ticks: {
+                        fontSize: 15,
+                        fontStyle: "bold",
+                        min: params.minvalue,
+                    },
+                    scaleLabel: {
+                        display:false,
+                    }
+                }]
+            },
+            title: {
+                text: params.title,
+                display:true,
+            },
+        }
+    });
+    if (params.y1element == "upstream") {
+        myChart_one.config.options.annotation.annotations[0] = anno_HOL;
+        }
+    else {
+        myChart_one.config.options.annotation.annotations[0] = "";
+        };
+    myChart_one.update();
+}
+function renderChart2(start, end, params) {
+
+    const xs = [];
+    const ys1 = [];
+    const ys2 = [];
+
+        var selection = global_data.filter(function(item){
+        return new Date(item.received_at) >= start &&
+            new Date(item.received_at) <= end
+    })
+    var length = end - start
+    var unit = 'hour'
+    if (length >= 172800000){
+        unit = 'day'
+        }
+
+    for(item of selection) {                
+        //convert the timestamp to milliseconds (faster)                
+        const mydate = new Date(item.received_at).getTime()
+        xs.push(mydate);
+        ys1.push(Math.max(params.minvalue, item[params.y1element] * params.unitfactor));
+        ys2.push(Math.max(params.minvalue, item[params.y2element] * params.unitfactor));
+    }
+
+    const ctx = document.getElementById('ca_two').getContext('2d');
+    if (typeof myChart_two !== 'undefined' && myChart_two) {
+        myChart_two.destroy();
+    }
+    myChart_two = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: xs,
+            datasets: [
+                {
+                    label: 'Tony (Turbine 1)',
+                    data: ys1,
+                    fill: true,
+                    backgroundColor: 'rgba(143, 118, 242, 0.70)',
+                    borderColor: 'rgba(143, 118, 242, 1)',
+                    borderWidth: 1,
+                    radius: 0,
+                },
+                {
+                    label: 'Sophie (Turbine 2)',
+                    data: ys2,
+                    fill: true,
+                    backgroundColor: 'rgba(230, 48, 86, 0.70)',
+                    borderColor: 'rgba(230, 48, 86, 1)',
+                    borderWidth: 1,
+                    radius: 0,
+                }
+            ]
+        },
+        options: {
+            scales: {
+                xAxes: [{
+                    type: 'time', 
+                    time: {minUnit: unit,},
+                    distribution: 'linear',
+                    ticks: {
+                        fontStyle: "bold",
+                        min: start.getTime(),
+                        max: end.getTime(),
+                    },
+                    scaleLabel: {
+                        display:false,
+                    }
+                }],
+                yAxes: [{
+                    stacked: params.stacked,
+                    ticks: {
+                        fontSize: 15,
+                        fontStyle: "bold",
+                        min: 0,
+                    },
+                    scaleLabel: {
+                        display: false
+                    }
+                }]
+            },
+            title: {
+                text: params.title,
+                display: true,
+            },
+        }
+    });
+}
+  
+let plcCache = null;
+let plcTime = 0;
+async function getPLCDataCurrent() {
+    const interval = Date.now() - plcTime;
+    if (interval < 600_000 && plcCache) {
+        return plcCache;
+    }
+    plcCache = await fetch('/api/plc/current')
+        .then(res => res.json());
+    plcTime = Date.parse(plcCache.received_at);
+    return plcCache;
+}
+let globalMeterData = null;
+async function getMeterData(){
+    if (globalMeterData) {
+        return globalMeterData;
+    }
+    const response = await fetch('/api/meter/current');
+    if (!response.ok) {
+        throw new Error('HTTP error! status: ${response.status}');
+    }
+    meterCache = await response.json();
+    globalMeterData = meterCache.filter(function(item){
+                        return item.meter == '70150046' 
+                            })
+    return globalMeterData;
+}
+let global_data = null;
+async function getPLCData(start, end) {
+    fromsdate = luxon.DateTime.fromJSDate(start).toFormat('yyyyLLdd')
+    todate = luxon.DateTime.fromJSDate(end).toFormat('yyyyLLdd')
+    const response = await fetch(`/api/plc/between/${fromsdate}/${todate}`);
+    if (!response.ok) {
+        throw new Error('HTTP error! status: ${response.status}');
+    }
+    global_data = await response.json();
+    startdate = start;
+    enddate = end;
+    return global_data;
+}
+async function getSetlevel() { 
+    const response = await fetch('/api/setlevel/current');
+    if (!response.ok) { throw new Error('HTTP error! status: ${response.status}');
+    } return await response.json(); 
+}
+
+buildStaticPage();
+creatChartDefaults();
+initRangeButtons();
+loadCurrentConditions();
+// load default charts
+boxClickOne(document.getElementById("upst"));
+boxClickTwo(document.getElementById("pow1"));
+
+//-->
+</script>
