@@ -446,16 +446,18 @@ function boxClickTwo(box) {
     chart2params.unitfactor = 1;
     chart2params.title = document.getElementById("label-" + box.id).textContent;
     chart2params.stacked = true;
-    chart2params.minvalue = 0;
+    chart2params.minvalue = null;
     switch (id) {
         case "for":
             chart2params.y1element = "forebay_1";
             chart2params.y2element = "forebay_2";
             chart2params.stacked = false;
+            chart2params.minvalue = 35;
             break;
         case "pow":
             chart2params.y1element = "gen1_power_kw";
             chart2params.y2element = "gen2_power_kw";
+            chart2params.minvalue = 0;
             break;
         case "srpm":
             chart2params.y1element = "gen1_screw_rpm";
@@ -482,12 +484,14 @@ function boxClickTwo(box) {
             chart2params.y1element = "gen1_gearbox_temp";
             chart2params.y2element = "gen2_gearbox_temp";
             chart2params.stacked = false;
+            chart2params.minvalue = 30;
             break;
         case "flow":
             chart2params.y1element = "gen1_flow_ls";
             chart2params.y2element = "gen2_flow_ls";
             chart2params.unitfactor = 0.001;
             chart2params.stacked = true;
+            chart2params.minvalue = 0;
             break;
         };
     getPLCData(startdate, enddate).then(() => {
@@ -527,7 +531,9 @@ let anno_HOL = {
             enabled: true,
         }
     }; 
-
+function myMinValue(arr) {
+    return Math.floor(Math.min(...arr) * 9.98)/10;
+}
 function renderChart1(start, end, params) {
 
     const xs = [];
@@ -548,15 +554,14 @@ function renderChart1(start, end, params) {
                 xs.push(new Date(item.received_at).getTime());
                 ys1.push(item[params.y1element]);
             };
-            params.minvalue = (Math.min(...ys1) - 0.02);
-            params.minvalue = Math.min(params.minvalue, HOL - 0.05);
+            params.minvalue = myMinValue(ys1.concat(HOL));
             break;
         case "downstream":
             for(item of selection) {                
                 xs.push(new Date(item.received_at).getTime());
                 ys1.push(item[params.y1element]);
             }
-            params.minvalue = (Math.min(...ys1) - 0.02);
+            params.minvalue = myMinValue(ys1);
             break;
         case "headvalue":
             for(item of selection) {                
@@ -648,12 +653,13 @@ function renderChart2(start, end, params) {
 
     for(item of selection) {                
         //convert the timestamp to milliseconds (faster)                
-        const mydate = new Date(item.received_at).getTime()
-        xs.push(mydate);
-        ys1.push(Math.max(params.minvalue, item[params.y1element] * params.unitfactor));
-        ys2.push(Math.max(params.minvalue, item[params.y2element] * params.unitfactor));
+        xs.push(new Date(item.received_at).getTime());
+        ys1.push(Math.max(0, item[params.y1element] * params.unitfactor));
+        ys2.push(Math.max(0, item[params.y2element] * params.unitfactor));
     }
-
+    if (params.minvalue == null) {
+        params.minvalue = myMinValue(ys1.concat(ys2));
+    }
     const ctx = document.getElementById('ca_two').getContext('2d');
     if (typeof myChart_two !== 'undefined' && myChart_two) {
         myChart_two.destroy();
@@ -703,7 +709,7 @@ function renderChart2(start, end, params) {
                     ticks: {
                         fontSize: 15,
                         fontStyle: "bold",
-                        min: 0,
+                        min: params.minvalue,
                     },
                     scaleLabel: {
                         display: false
