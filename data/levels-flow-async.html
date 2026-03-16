@@ -354,6 +354,7 @@ function initRangeButtons() {
             let newend = luxon.DateTime.now().endOf('day').toJSDate();
 
             picker1.setMax(newend);
+            picker2.setMax(newend);
             picker1.setDate(newstart);
             picker2.setDate(newend);
             updateCharts(newstart, newend);
