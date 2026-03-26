@@ -194,7 +194,7 @@ _ack_resp_ok = '''\
    <body>
      <h1>Acknowledgement of alert Sucessful</h1>
      <h1>Acknowledgement alerts currently active</h1>
-     <table><tr><th>Token</th><th>Email address</th><th>Expiary Time</th><th>Status</th><th>Count</th><th>Message</th></tr>
+     <table><tr><th>Token</th><th>Expiary Time</th><th>Status</th><th>Count</th><th>Message</th></tr>
      '''
 
 
@@ -207,10 +207,10 @@ _ack_resp_fail = '''\
    <body>
      <h1>Acknowledgement of alert Failed</h1>
      <h1>Acknowledgement alerts currently active</h1>
-     <table><tr><th>Token</th><th>Email address</th><th>Expiary Time</th><th>Status</th><th>Count</th><th>Message</th></tr>
+     <table><tr><th>Token</th><th>Expiary Time</th><th>Status</th><th>Count</th><th>Message</th></tr>
      '''
 _ack_list_body = '''\
-    <tr><td><a href="https://readinghydro.org/ackresp?token={token}">Token</a></td><td>{email}</td>
+    <tr><td><a href="https://readinghydro.org/ackresp?token={token}">Token</a></td>
     <td>{time}</td><td>{status}</td><td>{count}</td><td>{message}</td></tr>
     '''
 _ack_list_tail = '''\
@@ -233,7 +233,6 @@ def ackresp(environ, start_response):
         if entry.get('ack'):
             status = 'Acknowledged'
         resp = resp + _ack_list_body.format(token=entry.get('token'),
-                                            email=entry.get('email'),
                                             time=entry.get('time'), 
                                             status=status,
                                             count=entry.get('count'), 
