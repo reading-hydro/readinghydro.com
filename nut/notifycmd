@@ -14,6 +14,9 @@ if [[ -z "${UPSNAME}" ]]; then
 fi
 if upsc "${UPSNAME}" >/dev/null 2>&1; then
     STATUS=$(upsc "${UPSNAME}" ups.status)
+    IVOLT=$(upsc "${UPSNAME}" input.voltage)
+    BATCHARGE=$(upsc "${UPSNAME}" battery.charge)
+    BATVOLT=$(upsc "${UPSNAME}" battery.voltage)
 else
     echo "UPS '${UPSNAME}' not found or not accessible."
     STATUS="EE"
@@ -30,7 +33,7 @@ fi
 # Prepare mqtt message
 BODY=$(cat <<EOF
 {"TimeString": "${TIME}", "StateAfter": "${STATEAFTER}",
-"MsgText": "UPS Notification: ${*}"}
+"MsgText": "UPS Notification: ${*} Input: ${IVOLT}V Battery: ${BATCHARGE}% ${BATVOLT}V"}
 EOF
 )
 
