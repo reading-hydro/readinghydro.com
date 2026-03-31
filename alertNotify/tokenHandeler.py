@@ -71,7 +71,8 @@ def expired_token() -> list:
                     tokens.append(entry)
                 token_table.remove(entry)
             else:
-                tokens.append(entry)
+                if entry.get('message')[:7] != 'Cleared':
+                    tokens.append(entry)
                 token_table.remove(entry)
     return tokens
 

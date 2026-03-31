@@ -36,11 +36,10 @@ def log_alert_message(time: str, message: str) -> None:
 # Read the google calendar to see who is on call
 
 
-def calendar_read(api_key):
+def calendar_read(api_key, calendar_id):
     SCOPE = 'https://www.googleapis.com/calendar/v3/calendars/'
-    CALENDAR_ID = '6fue264k25k03v1ogsmkb2pk5g%40group.calendar.google.com'
 
-# Dictionary of query parameters
+    # Dictionary of query parameters
     now = datetime.datetime.now(datetime.UTC).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
     now_end = (datetime.datetime.now(datetime.UTC) + datetime.timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
     parms = {
@@ -53,7 +52,7 @@ def calendar_read(api_key):
 
     # Encode the query string
     querystring = parse.urlencode(parms)
-    url = SCOPE+CALENDAR_ID+'/events?'
+    url = SCOPE + calendar_id + '/events?'
 
     # Make a GET request and read the response
     requ = request.Request(url + querystring, headers={'Accept': 'application/json'})
@@ -326,6 +325,7 @@ next_data_report_time = datetime.datetime.now(datetime.UTC)
 next_data_report_time = next_data_report_time.replace(tzinfo=datetime.timezone.utc)
 
 google_api_key = get_secret('GOOGLE_API_KEY')
+google_calendar_id = get_secret('CALENDAR_ID')
 
 # Start the mqtt subscribe loop
 
@@ -360,7 +360,7 @@ while True:
 
     if last_hour != now.hour:
         last_hour = now.hour
-        new_who_is_oncall = calendar_read(google_api_key)
+        new_who_is_oncall = calendar_read(google_api_key, google_calendar_id)
         for role in ('primary', 'second'):
             for person in new_who_is_oncall:
                 if person['role'] == role:
