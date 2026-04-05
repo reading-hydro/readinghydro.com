@@ -283,9 +283,12 @@ function setText(id, value) {
     if (el) el.textContent = value;
 }
 
-// datepicker
-let startdate = luxon.DateTime.now().startOf('day').toJSDate();
-let enddate = luxon.DateTime.now().endOf('day').toJSDate();
+// these hold the date range of the currently loaded data
+let startdate = luxon.DateTime.utc().startOf('day').toJSDate();
+let enddate = luxon.DateTime.utc().endOf('day').toJSDate();
+// the date picker can only operate in users local time, so we maintain picker dates sepratly from the UTC dates.
+let pickerstart = luxon.DateTime.now().startOf('day').toJSDate();
+let pickerend = luxon.DateTime.now().endOf('day').toJSDate();
 
 // push end date to end of day
 function dayEnd(pick){
@@ -303,13 +306,13 @@ function initRangeButtons() {
 
             let start = new Date();
             let now = new Date();
-            now.setDate(now.getUTCDate());
+            now.setDate(now.getDate());
 
             switch (btn.dataset.range) {
-                case 'week':  start.setDate(now.getUTCDate() - 7); break;
-                case 'month': start.setDate(now.getUTCDate() - 31); break;
-                case 'year':  start.setDate(now.getUTCDate() - 365); break;
-                default:      start.setDate(now.getUTCDate()); break;
+                case 'week':  start.setDate(now.getDate() - 7); break;
+                case 'month': start.setDate(now.getDate() - 31); break;
+                case 'year':  start.setDate(now.getDate() - 365); break;
+                default:      start.setDate(now.getDate()); break;
             }
 
             let newstart = luxon.DateTime.fromJSDate(start).startOf('day').toJSDate();
@@ -319,13 +322,18 @@ function initRangeButtons() {
             picker2.setMax(newend);
             picker1.setDate(newstart);
             picker2.setDate(newend);
-            updateCharts(newstart, newend);
+            // convert picker dates to UTC for API and charts
+            UTCpicker1Date = luxon.DateTime.fromJSDate(newstart).toFormat('yyyy-LL-dd')+ 'T00:00:00+00:00';
+            UTCpicker1Date = luxon.DateTime.fromISO(UTCpicker1Date).toJSDate();
+            UTCpicker2Date = luxon.DateTime.fromJSDate(newend).toFormat('yyyy-LL-dd')+ 'T23:59:59+00:00';
+            UTCpicker2Date = luxon.DateTime.fromISO(UTCpicker2Date).toJSDate();
+            updateCharts(UTCpicker1Date, UTCpicker2Date);
         });
     });
     picker1 = datepicker( "#dpk1" , {
         id: 1,
-        dateSelected: startdate,
-        maxDate: enddate,
+        dateSelected: pickerstart,
+        maxDate: pickerend,
         formatter: (input, date, instance) => {
             input.value = luxon.DateTime.fromJSDate(date).toFormat('yyyy-LL-dd');
         },
@@ -335,13 +343,17 @@ function initRangeButtons() {
             }
             document.querySelectorAll('#btw .btn')
                 .forEach(b => b.classList.remove('active'));
-            updateCharts(picker1.dateSelected, dayEnd(picker2.dateSelected));
+            UTCpicker1Date = luxon.DateTime.fromJSDate(picker1.dateSelected).toFormat('yyyy-LL-dd')+ 'T00:00:00+00:00';
+            UTCpicker1Date = luxon.DateTime.fromISO(UTCpicker1Date, {zone: 'UTC'}).toJSDate();
+            UTCpicker2Date = luxon.DateTime.fromJSDate(picker2.dateSelected).toFormat('yyyy-LL-dd')+ 'T23:59:59+00:00';
+            UTCpicker2Date = luxon.DateTime.fromISO(UTCpicker2Date, {zone: 'UTC'}).toJSDate();
+            updateCharts(UTCpicker1Date, UTCpicker2Date);
         }
     });
     picker2 = datepicker( "#dpk2" , {
         id: 2,
-        dateSelected: enddate,
-        maxDate: enddate,
+        dateSelected: pickerend,
+        maxDate: pickerend,
         formatter: (input, date, instance) => {
             input.value = luxon.DateTime.fromJSDate(date).toFormat('yyyy-LL-dd');
         },
@@ -354,7 +366,11 @@ function initRangeButtons() {
             }
             document.querySelectorAll('#btw .btn')
                 .forEach(b => b.classList.remove('active'));
-            updateCharts(picker1.dateSelected, dayEnd(picker2.dateSelected));
+            UTCpicker1Date = luxon.DateTime.fromJSDate(picker1.dateSelected).toFormat('yyyy-LL-dd')+ 'T00:00:00+00:00';
+            UTCpicker1Date = luxon.DateTime.fromISO(UTCpicker1Date, {zone: 'UTC'}).toJSDate();
+            UTCpicker2Date = luxon.DateTime.fromJSDate(picker2.dateSelected).toFormat('yyyy-LL-dd')+ 'T23:59:59+00:00';
+            UTCpicker2Date = luxon.DateTime.fromISO(UTCpicker2Date, {zone: 'UTC'}).toJSDate();
+            updateCharts(UTCpicker1Date, UTCpicker2Date);
         }
     });
 }
@@ -379,7 +395,8 @@ async function loadCurrentConditions() {
 function creatChartDefaults() { 
 //Set global defaults for charts
     Chart.defaults.global.tooltips.callbacks.title = function(t, d) {
-        return luxon.DateTime.fromMillis(d.labels[t[0].index]).toFormat('yyyy-LL-dd T');}
+        return luxon.DateTime.fromMillis(d.labels[t[0].index]).setZone('utc').toFormat('yyyy-LL-dd T') + ' UTC';
+    };
 //    Chart.defaults.global.animation.duration = 0 
     Chart.defaults.global.maintainAspectRatio = false
     Chart.defaults.global.title.display = true
@@ -416,10 +433,10 @@ function renderChart(start, end) {
             new Date(item.received_at) <= end
     })
     var length = end - start
-    var unit = 'hour'
-    if (length >= 172800000){
-        unit = 'day'
-        }
+    var unit = 'day'
+    if (length < 2764800000){unit = 'month'}
+    if (length < 691200000){unit = 'week'}
+    if (length < 86400000){unit = 'hour'}
 
     for(item of selection) {                
         //convert the timestamp to milliseconds (faster)                
@@ -452,12 +469,25 @@ function renderChart(start, end) {
             scales: {
                 xAxes: [{
                     type: 'time', 
-                    time: {minUnit: unit,},
                     distribution: 'linear',
                     ticks: {
                         fontStyle: "bold",
                         min: start.getTime(),
                         max: end.getTime(),
+                        callback: function(value, index, ticks) {
+                            timestamp = ticks[index].value;
+                            const dt = luxon.DateTime.fromMillis(timestamp).toUTC();
+                            switch (unit) {
+                                case 'hour':
+                                    return dt.toFormat('HH:mm');
+                                case 'week':
+                                    return dt.toFormat('ccc LL-dd HH');
+                                case 'month':
+                                    return dt.toFormat('yyyy-LL-dd');
+                                default:
+                                    return dt.toFormat('yyyy-LL-dd');
+                            }
+                        }
                     },
                     scaleLabel: {
                         display:false,
@@ -503,12 +533,25 @@ function renderChart(start, end) {
             scales: {
                 xAxes: [{
                     type: 'time', 
-                    time: {minUnit: unit,},
                     distribution: 'linear',
                     ticks: {
                         fontStyle: "bold",
                         min: start.getTime(),
                         max: end.getTime(),
+                        callback: function(value, index, ticks) {
+                            timestamp = ticks[index].value;
+                            const dt = luxon.DateTime.fromMillis(timestamp).toUTC();
+                            switch (unit) {
+                                case 'hour':
+                                    return dt.toFormat('HH:mm');
+                                case 'week':
+                                    return dt.toFormat('ccc LL-dd HH');
+                                case 'month':
+                                    return dt.toFormat('yyyy-LL-dd');
+                                default:
+                                    return dt.toFormat('yyyy-LL-dd');
+                            }
+                        }
                     },
                     scaleLabel: {
                         display:false,
@@ -567,8 +610,8 @@ buildStaticPage();
 initRangeButtons();
 
 // initial load
-startdate = luxon.DateTime.now().minus({days: 1}).startOf('day').toJSDate();
-enddate = luxon.DateTime.now().endOf('day').toJSDate();
+startdate = luxon.DateTime.utc().startOf('day').toJSDate();
+enddate = luxon.DateTime.utc().endOf('day').toJSDate();
 loadCurrentConditions();
 creatChartDefaults();
 getTTNdata(startdate, enddate).then(data => {

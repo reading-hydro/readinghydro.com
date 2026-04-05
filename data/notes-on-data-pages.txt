@@ -61,3 +61,10 @@ Code to add to make pages work as html for testing elsewhere
 
 Currently dates are all local need to convert from using the getDate() to getUTCDate()
 as graphs are messed up in other time zones.
+
+Currently done, for all except the x-axis lables. The data picker has to operate in 
+local time. I then convert this to and equivalent UTC time by converting to text and adding
+"00:00:00+0.00" or "23:59:59+0.00" to the data value.
+
+X-axis lables don on on the data exlora page https://readinghydro.org/test-page-1/ I will update 
+the other pages with this code soon.

@@ -562,8 +562,9 @@ async function getGateData(fromdate, todate){
 function creatChartDefaults() { 
 //Set global defaults for charts
     Chart.defaults.global.tooltips.callbacks.title = function(t, d) {
-        return luxon.DateTime.fromMillis(d.labels[t[0].index]).toFormat('yyyy-LL-dd T');}
-//    Chart.defaults.global.animation.duration = 0 
+        return luxon.DateTime.fromMillis(d.labels[t[0].index]).setZone('utc').toFormat('yyyy-LL-dd T') + ' UTC';
+    };
+    //    Chart.defaults.global.animation.duration = 0 
     Chart.defaults.global.maintainAspectRatio = false
     Chart.defaults.global.title.display = true
     Chart.defaults.global.title.fontSize = 20
@@ -586,10 +587,10 @@ function renderPowerChart(start, end) {
             new Date(item.received_at) <= end
     })
     var length = end - start
-    var unit = 'hour'
-    if (length >= 172800000){
-        unit = 'day'
-        }
+    var unit = 'day'
+    if (length < 2764800000){unit = 'month'}
+    if (length < 691200000){unit = 'week'}
+    if (length < 86400000){unit = 'hour'}
 
     for(item of selection) {                
         //convert the timestamp to milliseconds (faster)                
@@ -632,12 +633,26 @@ function renderPowerChart(start, end) {
             scales: {
                 xAxes: [{
                     type: 'time', 
-                    time: {minUnit: unit,},
                     distribution: 'linear',
                     ticks: {
+                        source: 'auto',
                         fontStyle: "bold",
                         min: start.getTime(),
                         max: end.getTime(),
+                        callback: function(value, index, ticks) {
+                            timestamp = ticks[index].value;
+                            const dt = luxon.DateTime.fromMillis(timestamp).toUTC();
+                            switch (unit) {
+                                case 'hour':
+                                    return dt.toFormat('HH:mm');
+                                case 'week':
+                                    return dt.toFormat('ccc LL-dd HH');
+                                case 'month':
+                                    return dt.toFormat('yyyy-LL-dd');
+                                default:
+                                    return dt.toFormat('yyyy-LL-dd');
+                            }
+                        }
                     },
                     scaleLabel: {
                         display:false,
@@ -667,10 +682,10 @@ function renderGateChart(start, end) {
             new Date(item.date) <= end
     })
     length = end - start
-    var unit = 'hour'
-    if (length >= 172800000){
-        unit = 'day'
-        }
+    var unit = 'day'
+    if (length < 2764800000){unit = 'month'}
+    if (length < 691200000){unit = 'week'}
+    if (length < 86400000){unit = 'hour'}
 
     const xs = [];
     const ys1 = [];
@@ -729,12 +744,26 @@ function renderGateChart(start, end) {
             scales: {
                 xAxes: [{
                     type: 'time', 
-                    time: {minUnit: unit,},
                     distribution: 'linear',
                     ticks: {
+                        source: 'auto',
                         fontStyle: "bold",
                         min: start.getTime(),
                         max: end.getTime(),
+                        callback: function(value, index, ticks) {
+                            timestamp = ticks[index].value;
+                            const dt = luxon.DateTime.fromMillis(timestamp).toUTC();
+                            switch (unit) {
+                                case 'hour':
+                                    return dt.toFormat('HH:mm');
+                                case 'week':
+                                    return dt.toFormat('ccc LL-dd HH');
+                                case 'month':
+                                    return dt.toFormat('yyyy-LL-dd');
+                                default:
+                                    return dt.toFormat('yyyy-LL-dd');
+                            }
+                        }                        
                     },
                     scaleLabel: {
                         display:false,

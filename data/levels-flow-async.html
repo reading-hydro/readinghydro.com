@@ -561,8 +561,9 @@ async function getEAdata(fromdate, todate){
 function creatChartDefaults() { 
 //Set global defaults for charts
     Chart.defaults.global.tooltips.callbacks.title = function(t, d) {
-        return luxon.DateTime.fromMillis(d.labels[t[0].index]).toFormat('yyyy-LL-dd T');}
-//    Chart.defaults.global.animation.duration = 0 
+        return luxon.DateTime.fromMillis(d.labels[t[0].index]).setZone('utc').toFormat('yyyy-LL-dd T') + ' UTC';
+    };
+    //    Chart.defaults.global.animation.duration = 0 
     Chart.defaults.global.maintainAspectRatio = false
     Chart.defaults.global.title.display = true
     Chart.defaults.global.title.fontSize = 20
@@ -658,10 +659,10 @@ function renderLevelChart(start, end) {
             new Date(item.received_at) <= end
     })
     var length = end - start
-    var unit = 'hour'
-    if (length >= 172800000){
-        unit = 'day'
-        }
+    var unit = 'day'
+    if (length < 2764800000){unit = 'month'}
+    if (length < 691200000){unit = 'week'}
+    if (length < 86400000){unit = 'hour'}
 
     for(item of selection) {                
         //convert the timestamp to milliseconds (faster)                
@@ -715,14 +716,28 @@ function renderLevelChart(start, end) {
             scales: {
                 xAxes: [{
                     type: 'time',
-                    time: {minUnit: unit,
-                           tooltipFormat: 'yyyy-LL-dd T',},
                     distribution: 'linear',
                     ticks: {
+                        source: 'auto',
                         fontStyle: "bold",
                         min: start,
-                        max: end,},
-                        scaleLabel: {display: false,},
+                        max: end,
+                        callback: function(value, index, ticks) {
+                            timestamp = ticks[index].value;
+                            const dt = luxon.DateTime.fromMillis(timestamp).toUTC();
+                            switch (unit) {
+                                case 'hour':
+                                    return dt.toFormat('HH:mm');
+                                case 'week':
+                                    return dt.toFormat('ccc LL-dd HH');
+                                case 'month':
+                                    return dt.toFormat('yyyy-LL-dd');
+                                default:
+                                    return dt.toFormat('yyyy-LL-dd');
+                            }
+                        }
+                    },
+                    scaleLabel: {display: false,},
                 }],
                 yAxes: [{
                     ticks: {
@@ -769,14 +784,25 @@ function renderLevelChart(start, end) {
             scales: {
                 xAxes: [{
                     type: 'time', 
-                    time: {minUnit: unit,
-                           tooltipFormat: 'yyyy-LL-dd T',
-                    },
                     distribution: 'linear',
                     ticks: {
                         fontStyle: "bold",
                         min: start,
                         max: end,
+                        callback: function(value, index, ticks) {
+                            timestamp = ticks[index].value;
+                            const dt = luxon.DateTime.fromMillis(timestamp).toUTC();
+                            switch (unit) {
+                                case 'hour':
+                                    return dt.toFormat('HH:mm');
+                                case 'week':
+                                    return dt.toFormat('ccc LL-dd HH');
+                                case 'month':
+                                    return dt.toFormat('yyyy-LL-dd');
+                                default:
+                                    return dt.toFormat('yyyy-LL-dd');
+                            }
+                        }                        
                     },
                     scaleLabel: {
                         display: false,
@@ -809,10 +835,10 @@ function renderEAChart(startdate, enddate) {
             new Date(item.entrytime) <= enddate
     })
     var length = enddate - startdate
-    var unit = 'hour'
-    if (length >= 172800000){
-        unit = 'day'
-        }
+    var unit = 'day'
+    if (length < 2764800000){unit = 'month'}
+    if (length < 691200000){unit = 'week'}
+    if (length < 86400000){unit = 'hour'}
 
     for(item of selection) {                
         //convert the timestamp to milliseconds (faster)                
@@ -847,14 +873,25 @@ function renderEAChart(startdate, enddate) {
             scales: {
                 xAxes: [{
                     type: 'time', 
-                    time: {minUnit: unit,
-                           tooltipFormat: 'yyyy-LL-dd T',
-                    },
                     distribution: 'linear',
                     ticks: {
                         fontStyle: "bold",
                         min: startdate,
                         max: enddate,
+                        callback: function(value, index, ticks) {
+                            timestamp = ticks[index].value;
+                            const dt = luxon.DateTime.fromMillis(timestamp).toUTC();
+                            switch (unit) {
+                                case 'hour':
+                                    return dt.toFormat('HH:mm');
+                                case 'week':
+                                    return dt.toFormat('ccc LL-dd HH');
+                                case 'month':
+                                    return dt.toFormat('yyyy-LL-dd');
+                                default:
+                                    return dt.toFormat('yyyy-LL-dd');
+                            }
+                        }                        
                     },
                     scaleLabel: {
                         display: false,

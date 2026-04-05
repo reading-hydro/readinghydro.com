@@ -357,7 +357,8 @@ function needsReload(mystart, myend) {
 function creatChartDefaults() { 
 //Set global defaults for charts
     Chart.defaults.global.tooltips.callbacks.title = function(t, d) {
-        return luxon.DateTime.fromMillis(d.labels[t[0].index]).toFormat('yyyy-LL-dd T');}
+        return luxon.DateTime.fromMillis(d.labels[t[0].index]).setZone('utc').toFormat('yyyy-LL-dd T') + ' UTC';
+    };
 //    Chart.defaults.global.animation.duration = 0 
     Chart.defaults.global.maintainAspectRatio = false
     Chart.defaults.global.title.display = true
@@ -366,7 +367,6 @@ function creatChartDefaults() {
     Chart.defaults.global.legend.labels.fontSize = 15
     Chart.defaults.global.legend.labels.fontStyle = 'bold'
 }
-
 let HOL = null;
 async function loadCurrentConditions() {
     try {
@@ -550,6 +550,7 @@ let anno_HOL = {
 function myMinValue(arr) {
     return Math.floor(Math.min(...arr) * 9.98)/10;
 }
+
 function renderChart1(start, end, params) {
 
     const xs = [];
@@ -560,11 +561,11 @@ function renderChart1(start, end, params) {
             new Date(item.received_at) <= end
     })
     var length = end - start
-    var unit = 'hour'
-    if (length >= 172800000){
-        unit = 'day'
-        }
-    switch (params.y1element) {
+    var unit = 'day'
+    if (length < 2764800000){unit = 'month'}
+    if (length < 691200000){unit = 'week'}
+    if (length < 86400000){unit = 'hour'}
+        switch (params.y1element) {
         case "upstream":
             for(item of selection) {                
                 xs.push(new Date(item.received_at).getTime());
@@ -615,12 +616,26 @@ function renderChart1(start, end, params) {
             scales: {
                 xAxes: [{
                     type: 'time', 
-                    time: {minUnit: unit,},
                     distribution: 'linear',
                     ticks: {
+                        source: 'auto',
                         fontStyle: "bold",
                         min: start.getTime(),
                         max: end.getTime(),
+                        callback: function(value, index, ticks) {
+                            timestamp = ticks[index].value;
+                            const dt = luxon.DateTime.fromMillis(timestamp).toUTC();
+                            switch (unit) {
+                                case 'hour':
+                                    return dt.toFormat('HH:mm');
+                                case 'week':
+                                    return dt.toFormat('ccc LL-dd HH');
+                                case 'month':
+                                    return dt.toFormat('yyyy-LL-dd');
+                                default:
+                                    return dt.toFormat('yyyy-LL-dd');
+                            }
+                        }
                     },
                     scaleLabel: {
                         display:false,
@@ -662,10 +677,10 @@ function renderChart2(start, end, params) {
             new Date(item.received_at) <= end
     })
     var length = end - start
-    var unit = 'hour'
-    if (length >= 172800000){
-        unit = 'day'
-        }
+    var unit = 'day'
+    if (length < 2764800000){unit = 'month'}
+    if (length < 691200000){unit = 'week'}
+    if (length < 86400000){unit = 'hour'}
 
     for(item of selection) {                
         //convert the timestamp to milliseconds (faster)                
@@ -709,12 +724,26 @@ function renderChart2(start, end, params) {
             scales: {
                 xAxes: [{
                     type: 'time', 
-                    time: {minUnit: unit,},
                     distribution: 'linear',
                     ticks: {
+                        source: 'auto',
                         fontStyle: "bold",
                         min: start.getTime(),
                         max: end.getTime(),
+                        callback: function(value, index, ticks) {
+                            timestamp = ticks[index].value;
+                            const dt = luxon.DateTime.fromMillis(timestamp).toUTC();
+                            switch (unit) {
+                                case 'hour':
+                                    return dt.toFormat('HH:mm');
+                                case 'week':
+                                    return dt.toFormat('ccc LL-dd HH');
+                                case 'month':
+                                    return dt.toFormat('yyyy-LL-dd');
+                                default:
+                                    return dt.toFormat('yyyy-LL-dd');
+                            }
+                        },
                     },
                     scaleLabel: {
                         display:false,
