@@ -353,7 +353,7 @@
         const data = await getData1();
         const th = data.find(d => d.device_id === 'rdghydro-ers001');
 
-        setText("subtitle_TH", `Current conditions: ${luxon.DateTime.fromISO(th.received_at).toFormat('yyyy-LL-dd T')} UTC`);
+        setText("subtitle_TH", `Current conditions: ${luxon.DateTime.fromISO(th.received_at).setZone('utc').toFormat('yyyy-LL-dd T')} UTC`);
 
         setText("temp", th.temperature);
         setText("humid", th.humidity);
@@ -362,7 +362,7 @@
         try {
             const data = await getDataMeter();
             const meter = data.find(m => m.meter === '70150046');
-            setText("subtitle_TOT", `Total Export as of: ${luxon.DateTime.fromISO(meter.date).toFormat('yyyy-LL-dd T')} UTC`);
+            setText("subtitle_TOT", `Total Export as of: ${luxon.DateTime.fromISO(meter.date).setZone('utc').toFormat('yyyy-LL-dd T')} UTC`);
             setText("total_export", (meter.export / 1000).toFixed(1));
         } catch (e) {
             console.warn("Meter update failed", e);
@@ -374,7 +374,7 @@
 
             setText(
                 "subtitle_T1",
-                `Turbine 1 (Tony): ${luxon.DateTime.fromISO(d.received_at).toFormat('yyyy-LL-dd T')} UTC`
+                `Turbine 1 (Tony): ${luxon.DateTime.fromISO(d.received_at).setZone('utc').toFormat('yyyy-LL-dd T')} UTC`
             );
 
             setText("g1_power", Math.max(0, Math.min(d.gen1_power_kw, 23)));
@@ -385,7 +385,7 @@
 
             setText(
                 "subtitle_T2",
-                `Turbine 2 (Sophie): ${luxon.DateTime.fromISO(d.received_at).toFormat('yyyy-LL-dd T')} UTC`
+                `Turbine 2 (Sophie): ${luxon.DateTime.fromISO(d.received_at).setZone('utc').toFormat('yyyy-LL-dd T')} UTC`
             );
 
             setText("g2_power", Math.max(0, Math.min(d.gen2_power_kw, 23)));
@@ -396,7 +396,7 @@
 
             setText(
                 "subtitle_RC",
-                `Current conditions: ${luxon.DateTime.fromISO(d.received_at).toFormat('yyyy-LL-dd T')} UTC`
+                `Current conditions: ${luxon.DateTime.fromISO(d.received_at).setZone('utc').toFormat('yyyy-LL-dd T')} UTC`
             );
 
             setText("upstream", d.upstream.toFixed(3));
@@ -429,7 +429,7 @@
 
             setText(
                 "subtitle_TH",
-                `Current conditions: ${luxon.DateTime.fromISO(th.received_at).toFormat('yyyy-LL-dd T')} UTC`
+                `Current conditions: ${luxon.DateTime.fromISO(th.received_at).setZone('utc').toFormat('yyyy-LL-dd T')} UTC`
             );
 
             setText("temp", th.temperature);
