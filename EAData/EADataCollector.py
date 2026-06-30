@@ -63,7 +63,7 @@ def main():
     except:
         print("Error getting EA data")
         syslog.syslog("Error getting EA data")
-# enter the data into the database only if is after the LsatEntry (new data)
+# enter the data into the database only if is after the LastEntry (new data)
 
     rowsadded = 0
     data = json.loads(jsondata.read())
