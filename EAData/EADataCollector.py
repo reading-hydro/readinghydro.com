@@ -59,7 +59,7 @@ def main():
     myds4 = datetime.datetime.now(datetime.UTC).strftime('%Y-%m-%d')
     EAapiURL = "https://environment.data.gov.uk/flood-monitoring/id/measures/2200TH-flow--Mean-15_min-m3_s/readings?startdate=" + myds3 + "&enddate=" + myds4 + "&_sorted&_limit=3000"
     try: 
-        jsondata = request.urlopen(url=EAapiURL,timeout=20)
+        jsondata = request.urlopen(url=EAapiURL,timeout=120)
     except:
         print("Error getting EA data")
         syslog.syslog("Error getting EA data")
