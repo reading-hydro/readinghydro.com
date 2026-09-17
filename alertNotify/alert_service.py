@@ -323,6 +323,7 @@ latest_data_time = latest_data_time.replace(tzinfo=datetime.timezone.utc)
 latest_data = latest_data_time.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
 next_data_report_time = datetime.datetime.now(datetime.UTC)
 next_data_report_time = next_data_report_time.replace(tzinfo=datetime.timezone.utc)
+no_data_alert_active = False
 
 google_api_key = get_secret('GOOGLE_API_KEY')
 google_calendar_id = get_secret('CALENDAR_ID')
@@ -393,7 +394,7 @@ while True:
             alertMessage = 'Repeated: {count:d} message: {message}'.format(count=dup_count, message=entry.get('message'))
             token = generate_token(email1, alertMessage, ALERT_ESCALATION_TIME)
             alertMessages.append(alertMessage)
-            sendntfy(alertMessage, now, "")
+            sendntfy(alertMessage, now, token)
             log_alert_message(now_string, alertMessage)
 
     tokenlist = active_token()
@@ -419,6 +420,7 @@ while True:
     if latest_data_time < now_utc - NO_DATA_REPORT_EVENT:
         if now_utc > next_data_report_time:
             next_data_report_time = now_utc + NO_DATA_RE_REPORT_TIME
+            no_data_alert_active = True
             alertMessage = 'No data received since '+latest_data_time.strftime('%Y-%m-%dT%H:%M:%SZ')
             alertMessage += ' That is {minutes:5.2f} Minutes ago'.format(minutes=(now_utc-latest_data_time).seconds/60)
             token = generate_token(email1, 'At: {time} message: {message}'.format(time=now_string, message=alertMessage),
@@ -426,6 +428,15 @@ while True:
             alertMessages.append(alertMessage)
             sendntfy("Active " + alertMessage, now, token)
             log_alert_message(now_string, alertMessage)
+    else:
+        if no_data_alert_active:
+            alertMessage = 'Data feed has resumed at '+latest_data_time.strftime('%Y-%m-%dT%H:%M:%SZ')
+            token = generate_token(email1, 'At: {time} message: {message}'.format(time=now_string, message=alertMessage),
+                                    datetime.timedelta(seconds=15*60))
+            alertMessages.append(alertMessage)
+            sendntfy("Cleared " + alertMessage, now, token)
+            log_alert_message(now_string, alertMessage)
+        no_data_alert_active = False
 
 # check the REST server is running, restart it if not
     if not(restThread.is_alive()):
