@@ -421,20 +421,20 @@ while True:
         if now_utc > next_data_report_time:
             next_data_report_time = now_utc + NO_DATA_RE_REPORT_TIME
             no_data_alert_active = True
-            alertMessage = 'No data received since '+latest_data_time.strftime('%Y-%m-%dT%H:%M:%SZ')
+            alertMessage = 'Active: No data received since '+latest_data_time.strftime('%Y-%m-%dT%H:%M:%SZ')
             alertMessage += ' That is {minutes:5.2f} Minutes ago'.format(minutes=(now_utc-latest_data_time).seconds/60)
             token = generate_token(email1, 'At: {time} message: {message}'.format(time=now_string, message=alertMessage),
                                     datetime.timedelta(seconds=15*60))
             alertMessages.append(alertMessage)
-            sendntfy("Active " + alertMessage, now, token)
+            sendntfy(alertMessage, now, token)
             log_alert_message(now_string, alertMessage)
     else:
         if no_data_alert_active:
-            alertMessage = 'Data feed has resumed at '+latest_data_time.strftime('%Y-%m-%dT%H:%M:%SZ')
+            alertMessage = 'Cleared: Data feed has resumed at '+latest_data_time.strftime('%Y-%m-%dT%H:%M:%SZ')
             token = generate_token(email1, 'At: {time} message: {message}'.format(time=now_string, message=alertMessage),
                                     datetime.timedelta(seconds=15*60))
             alertMessages.append(alertMessage)
-            sendntfy("Cleared " + alertMessage, now, token)
+            sendntfy(alertMessage, now, token)
             log_alert_message(now_string, alertMessage)
         no_data_alert_active = False
 
