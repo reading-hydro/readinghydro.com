@@ -306,7 +306,7 @@ topic = "hydro-alert"
 qos = 0
 last_hour = -1
 
-client = mqtt.Client("purple")
+client = mqtt.Client(callback_api_version=mqtt.CallbackAPIVersion.VERSION1, client_id="purple")
 
 client.username_pw_set("mqttrota", get_secret('MQTT_ROTA_PWD'))
 client.on_connect = on_connect
