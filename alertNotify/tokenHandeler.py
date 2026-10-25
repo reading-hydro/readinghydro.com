@@ -8,6 +8,7 @@
 import hashlib
 import base64
 import datetime
+from shared_state import STATE_LOCK
 
 token_table = []
 
@@ -19,62 +20,67 @@ def generate_token(emailAddr: str, message: str, lifetime: datetime) -> str:
     hash.update(bytes(timekey.isoformat(), "ascii"))
     hash.update(b'Readinghydro token service')
     token = (base64.urlsafe_b64encode(hash.digest())).decode()
-    token_table.append({'token': token, 'email': emailAddr, 'time': timekey,
-                 'ack': False, 'message': message, 'count': 0, 'sent': False})
+    with STATE_LOCK:
+        token_table.append({'token': token, 'email': emailAddr, 'time': timekey,
+                            'ack': False, 'message': message, 'count': 0, 'sent': False})
     return token
 
 
 def check_dup(message: str) -> bool:
-    for entry in token_table:
-        if entry.get('message') == message:
-            count = entry.get('count')
-            entry.update({'count': count+1})
-            return True
+    with STATE_LOCK:
+        for entry in token_table:
+            if entry.get('message') == message:
+                count = entry.get('count')
+                entry.update({'count': count+1})
+                return True
     return False
 
 
 def check_token(token: str) -> bool:
-    token_state = False
-    token_email = ''
-    for entry in token_table:
-        if entry.get('token') == token:
-            if entry.get('time') > datetime.datetime.now():
-                entry.update({'ack': True})
-                token_email = entry.get('email')
-                token_state = True
-    if token_state:
+    with STATE_LOCK:
+        token_state = False
+        token_email = ''
         for entry in token_table:
-            if entry.get('email') == token_email:
-                entry.update({'ack': True})
-    return token_state
+            if entry.get('token') == token:
+                if entry.get('time') > datetime.datetime.now():
+                    entry.update({'ack': True})
+                    token_email = entry.get('email')
+                    token_state = True
+        if token_state:
+            for entry in token_table:
+                if entry.get('email') == token_email:
+                    entry.update({'ack': True})
+        return token_state
 
 def token_mark_sent(token: str):
-    for entry in token_table:
-        if entry.get('token') == token:
-            entry.update({'sent': True})
+    with STATE_LOCK:
+        for entry in token_table:
+            if entry.get('token') == token:
+                entry.update({'sent': True})
     return
 
 def active_token() -> list:
     tokens = []
-    for entry in token_table:
-        if entry.get('time') > datetime.datetime.now():
-            tokens.append(entry)
-    return tokens
+    with STATE_LOCK:
+        return [dict(entry) for entry in token_table
+                if entry.get('time') > datetime.datetime.now()]
 
 
 def expired_token() -> list:
     tokens = []
-    for entry in token_table:
-        if entry.get('time') < datetime.datetime.now():
-            if entry.get('ack'):
-                if entry.get('count') > 0:
-                    tokens.append(entry)
-                token_table.remove(entry)
-            else:
-                if entry.get('message')[:7] != 'Cleared':
-                    tokens.append(entry)
-                token_table.remove(entry)
-    return tokens
+    with STATE_LOCK:
+        tokens = []
+        for entry in token_table[:]:
+            if entry.get('time') < datetime.datetime.now():
+                if entry.get('ack'):
+                    if entry.get('count') > 0:
+                        tokens.append(dict(entry))
+                    token_table.remove(entry)
+                else:
+                    if entry.get('message')[:7] != 'Cleared':
+                        tokens.append(dict(entry))
+                    token_table.remove(entry)
+        return tokens
 
 
 def main():

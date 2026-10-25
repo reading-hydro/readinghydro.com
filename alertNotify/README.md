@@ -21,6 +21,10 @@ for the MQTT library
 pip install paho-mqtt
 sudo apt install python3-paho-mqtt
 
+for the ASGI web server
+pip install uvicorn
+sudo apt install python3-uvicorn
+
 for the EADataCollector
 sudo apt install python3-psycopg2
 
@@ -30,7 +34,19 @@ These modules provide the Alert notification system for Reading Hydro On-Call te
 
 ### alert_service ###
 
-This is the main module that should be started, It contains the REST server and the mqtt topic subscriber and calandar_read.
+This is the main module that should be started. It starts the ASGI web server in a separate thread and runs the MQTT alert worker in the service thread. The web server uses Uvicorn on port 8080.
+
+### alert_web ###
+
+Provides the ASGI endpoints `/whoisoncall`, `/ackresp?token=`, and `/alertlist`.
+
+### mqtt_worker ###
+
+Subscribes to the `hydro-alert` MQTT topic, checks the Google calendar for on-call changes, and monitors the data feed.
+
+### shared_state ###
+
+Provides mutex-protected read and update routines for on-call assignments and alert history. Token operations use the same mutex.
 
 ### calendar_read ###
 
@@ -43,9 +59,9 @@ An on shift reminder email is sent at about 9:00 each day to the current on-call
 
 The mqtt-topic attached to the readinghydro.org mosquitto broker and subscribes to the "hydro-alert" topic when an alert is recieved an email is sent to the primary and secondary on-call person. These contain a token to confirm recipt of the message. If the token is not acknowleged in 5 minutes a escalation email is sent to [alerts@readinghydro.org]
 
-### restServer ###
+### restServer (legacy) ###
 
-restServer provides a simple http webserver on port 8080 the respondes to:
+The active `alert_service` no longer uses this WSGI server. The ASGI endpoints respond to:
 
 [/whoisoncall](http://readinghydro.org:8080/whoisoncall)  Shows the on call primary and second person
 
@@ -66,6 +82,3 @@ Sends the various alert and esclation emails. No longer used, events are sent wi
 Send alert messages to the ntfy channel "alerts-readinghydro-org"
 
 ## To Do ##
-
-1. Connect to the TTN network to revieve smoke alarm and door status
-2. Add TLS to the restServer. Not done proxy through apache to achieve this.
