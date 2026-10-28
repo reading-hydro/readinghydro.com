@@ -5,12 +5,6 @@ STATE_LOCK = threading.RLock()
 _who_is_oncall = {'primary': 'Unknown', 'second': 'Unknown'}
 _alert_log_list = []
 
-
-def get_on_call_snapshot():
-    with STATE_LOCK:
-        return dict(_who_is_oncall)
-
-
 def get_on_call_person(role):
     with STATE_LOCK:
         return _who_is_oncall.get(role)

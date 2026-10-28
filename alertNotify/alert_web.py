@@ -2,7 +2,7 @@ import datetime
 from html import escape
 from urllib.parse import parse_qs
 
-from shared_state import get_alert_log_snapshot, get_on_call_snapshot
+from shared_state import get_alert_log_snapshot, get_on_call_person
 from tokenHandeler import active_token, check_token
 
 
@@ -57,7 +57,6 @@ def _text(value):
 
 
 def _whoisoncall():
-    on_call = get_on_call_snapshot()
     return '''\
 <html>
   <head>
@@ -67,7 +66,7 @@ def _whoisoncall():
      <h1>Current on call Primary contact is {primary}</h1>
      <h1>Current on call Secondary contact is {second}</h1>
    </body>
-</html>'''.format(primary=_text(on_call.get('primary')), second=_text(on_call.get('second')))
+</html>'''.format(primary=_text(get_on_call_person('primary')), second=_text(get_on_call_person('second')))
 
 
 def _ackresp(token):

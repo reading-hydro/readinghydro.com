@@ -1,7 +1,7 @@
 #!/bin/bash
 # Deploy script for readinghydro.com alert notification system
 set -e
-echo "stop the existing alertNotify service"
+echo "stoping the existing alertNotify service"
 sudo systemctl stop hydro-alert-notify.service
 sleep 2
 echo "copy files to /usr/local/bin/alertNotify"
