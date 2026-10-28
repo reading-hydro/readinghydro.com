@@ -1,10 +1,11 @@
 #! /usr/bin/python3
 import threading
+import time
 
 import uvicorn
 
 from alert_web import app
-from mqtt_worker import run_worker
+from alert_worker import AlertWorker
 
 
 def _run_asgi_server():
@@ -18,7 +19,13 @@ def main():
         daemon=True,
     )
     web_thread.start()
-    run_worker()
+    worker = AlertWorker()
+    try:
+        while True:
+            worker.run_once()
+            time.sleep(30)
+    finally:
+        worker.stop()
 
 
 if __name__ == '__main__':

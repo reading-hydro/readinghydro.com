@@ -11,7 +11,7 @@ if [ ! -d /usr/local/bin/alertNotify ]; then
 fi
 sudo cp alert_service.py /usr/local/bin/alertNotify/alert_service.py
 sudo cp alert_web.py /usr/local/bin/alertNotify/alert_web.py
-sudo cp mqtt_worker.py /usr/local/bin/alertNotify/mqtt_worker.py
+sudo cp alert_worker.py /usr/local/bin/alertNotify/alert_worker.py
 sudo cp shared_state.py /usr/local/bin/alertNotify/shared_state.py
 sudo cp tokenHandeler.py /usr/local/bin/alertNotify/tokenHandeler.py
 sudo cp sendntfy.py /usr/local/bin/alertNotify/sendntfy.py
