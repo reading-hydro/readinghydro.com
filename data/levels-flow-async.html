@@ -481,9 +481,12 @@ async function loadChartDataEA() {
 
 function myround(value, precision) {
     var multiplier = Math.pow(10, precision || 0);
-    return Math.round(value * multiplier) / multiplier;
+    return Math.floor(value * multiplier) / multiplier;
 }
-
+function myceil(value, precision) {
+    var multiplier = Math.pow(10, precision || 0);
+    return Math.ceil(value * multiplier) / multiplier;
+}
 //select timescale using parameters from buttons or datepicker
 function needsReload(mystart, myend) {
 
@@ -676,7 +679,7 @@ function renderLevelChart(start, end) {
 
     // tweak scales for y axes of graphs
     // upstream/downstream levels
-    ymax1 = myround((Math.max(...ys1) + 0.02), 1)
+    ymax1 = myceil((Math.max(...ys1) + 0.02), 1)
     ymax1 = Math.max(ymax1, HOL + 0.02)
     ymin1 = myround((Math.min(...ys1) - 0.02), 1)
     ymin2 = myround((Math.min(...ys2) - 0.02), 1)
@@ -847,7 +850,7 @@ function renderEAChart(startdate, enddate) {
         ys.push(item.flow);
     }
     var ymin3 = 0
-    var ymax3 = myround((Math.max(...ys)), 0)
+    var ymax3 = myceil((Math.max(...ys)), 0)
     ymax3 = Math.ceil(ymax3/10)*10
     if (ymax3 < 100){ymax3 = 100}
 
